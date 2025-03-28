@@ -16,9 +16,12 @@ public class StageGenerator : MonoBehaviour
 
     [Header("Tile Prefab")]
     public GameObject[] tilePrefabs; // 타일 프리팹 (Inspector에 할당)
+    public Transform tileContainer; // 타일 오브젝트들을 담을 부모 오브젝트
 
     // 스테이지 전체를 관리하는 2차원 배열 (PlayManager에서 참조)
     public static TileColor[,] grid;
+    // 실제 타일 오브젝트들을 관리하는 배열
+    public static GameObject[,] tileObjects;
 
     void Start()
     {
@@ -30,11 +33,13 @@ public class StageGenerator : MonoBehaviour
     {
         // 1. grid 초기화 (모든 칸을 None으로)
         grid = new TileColor[rows, columns];
+        tileObjects = new GameObject[rows, columns];
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < columns; x++)
             {
                 grid[y, x] = TileColor.None;
+                tileObjects[y, x] = null;
             }
         }
 
@@ -124,20 +129,17 @@ public class StageGenerator : MonoBehaviour
 
         if (tilePrefabs[(int)color - 1] != null)
         {
-            Instantiate(tilePrefabs[(int)color - 1], worldPos1, Quaternion.identity);
-            Instantiate(tilePrefabs[(int)color - 1], worldPos2, Quaternion.identity);
+            GameObject tile1 = Instantiate(tilePrefabs[(int)color - 1], worldPos1, Quaternion.identity, tileContainer);
+            GameObject tile2 = Instantiate(tilePrefabs[(int)color - 1], worldPos2, Quaternion.identity, tileContainer);
+
+            tileObjects[pos1.y, pos1.x] = tile1;
+            tileObjects[pos2.y, pos2.x] = tile2;
         }
     }
 
     // grid 좌표 → 월드 좌표 변환
     public Vector3 GetWorldPosition(Vector2Int gridPos)
     {
-        float stageWidth = columns * cellSize;
-        float stageHeight = rows * cellSize;
-        // 각 타일의 원래 위치: (gridPos.x * cellSize + cellSize/2, gridPos.y * cellSize + cellSize/2)
-        // 이를 스테이지 중앙 정렬을 위해 전체 크기의 절반만큼 빼줍니다.
-        return new Vector3(gridPos.x * cellSize + cellSize / 2, gridPos.y * cellSize + cellSize / 2, 0)
-               - new Vector3(stageWidth / 2, stageHeight / 2, 0);
+        return new Vector3(gridPos.x * cellSize + cellSize / 2, gridPos.y * cellSize + cellSize / 2, 0);
     }
-
 }

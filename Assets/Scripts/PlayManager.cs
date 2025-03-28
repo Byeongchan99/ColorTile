@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using static Enums;
 
 public class PlayManager : MonoBehaviour
@@ -11,8 +12,14 @@ public class PlayManager : MonoBehaviour
     public int columns = 10;
 
     [Header("Game Timer")]
-    public float timeRemaining = 60f; // 예시 시간 제한 (초)
+    public Text resultText;
+    public float timeRemaining = 120f; // 예시 시간 제한 (초)
     public float penaltyTime = 5f;    // 틀린 클릭 시 감점 시간
+
+    public void Awake()
+    {
+        resultText.gameObject.SetActive(false);
+    }
 
     void Update()
     {
@@ -37,16 +44,42 @@ public class PlayManager : MonoBehaviour
 
             if (IsValidGridPos(gridPos))
             {
-                TileColor clickedColor = StageGenerator.grid[gridPos.y, gridPos.x];
-                if (clickedColor != TileColor.None)
+                Debug.Log("Clicked grid position: " + gridPos);
+
+                // 클릭한 위치가 빈 칸일 때만 인접 타일 탐색
+                if (StageGenerator.grid[gridPos.y, gridPos.x] == TileColor.None)
                 {
-                    // 상하좌우 방향에서 가장 가까운 타일 중 색상이 같은 것 찾기
-                    List<Vector2Int> matchingTiles = GetMatchingAdjacentTiles(gridPos, clickedColor);
-                    if (matchingTiles.Count > 0)
+                    // 상하좌우 방향에서 가장 가까운 타일들을 가져옴
+                    List<Vector2Int> matchingTiles = GetAdjacentTiles(gridPos);
+                    Debug.Log("Total adjacent tiles found: " + matchingTiles.Count);
+
+                    // 각 인접 타일의 색상을 기준으로 그룹화
+                    Dictionary<TileColor, List<Vector2Int>> groups = new Dictionary<TileColor, List<Vector2Int>>();
+                    foreach (var pos in matchingTiles)
                     {
-                        // 클릭한 타일도 포함하여 제거 대상에 추가
-                        matchingTiles.Add(gridPos);
-                        EraseTiles(matchingTiles);
+                        TileColor tileColor = StageGenerator.grid[pos.y, pos.x];
+                        // 이미 그룹에 있다면 추가, 아니면 새로 생성
+                        if (!groups.ContainsKey(tileColor))
+                            groups[tileColor] = new List<Vector2Int>();
+
+                        groups[tileColor].Add(pos);
+                    }
+
+                    // 그룹 내 타일이 2개 이상인 경우만 지울 대상으로 선정
+                    List<Vector2Int> tilesToErase = new List<Vector2Int>();
+                    foreach (var kvp in groups)
+                    {
+                        if (kvp.Value.Count >= 2)
+                        {
+                            Debug.Log("Removing group of color: " + kvp.Key + ", count: " + kvp.Value.Count);
+                            tilesToErase.AddRange(kvp.Value);
+                        }
+                    }
+
+                    // 타일을 제거하거나, 해당하는 그룹이 없으면 페널티 적용
+                    if (tilesToErase.Count > 0)
+                    {
+                        EraseTiles(tilesToErase);
 
                         // 모든 타일 제거 여부 확인 (승리 조건)
                         if (IsStageCleared())
@@ -56,9 +89,8 @@ public class PlayManager : MonoBehaviour
                     }
                     else
                     {
-                        // 매칭되는 타일이 없으면 페널티
                         timeRemaining -= penaltyTime;
-                        Debug.Log("Wrong click! Penalty applied.");
+                        Debug.Log("No matching adjacent groups found. Penalty applied.");
                     }
                 }
             }
@@ -87,9 +119,8 @@ public class PlayManager : MonoBehaviour
         return pos.x >= 0 && pos.x < columns && pos.y >= 0 && pos.y < rows;
     }
 
-    // 클릭한 위치에서 상하좌우 방향으로 가장 가까운 타일 중,
-    // targetColor와 같은 색상을 가진 타일들을 반환 (한 방향에서 첫번째로 만난 타일만 검사)
-    List<Vector2Int> GetMatchingAdjacentTiles(Vector2Int pos, TileColor targetColor)
+    // 클릭한 위치에서 상하좌우 방향으로 가장 가까운 타일들을 반환(한 방향에서 첫번째로 만난 타일만 검사)
+    List<Vector2Int> GetAdjacentTiles(Vector2Int pos)
     {
         List<Vector2Int> matched = new List<Vector2Int>();
 
@@ -101,6 +132,8 @@ public class PlayManager : MonoBehaviour
             new Vector2Int(1, 0)    // 오른쪽
         };
 
+        Debug.Log("Checking adjacent tiles from " + pos);
+
         foreach (Vector2Int dir in directions)
         {
             Vector2Int checkPos = pos + dir;
@@ -108,10 +141,8 @@ public class PlayManager : MonoBehaviour
             {
                 if (StageGenerator.grid[checkPos.y, checkPos.x] != TileColor.None)
                 {
-                    if (StageGenerator.grid[checkPos.y, checkPos.x] == targetColor)
-                    {
-                        matched.Add(checkPos);
-                    }
+                    Debug.Log("Matched tile found at " + checkPos + " color" + StageGenerator.grid[checkPos.y, checkPos.x]);
+                    matched.Add(checkPos);
                     break; // 해당 방향에서 첫 타일을 만난 후 중단
                 }
                 checkPos += dir;
@@ -127,6 +158,13 @@ public class PlayManager : MonoBehaviour
         {
             StageGenerator.grid[pos.y, pos.x] = TileColor.None;
             // 만약 타일 오브젝트에 태그나 별도 관리가 있다면, 해당 오브젝트를 찾아 제거할 수 있음
+            // tileObjects 배열에서 해당 위치의 GameObject를 찾아 삭제
+            GameObject tileObj = StageGenerator.tileObjects[pos.y, pos.x];
+            if (tileObj != null)
+            {
+                Destroy(tileObj);
+                StageGenerator.tileObjects[pos.y, pos.x] = null;
+            }
         }
     }
 
@@ -147,12 +185,15 @@ public class PlayManager : MonoBehaviour
     // 게임 종료 처리 (win: true면 승리, false면 패배)
     void EndGame(bool win)
     {
+        resultText.gameObject.SetActive(true);
         if (win)
         {
+            resultText.text = "Stage cleared! You win!";
             Debug.Log("Stage cleared! You win!");
         }
         else
         {
+            resultText.text = "Time's up! Game Over!";
             Debug.Log("Time's up! Game Over!");
         }
         // 추가 종료 처리 (씬 전환, UI 표시 등)
