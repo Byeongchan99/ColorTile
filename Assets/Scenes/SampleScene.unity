@@ -751,11 +751,11 @@ MonoBehaviour:
   pairCount: 7
   colorCount: 10
   tilePrefabs:
-  - {fileID: 1328728263180657370, guid: 8450cf8479e00944c8d14dda968aa7f8, type: 3}
+  - {fileID: 1328728263180657370, guid: e599e6a17f4c5d04194b1da30e9eae75, type: 3}
   - {fileID: 2623143937281074210, guid: e50991985c6320f44a434d5bad29a647, type: 3}
   - {fileID: 3201441611351008911, guid: 1368cd5c38ad6004a95993dd3b63b04e, type: 3}
   - {fileID: 7502561436463056045, guid: f9aff31eda783504f8bf2c5973fefda9, type: 3}
-  - {fileID: 4219133518455607408, guid: 2f188eeee211e574fbf5117be68677ac, type: 3}
+  - {fileID: 4219133518455607408, guid: b99f0cc869bdcf74885e45f3d3590068, type: 3}
   - {fileID: 5561266232563233018, guid: bb004731855dfe2419fbb11d390db567, type: 3}
   - {fileID: 3408144753225075697, guid: 7f0c8042bbe359d489c495f818f5bc10, type: 3}
   - {fileID: 1013087852384782845, guid: 080e821ba7396b3439542cecff977f56, type: 3}
