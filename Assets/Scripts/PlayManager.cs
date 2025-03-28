@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static Enums;
@@ -12,8 +13,8 @@ public class PlayManager : MonoBehaviour
     public int columns = 10;
 
     [Header("Game Timer")]
-    public Text resultText;
-    public float timeRemaining = 120f; // 예시 시간 제한 (초)
+    public TMP_Text resultText;
+    public float timeRemaining = 180f; // 예시 시간 제한 (초)
     public float penaltyTime = 5f;    // 틀린 클릭 시 감점 시간
 
     public void Awake()
@@ -188,13 +189,13 @@ public class PlayManager : MonoBehaviour
         resultText.gameObject.SetActive(true);
         if (win)
         {
-            resultText.text = "Stage cleared! You win!";
+            resultText.text = "Stage cleared!\nYou win!";
             Debug.Log("Stage cleared! You win!");
         }
         else
         {
-            resultText.text = "Time's up! Game Over!";
-            Debug.Log("Time's up! Game Over!");
+            resultText.text = "Time's up!\nGame Over!";
+            Debug.Log("Time's up! \n Game Over!");
         }
         // 추가 종료 처리 (씬 전환, UI 표시 등)
         enabled = false;
