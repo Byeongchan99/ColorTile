@@ -29,6 +29,182 @@ public class StageGenerator : MonoBehaviour
     }
 
     // 스테이지를 생성하는 메서드
+    // 스테이지를 생성하는 메서드 (GenerateStage ver.2)
+    void GenerateStage()
+    {
+        // 1. grid와 tileObjects 초기화 (모든 칸을 None, null로 설정)
+        grid = new TileColor[rows, columns];
+        tileObjects = new GameObject[rows, columns];
+        for (int y = 0; y < rows; y++)
+        {
+            for (int x = 0; x < columns; x++)
+            {
+                grid[y, x] = TileColor.None;
+                tileObjects[y, x] = null;
+            }
+        }
+
+        // 2. 색상별 쌍 리스트 생성 (총 pairCount * colorCount 쌍)
+        List<TileColor> pairColors = new List<TileColor>();
+        for (int colorIndex = 1; colorIndex <= colorCount; colorIndex++)
+        {
+            for (int i = 0; i < pairCount; i++)
+            {
+                pairColors.Add((TileColor)colorIndex);
+            }
+        }
+
+        // 3. 쌍 순서를 랜덤으로 섞기
+        for (int i = 0; i < pairColors.Count; i++)
+        {
+            TileColor temp = pairColors[i];
+            int randomIndex = Random.Range(i, pairColors.Count);
+            pairColors[i] = pairColors[randomIndex];
+            pairColors[randomIndex] = temp;
+        }
+
+        // 4. 각 쌍을 ver.2 로직에 따라 배치
+        int MAX_ATTEMPTS = 1000;
+        foreach (TileColor color in pairColors)
+        {
+            bool placed = false;
+            int attempt = 0;
+            while (!placed && attempt < MAX_ATTEMPTS)
+            {
+                attempt++;
+
+                // Step 1: 빈 셀(트리거 셀)을 랜덤 선택
+                int triggerX = Random.Range(0, columns);
+                int triggerY = Random.Range(0, rows);
+                Vector2Int triggerPos = new Vector2Int(triggerX, triggerY);
+                if (grid[triggerPos.y, triggerPos.x] != TileColor.None)
+                {
+                    continue;
+                }
+
+                // Step 2: 상하좌우 방향 중 2가지를 랜덤하게 선택 (순서를 섞어서 첫 두 개 사용)
+                List<Vector2Int> directions = new List<Vector2Int>
+            {
+                new Vector2Int(0, 1),   // 위
+                new Vector2Int(0, -1),  // 아래
+                new Vector2Int(-1, 0),  // 왼쪽
+                new Vector2Int(1, 0)    // 오른쪽
+            };
+                for (int i = 0; i < directions.Count; i++)
+                {
+                    int j = Random.Range(i, directions.Count);
+                    Vector2Int tempDir = directions[i];
+                    directions[i] = directions[j];
+                    directions[j] = tempDir;
+                }
+                Vector2Int dir1 = directions[0];
+                Vector2Int dir2 = directions[1];
+
+                // Step 3: 각 방향으로 이동할 수 있는 최대 거리를 계산 (트리거 셀 기준)
+                int maxDist1 = 0;
+                if (dir1.x > 0) maxDist1 = columns - 1 - triggerPos.x;
+                else if (dir1.x < 0) maxDist1 = triggerPos.x;
+                else if (dir1.y > 0) maxDist1 = rows - 1 - triggerPos.y;
+                else if (dir1.y < 0) maxDist1 = triggerPos.y;
+
+                int maxDist2 = 0;
+                if (dir2.x > 0) maxDist2 = columns - 1 - triggerPos.x;
+                else if (dir2.x < 0) maxDist2 = triggerPos.x;
+                else if (dir2.y > 0) maxDist2 = rows - 1 - triggerPos.y;
+                else if (dir2.y < 0) maxDist2 = triggerPos.y;
+
+                // 이동 거리는 최소 1 이상이어야 함
+                if (maxDist1 < 1 || maxDist2 < 1)
+                {
+                    continue;
+                }
+
+                // Step 4: 각 방향에 대해, 1부터 최대 거리(maxDist)까지 중 랜덤한 거리 선택
+                int dist1 = Random.Range(1, maxDist1 + 1);
+                int dist2 = Random.Range(1, maxDist2 + 1);
+
+                // Step 5: 각 방향으로 이동하며 배치할 위치 결정 (다른 타일을 만나기 전, 혹은 최대 거리 도달 시까지)
+                // 첫 번째 방향에 대해:
+                Vector2Int posTile1 = triggerPos;
+                bool valid1 = true;
+                for (int step = 1; step <= dist1; step++)
+                {
+                    Vector2Int nextPos = triggerPos + new Vector2Int(dir1.x * step, dir1.y * step);
+                    if (grid[nextPos.y, nextPos.x] != TileColor.None)
+                    {
+                        if (step == 1)
+                        {
+                            valid1 = false;
+                            break;
+                        }
+                        else
+                        {
+                            posTile1 = triggerPos + new Vector2Int(dir1.x * (step - 1), dir1.y * (step - 1));
+                            break;
+                        }
+                    }
+                    if (step == dist1)
+                    {
+                        posTile1 = nextPos;
+                    }
+                }
+                if (!valid1)
+                {
+                    continue;
+                }
+
+                // 두 번째 방향에 대해:
+                Vector2Int posTile2 = triggerPos;
+                bool valid2 = true;
+                for (int step = 1; step <= dist2; step++)
+                {
+                    Vector2Int nextPos = triggerPos + new Vector2Int(dir2.x * step, dir2.y * step);
+                    if (grid[nextPos.y, nextPos.x] != TileColor.None)
+                    {
+                        if (step == 1)
+                        {
+                            valid2 = false;
+                            break;
+                        }
+                        else
+                        {
+                            posTile2 = triggerPos + new Vector2Int(dir2.x * (step - 1), dir2.y * (step - 1));
+                            break;
+                        }
+                    }
+                    if (step == dist2)
+                    {
+                        posTile2 = nextPos;
+                    }
+                }
+                if (!valid2)
+                {
+                    continue;
+                }
+
+                // Step 6: 배치할 두 위치가 서로 다르고, 트리거 셀과도 겹치지 않으며, 모두 빈 칸인지 확인
+                if (posTile1 == posTile2 || posTile1 == triggerPos || posTile2 == triggerPos)
+                {
+                    continue;
+                }
+                if (grid[posTile1.y, posTile1.x] != TileColor.None || grid[posTile2.y, posTile2.x] != TileColor.None)
+                {
+                    continue;
+                }
+
+                // Step 7: 두 위치에 타일 쌍 배치
+                SetTiles(posTile1, posTile2, color);
+                placed = true;
+            }
+
+            if (!placed)
+            {
+                Debug.LogWarning("Failed to place a pair of color " + color + " after many attempts.");
+            }
+        }
+    }
+
+    /*
     void GenerateStage()
     {
         // 1. grid 초기화 (모든 칸을 None으로)
@@ -110,6 +286,7 @@ public class StageGenerator : MonoBehaviour
             }
         }
     }
+    */
 
     // 해당 두 위치가 비어있는지 검사
     bool CanSetTiles(Vector2Int pos1, Vector2Int pos2)
