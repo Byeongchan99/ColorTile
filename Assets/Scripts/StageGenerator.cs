@@ -8,7 +8,7 @@ public class StageGenerator : MonoBehaviour
     [Header("Grid Settings")]
     public int rows = 20;
     public int columns = 10;
-    public float cellSize = 0.48f; // 한 칸의 크기
+    public float cellSize = 0.4512f; // 한 칸의 크기
 
     [Header("Tile Pair Settings")]
     public int pairCount = 7; // 각 색상별 쌍 개수

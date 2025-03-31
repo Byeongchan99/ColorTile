@@ -14,12 +14,20 @@ public class PlayManager : MonoBehaviour
 
     [Header("Game Timer")]
     public TMP_Text resultText;
-    public float timeRemaining = 180f; // 예시 시간 제한 (초)
+    public Slider timerSlider;
+    public float playTime; // 게임 시간 (초)
+    public float timeRemaining; // 남은 시간
     public float penaltyTime = 5f;    // 틀린 클릭 시 감점 시간
+
+    public int score = 0; // 점수
+    public int tileScore = 1; // 타일 개당 점수
+    public TMP_Text scoreText;
 
     public void Awake()
     {
         resultText.gameObject.SetActive(false);
+        timeRemaining = playTime;
+        scoreText.text = "0";
     }
 
     void Update()
@@ -28,6 +36,7 @@ public class PlayManager : MonoBehaviour
 
         // 타이머 업데이트
         timeRemaining -= Time.deltaTime;
+        timerSlider.value = timeRemaining / playTime; // 180초로 고정
         if (timeRemaining <= 0)
         {
             EndGame(false);
@@ -81,6 +90,7 @@ public class PlayManager : MonoBehaviour
                     if (tilesToErase.Count > 0)
                     {
                         EraseTiles(tilesToErase);
+                        scoreText.text = score.ToString();
 
                         // 모든 타일 제거 여부 확인 (승리 조건)
                         if (IsStageCleared())
@@ -164,6 +174,7 @@ public class PlayManager : MonoBehaviour
             if (tileObj != null)
             {
                 Destroy(tileObj);
+                score += tileScore; // 타일 제거 시 점수 추가
                 StageGenerator.tileObjects[pos.y, pos.x] = null;
             }
         }
@@ -189,12 +200,12 @@ public class PlayManager : MonoBehaviour
         resultText.gameObject.SetActive(true);
         if (win)
         {
-            resultText.text = "Stage cleared!\nYou win!";
+            resultText.text = "Stage cleared!\nYou win!\n" + "score: " + score;
             Debug.Log("Stage cleared! You win!");
         }
         else
         {
-            resultText.text = "Time's up!\nGame Over!";
+            resultText.text = "Time's up!\nGame Over!\n" + "score: " + score;
             Debug.Log("Time's up! \n Game Over!");
         }
         // 추가 종료 처리 (씬 전환, UI 표시 등)
