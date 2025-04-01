@@ -4,17 +4,42 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    void Start()
+    /*
+    public GameEventChannel eventChannel; // 이벤트 기반
+
+    void OnEnable()
     {
-        
+        eventChannel.onGameStart.AddListener(GameStart);
+        eventChannel.onGameOver.AddListener(GameOver);
+        eventChannel.onPause.AddListener(Pause);
+        eventChannel.onGameRestart.AddListener(GameRestart);
+        eventChannel.onGoToMain.AddListener(GoToMain);
     }
+
+    void OnDisable()
+    {
+        eventChannel.onGameStart.RemoveListener(GameStart);
+        eventChannel.onGameOver.RemoveListener(GameOver);
+        eventChannel.onPause.RemoveListener(Pause);
+        eventChannel.onGameRestart.RemoveListener(GameRestart);
+        eventChannel.onGoToMain.RemoveListener(GoToMain);
+    }
+    */
+
+    [Header("References")]
+    public UIManager uiManager;
+    public PlayManager playManager;
+    public StageGenerator stageGenerator;
 
     // 1. 게임 시작
     public void GameStart()
     {
         // 1. 스테이지 생성
+        stageGenerator.GenerateStage();
         // 2. 타이머 시작
+        uiManager.StartGame();
         // 3. 메인화면 닫기
+        uiManager.CloseMainUI();
     }
 
     // 2. 게임 종료
