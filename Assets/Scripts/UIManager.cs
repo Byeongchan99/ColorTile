@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour
     public TMP_Text scoreText;
     public GameObject PauseUI;
     public GameObject MainUI;
+    public GameObject ResultUI;
 
     [Header("References")]
     public PlayManager playManager;
@@ -54,6 +55,7 @@ public class UIManager : MonoBehaviour
     public void StartGame()
     {
         resultText.gameObject.SetActive(false);
+        ResultUI.SetActive(false);
         playManager.Initialize();
         Initialize();
         stageGenerator.GenerateStage();
@@ -77,6 +79,7 @@ public class UIManager : MonoBehaviour
     // 4. 게임 종료 결과 UI 표시
     public void ShowResult(bool win)
     {
+        ResultUI.SetActive(true);
         resultText.gameObject.SetActive(true);
         if (win)
         {
