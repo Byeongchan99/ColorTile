@@ -157,11 +157,9 @@ MonoBehaviour:
   scoreText: {fileID: 394631178}
   PauseUI: {fileID: 459412676}
   MainUI: {fileID: 1652031380}
-  isTimerOn: 1
-  playTime: 60
-  timeRemaining: 60
-  penaltyTime: 5
   playManager: {fileID: 1509568680}
+  gameManager: {fileID: 460621657}
+  stageGenerator: {fileID: 2013358174}
 --- !u!4 &31672774
 Transform:
   m_ObjectHideFlags: 0
@@ -752,16 +750,16 @@ RectTransform:
   m_GameObject: {fileID: 394631176}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.28, y: 0.28, z: 0.28}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 647983093}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 103.9, y: 410.10004}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &394631178
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -957,7 +955,6 @@ MonoBehaviour:
   vibrationButton: {fileID: 1637502168}
   mainButton: {fileID: 675936152}
   gameManager: {fileID: 460621657}
-  stageGenerator: {fileID: 2013358174}
   uiManager: {fileID: 31672773}
 --- !u!1 &460621656
 GameObject:
@@ -988,6 +985,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f01c6841357116a4784e0df24e08d644, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isPaused: 0
   uiManager: {fileID: 31672773}
   playManager: {fileID: 1509568680}
   stageGenerator: {fileID: 2013358174}
@@ -1636,18 +1634,18 @@ RectTransform:
   m_GameObject: {fileID: 640294405}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.4999999, y: 1.4999999, z: 1.4999999}
+  m_LocalScale: {x: 0.63, y: 0.63, z: 0.63}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 944831294}
   - {fileID: 880214871}
   m_Father: {fileID: 647983093}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -102.8, y: 411}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 20}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 1}
 --- !u!114 &640294407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2073,9 +2071,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 460621657}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: GameStart
+      - m_Target: {fileID: 31672773}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+        m_MethodName: OnClickStartGameButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2721,16 +2719,16 @@ RectTransform:
   m_GameObject: {fileID: 1193246710}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 647983093}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 210.5, y: 409.4}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 50, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 1, y: 1}
 --- !u!114 &1193246712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2993,7 +2991,11 @@ MonoBehaviour:
   columns: 10
   score: 0
   tileScore: 1
+  playTime: 60
+  timeRemaining: 60
+  penaltyTime: 5
   uiManager: {fileID: 31672773}
+  gameManager: {fileID: 460621657}
 --- !u!4 &1509568681
 Transform:
   m_ObjectHideFlags: 0

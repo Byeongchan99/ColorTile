@@ -23,8 +23,7 @@ public class StageGenerator : MonoBehaviour
     // 실제 타일 오브젝트들을 관리하는 배열
     public static GameObject[,] tileObjects;
 
-    // 스테이지를 생성하는 메서드 (GenerateStage ver.2)
-    public void GenerateStage()
+    public void InitStage()
     {
         // 1. grid와 tileObjects 초기화 (모든 칸을 None, null로 설정)
         grid = new TileColor[rows, columns];
@@ -43,7 +42,12 @@ public class StageGenerator : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+    }
 
+    // 스테이지를 생성하는 메서드 (GenerateStage ver.2)
+    public void GenerateStage()
+    {
+        InitStage();
         // 2. 색상별 쌍 리스트 생성 (총 pairCount * colorCount 쌍)
         List<TileColor> pairColors = new List<TileColor>();
         for (int colorIndex = 1; colorIndex <= colorCount; colorIndex++)

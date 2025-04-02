@@ -26,50 +26,28 @@ public class GameManager : MonoBehaviour
     }
     */
 
+    [Header("Time Settings")]
+    public bool isPaused = true;
+
     [Header("References")]
     public UIManager uiManager;
     public PlayManager playManager;
     public StageGenerator stageGenerator;
 
-    // 1. 게임 시작
-    public void GameStart()
+    void Awake()
     {
-        // 1. 스테이지 생성
-        stageGenerator.GenerateStage();
-        // 2. 타이머 시작
-        uiManager.StartGame();
-        // 3. 메인화면 닫기
-        uiManager.CloseMainUI();
+        StopTime(); 
     }
 
-    // 2. 게임 종료
-    public void GameOver()
+    public void StopTime()
     {
-        // 1. 타이머 정지
-        // 2. 게임 결과 표시
+        Time.timeScale = 0f;
+        isPaused = true;
     }
 
-    // 3. 일시정지
-    public void Pause()
+    public void StartTime()
     {
-        // 1. 타이머 정지
-        // 2. 일시정지 화면 표시
-    }
-
-    // 4. 게임 재시작
-    public void GameRestart()
-    {
-        // 1. 타이머 초기화 및 재시작
-        // 2. 스테이지 초기화 및 재생성
-        // 3. 일시정지 화면 닫기
-    }
-
-    // 5. 메인 화면으로 이동
-    public void GoToMain()
-    {
-        // 1. 타이머 초기화
-        // 2. 스테이지 초기화
-        // 3. 게임 결과 화면 / 일시정지 화면 닫기
-        // 4. 메인 화면 표시
+        Time.timeScale = 1f;
+        isPaused = false;
     }
 }

@@ -12,23 +12,48 @@ public class PlayManager : MonoBehaviour
     public int rows = 20;
     public int columns = 10;
 
+    [Header("Game Score Settings")]
     public int score = 0; // 점수
     public int tileScore = 1; // 타일 당 점수
 
+    [Header("Game Timer Settings")]
+    public float playTime; // 게임 시간 (초)
+    public float timeRemaining; // 남은 시간
+    public float penaltyTime = 5f; // 틀린 클릭 시 감점 시간
+
     [Header("References")]
     public UIManager uiManager;
+    public GameManager gameManager;
 
     public void Awake()
     {
-        if (uiManager == null)
-            uiManager = FindObjectOfType<UIManager>();
-
-        score = 0;
+        if (gameManager == null)
+            gameManager = FindObjectOfType<GameManager>();
     }
 
     void Update()
     {
+        if (gameManager.isPaused == true)
+        {
+            return;
+        }
+
         HandleInput();
+
+        // 타이머 업데이트
+        timeRemaining -= Time.deltaTime;
+        uiManager.UpdateTimer(timeRemaining / playTime);
+
+        if (timeRemaining <= 0) // 시간 종료로 인한 게임 종료
+        {
+            EndGame(false);
+        }
+    }
+
+    public void Initialize()
+    {
+        timeRemaining = playTime;
+        score = 0;
     }
 
     // 터치 또는 마우스 클릭 입력 처리
@@ -46,6 +71,7 @@ public class PlayManager : MonoBehaviour
             Vector3 worldPos = GetWorldPos(screenPos);
             Vector2Int gridPos = GetGridPos(worldPos);
 
+            // 유효 범위 검사
             if (IsValidGridPos(gridPos))
             {
                 Debug.Log("Clicked grid position: " + gridPos);
@@ -82,12 +108,12 @@ public class PlayManager : MonoBehaviour
 
                         if (IsStageCleared())
                         {
-                            uiManager.EndGame(true);
+                            EndGame(true);
                         }
                     }
                     else
                     {
-                        uiManager.GetPenaltiy();
+                        GetPenaltiy();
                         Debug.Log("No matching adjacent groups found. Penalty applied.");
                     }
                 }
@@ -163,6 +189,11 @@ public class PlayManager : MonoBehaviour
         }
     }
 
+    void GetPenaltiy()
+    {
+        timeRemaining -= penaltyTime;
+    }
+
     // 스테이지 클리어 여부 검사
     bool IsStageCleared()
     {
@@ -175,5 +206,11 @@ public class PlayManager : MonoBehaviour
             }
         }
         return true;
-    } 
+    }
+
+    void EndGame(bool result)
+    {
+        // 게임 종료 처리
+        uiManager.EndGame(result);
+    }
 }

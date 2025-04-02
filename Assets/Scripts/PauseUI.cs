@@ -16,10 +16,9 @@ public class PauseUI : MonoBehaviour
 
     [Header("References")]
     public GameManager gameManager;
-    public StageGenerator stageGenerator;
     public UIManager uiManager;
 
-    void Start()
+    void Awake()
     {
         // 버튼 클릭 이벤트 등록
         exitButton.onClick.AddListener(ClosePauseUI);
@@ -32,23 +31,16 @@ public class PauseUI : MonoBehaviour
     // 1. 일시정지 화면 닫기 (게임 재개)
     public void ClosePauseUI()
     {
-        // 게임 재개: 일시정지 상태 해제
-        Time.timeScale = 1f;
+        gameManager.StartTime();
         gameObject.SetActive(false);
     }
 
     // 2. 게임 재시작
     public void RetryGame()
     {
-        // 재시작 전 반드시 일시정지 해제
-        Time.timeScale = 1f;
-        uiManager.isTimerOn = true;
+        gameManager.StartTime();
         this.gameObject.SetActive(false);
-        stageGenerator.GenerateStage();
-
-
-        // 현재 씬을 다시 로드하여 게임을 리셋
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        uiManager.StartGame();
     }
 
     // 3. 소리 On/Off
@@ -76,12 +68,8 @@ public class PauseUI : MonoBehaviour
     // 5. 메인 화면으로 이동
     public void GoToMain()
     {
-        // 메인 화면으로 이동하기 전, 일시정지를 해제
-        Time.timeScale = 1f;
+        gameManager.StopTime();
         this.gameObject.SetActive(false);
         uiManager.GoToMain();
-
-        // 빌드 설정에 추가된 메인 메뉴 씬의 이름(예: "MainMenu")으로 이동합니다.
-        //SceneManager.LoadScene("MainMenu");
     }
 }
