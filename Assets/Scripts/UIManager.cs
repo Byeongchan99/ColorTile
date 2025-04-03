@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
     public TMP_Text resultText;
     public Slider timerSlider;
     public TMP_Text scoreText;
+
     public GameObject PauseUI;
     public GameObject MainUI;
     public GameObject ResultUI;
@@ -33,18 +34,19 @@ public class UIManager : MonoBehaviour
         scoreText.text = "0";
     }
 
-    // 1. 타이머 UI 업데이트
+    // 타이머 UI 업데이트
     public void UpdateTimer(float value)
     {
         timerSlider.value = value;
     } 
 
-    // 2. 점수 UI 업데이트
+    // 점수 UI 업데이트
     public void UpdateScore(int score)
     {
         scoreText.text = score.ToString();
     }
 
+    // 게임 시작 버튼 클릭
     public void OnClickStartGameButton()
     {
         gameManager.StartTime();
@@ -52,6 +54,7 @@ public class UIManager : MonoBehaviour
         StartGame();
     }
 
+    // 게임 시작 처리
     public void StartGame()
     {
         resultText.gameObject.SetActive(false);
@@ -61,14 +64,14 @@ public class UIManager : MonoBehaviour
         stageGenerator.GenerateStage();
     }
 
-    // 3. 일시정지 버튼
+    // 일시정지 버튼 클릭
     public void OnClickPauseButton()
     {
         gameManager.StopTime();
         PauseUI.SetActive(true); // 일시정지 UI 활성화
     }
 
-    // 게임 종료 처리 (win: true면 승리, false면 패배)
+    // 게임 종료 처리(win: true면 승리, false면 패배)
     public void EndGame(bool win)
     {
         gameManager.StopTime();
@@ -76,28 +79,28 @@ public class UIManager : MonoBehaviour
         Debug.Log(win ? "Stage cleared! You win!" : "Time's up! Game Over!");
     }
 
-    // 4. 게임 종료 결과 UI 표시
+    // 게임 종료 결과 UI 표시
     public void ShowResult(bool win)
     {
         ResultUI.SetActive(true);
         resultText.gameObject.SetActive(true);
         if (win)
         {
-            resultText.text = "Stage cleared!\nYou win!\nScore: " + playManager.score;
+            resultText.text = "Stage cleared!\nYou win!\nScore: " + playManager.Score;
         }
         else
         {
-            resultText.text = "Time's up!\nGame Over!\nScore: " + playManager.score;
+            resultText.text = "Time's up!\nGame Over!\nScore: " + playManager.Score;
         }
     } 
 
-    // 5. 메인 화면 닫기
+    // 메인 화면 닫기
     public void CloseMainUI()
     {
         MainUI.SetActive(false);
     }
 
-    // 6. 메인 화면으로 이동
+    // 메인 화면으로 이동
     public void GoToMain()
     {
         gameManager.StopTime();

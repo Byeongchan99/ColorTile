@@ -11,17 +11,18 @@ public class StageGenerator : MonoBehaviour
     public float cellSize = 0.4512f; // 한 칸의 크기
 
     [Header("Tile Pair Settings")]
-    public int pairCount = 7; // 각 색상별 쌍 개수
-    public int colorCount = 10; // 사용 색상 개수 (None 제외)
+    private int _pairCount = 7; // 각 색상별 쌍 개수
+    private int _colorCount = 10; // 사용 색상 개수 (None 제외)
+    public int totalTileCount; // 총 타일 개수(_pairCount * _colorCount * 2)
 
     [Header("Tile Prefab")]
     public GameObject[] tilePrefabs; // 타일 프리팹 (Inspector에 할당)
     public Transform tileContainer; // 타일 오브젝트들을 담을 부모 오브젝트
 
     // 스테이지 전체를 관리하는 2차원 배열 (PlayManager에서 참조)
-    public static TileColor[,] grid;
+    public TileColor[,] grid;
     // 실제 타일 오브젝트들을 관리하는 배열
-    public static GameObject[,] tileObjects;
+    public GameObject[,] tileObjects;
 
     public void InitStage()
     {
@@ -50,9 +51,9 @@ public class StageGenerator : MonoBehaviour
         InitStage();
         // 2. 색상별 쌍 리스트 생성 (총 pairCount * colorCount 쌍)
         List<TileColor> pairColors = new List<TileColor>();
-        for (int colorIndex = 1; colorIndex <= colorCount; colorIndex++)
+        for (int colorIndex = 1; colorIndex <= _colorCount; colorIndex++)
         {
-            for (int i = 0; i < pairCount; i++)
+            for (int i = 0; i < _pairCount; i++)
             {
                 pairColors.Add((TileColor)colorIndex);
             }
@@ -208,6 +209,8 @@ public class StageGenerator : MonoBehaviour
         }
     }
 
+    // 스테이지를 생성하는 메서드 (GenerateStage ver.1)
+    #region
     /*
     void GenerateStage()
     {
@@ -291,6 +294,7 @@ public class StageGenerator : MonoBehaviour
         }
     }
     */
+    #endregion
 
     // 해당 두 위치가 비어있는지 검사
     bool CanSetTiles(Vector2Int pos1, Vector2Int pos2)

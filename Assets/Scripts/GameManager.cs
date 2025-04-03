@@ -39,12 +39,14 @@ public class GameManager : MonoBehaviour
         StopTime(); 
     }
 
+    // 시간 정지 - 일시정지
     public void StopTime()
     {
         Time.timeScale = 0f;
         isPaused = true;
     }
 
+    // 시간 재개
     public void StartTime()
     {
         Time.timeScale = 1f;

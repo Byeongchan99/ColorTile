@@ -8,31 +8,56 @@ using static Enums;
 public class PlayManager : MonoBehaviour
 {
     [Header("Grid Settings")]
-    public float cellSize = 0.48f;
-    public int rows = 20;
-    public int columns = 10;
+    private float _cellSize = 0.48f;
+    private int _rows = 20;
+    private int _columns = 10;
 
     [Header("Game Score Settings")]
-    public int score = 0; // 점수
-    public int tileScore = 1; // 타일 당 점수
+    private int _score = 0; // 점수
+    public int Score
+    {
+        get { return _score; }
+        set
+        {
+            _score = value;
+            uiManager.UpdateScore(_score);
+        }
+    }
+    private int _tileScore = 1; // 타일 당 점수
+    private int _totalTileCount; // 총 타일 수
 
     [Header("Game Timer Settings")]
-    public float playTime; // 게임 시간 (초)
+    [SerializeField] float _playTime; // 게임 시간 (초)
     public float timeRemaining; // 남은 시간
-    public float penaltyTime = 5f; // 틀린 클릭 시 감점 시간
+    [SerializeField] private float penaltyTime = 5f; // 틀린 클릭 시 감점 시간
 
     [Header("References")]
     public UIManager uiManager;
     public GameManager gameManager;
+    public StageGenerator stageGenerator;
 
     public void Awake()
     {
+        // 참조
         if (gameManager == null)
             gameManager = FindObjectOfType<GameManager>();
+
+        if (uiManager == null)
+            uiManager = FindObjectOfType<UIManager>();
+
+        if (stageGenerator == null)
+            stageGenerator = FindObjectOfType<StageGenerator>();
+
+        _rows = stageGenerator.rows;
+        _columns = stageGenerator.columns;
+        _cellSize = stageGenerator.cellSize;
+
+        Initialize();
     }
 
     void Update()
     {
+        // 게임이 일시정지 상태인 경우
         if (gameManager.isPaused == true)
         {
             return;
@@ -42,7 +67,7 @@ public class PlayManager : MonoBehaviour
 
         // 타이머 업데이트
         timeRemaining -= Time.deltaTime;
-        uiManager.UpdateTimer(timeRemaining / playTime);
+        uiManager.UpdateTimer(timeRemaining / _playTime);
 
         if (timeRemaining <= 0) // 시간 종료로 인한 게임 종료
         {
@@ -50,16 +75,18 @@ public class PlayManager : MonoBehaviour
         }
     }
 
+    // 초기화
     public void Initialize()
     {
-        timeRemaining = playTime;
-        score = 0;
+        timeRemaining = _playTime;
+        Score = 0;
+        _totalTileCount = stageGenerator.totalTileCount;
     }
 
-    // 터치 또는 마우스 클릭 입력 처리
+    // 터치 또는 마우스 클릭 입력 처리 - 현재 마우스 이벤트만 처리
     void HandleInput()
     {
-        // UI 요소 위에서 클릭한 경우, 입력 무시
+        // UI 요소 위에서 클릭한 경우 입력 무시
         if (EventSystem.current.IsPointerOverGameObject())
         {
             return;
@@ -76,21 +103,24 @@ public class PlayManager : MonoBehaviour
             {
                 Debug.Log("Clicked grid position: " + gridPos);
 
-                // 클릭한 위치가 빈 칸일 때만 인접 타일 탐색
-                if (StageGenerator.grid[gridPos.y, gridPos.x] == TileColor.None)
+                // 클릭한 위치가 빈 칸일 때만 진행
+                if (stageGenerator.grid[gridPos.y, gridPos.x] == TileColor.None)
                 {
-                    List<Vector2Int> matchingTiles = GetAdjacentTiles(gridPos);
+                    // 빈 칸에서 가장 가까운 직교 타일 검색(상하좌우 각 4방향에서 가장 가까운 타일 검색)
+                    List<Vector2Int> matchingTiles = GetOrthogonalTiles(gridPos);
                     Debug.Log("Total adjacent tiles found: " + matchingTiles.Count);
 
+                    // 딕셔너리에 가져온 타일 색상과 위치 저장
                     Dictionary<TileColor, List<Vector2Int>> groups = new Dictionary<TileColor, List<Vector2Int>>();
                     foreach (var pos in matchingTiles)
                     {
-                        TileColor tileColor = StageGenerator.grid[pos.y, pos.x];
+                        TileColor tileColor = stageGenerator.grid[pos.y, pos.x];
                         if (!groups.ContainsKey(tileColor))
                             groups[tileColor] = new List<Vector2Int>();
                         groups[tileColor].Add(pos);
                     }
 
+                    // 같은 색상의 타일이 2개 이상인 경우에만 제거 리스트에 추가
                     List<Vector2Int> tilesToErase = new List<Vector2Int>();
                     foreach (var kvp in groups)
                     {
@@ -101,16 +131,26 @@ public class PlayManager : MonoBehaviour
                         }
                     }
 
+                    // 제거할 타일이 있는 경우
                     if (tilesToErase.Count > 0)
                     {
                         EraseTiles(tilesToErase);
-                        uiManager.UpdateScore(score); // 점수 업데이트
+                        //uiManager.UpdateScore(_score); // 점수 업데이트 - 프로퍼티에서 바로 처리
 
-                        if (IsStageCleared())
+                        // 남은 타일 수 감소
+                        _totalTileCount -= tilesToErase.Count; 
+
+                        // 모든 타일이 제거된 경우 - 스테이지 클리어
+                        if (_totalTileCount <= 0)
                         {
-                            EndGame(true);
-                        }
+                            // 스테이지 클리어 처리
+                            if (IsStageCleared())
+                            {
+                                EndGame(true);
+                            }
+                        }              
                     }
+                    // 제거할 타일이 없는 경우 - 잘못된 입력 -> 패널티 적용
                     else
                     {
                         GetPenaltiy();
@@ -132,21 +172,22 @@ public class PlayManager : MonoBehaviour
     // 월드 좌표를 grid 좌표로 변환
     Vector2Int GetGridPos(Vector3 worldPos)
     {
-        int x = Mathf.FloorToInt(worldPos.x / cellSize);
-        int y = Mathf.FloorToInt(worldPos.y / cellSize);
+        int x = Mathf.FloorToInt(worldPos.x / _cellSize);
+        int y = Mathf.FloorToInt(worldPos.y / _cellSize);
         return new Vector2Int(x, y);
     }
 
     // grid 범위 내 유효한 좌표인지 검사
     bool IsValidGridPos(Vector2Int pos)
     {
-        return pos.x >= 0 && pos.x < columns && pos.y >= 0 && pos.y < rows;
+        return pos.x >= 0 && pos.x < _columns && pos.y >= 0 && pos.y < _rows;
     }
 
-    // 인접 타일들을 반환
-    List<Vector2Int> GetAdjacentTiles(Vector2Int pos)
+    // 직교 위치에서 가장 가까운 타일들을 반환
+    List<Vector2Int> GetOrthogonalTiles(Vector2Int pos)
     {
         List<Vector2Int> matched = new List<Vector2Int>();
+        // 상하좌우 4방향 탐색
         Vector2Int[] directions = {
             new Vector2Int(0, 1),
             new Vector2Int(0, -1),
@@ -161,9 +202,10 @@ public class PlayManager : MonoBehaviour
             Vector2Int checkPos = pos + dir;
             while (IsValidGridPos(checkPos))
             {
-                if (StageGenerator.grid[checkPos.y, checkPos.x] != TileColor.None)
+                // 빈 칸이 아닌 타일
+                if (stageGenerator.grid[checkPos.y, checkPos.x] != TileColor.None)
                 {
-                    Debug.Log("Matched tile found at " + checkPos + " color: " + StageGenerator.grid[checkPos.y, checkPos.x]);
+                    Debug.Log("Matched tile found at " + checkPos + " color: " + stageGenerator.grid[checkPos.y, checkPos.x]);
                     matched.Add(checkPos);
                     break;
                 }
@@ -173,41 +215,44 @@ public class PlayManager : MonoBehaviour
         return matched;
     }
 
-    // grid에서 타일 제거 (타일 색상을 None으로 변경하고, 해당 GameObject 제거)
+    // grid에서 타일 제거(타일 색상을 None으로 변경하고, 해당 GameObject 제거)
     void EraseTiles(List<Vector2Int> positions)
     {
         foreach (Vector2Int pos in positions)
         {
-            StageGenerator.grid[pos.y, pos.x] = TileColor.None;
-            GameObject tileObj = StageGenerator.tileObjects[pos.y, pos.x];
+            stageGenerator.grid[pos.y, pos.x] = TileColor.None;
+            GameObject tileObj = stageGenerator.tileObjects[pos.y, pos.x];
             if (tileObj != null)
             {
                 Destroy(tileObj);
-                score += tileScore;
-                StageGenerator.tileObjects[pos.y, pos.x] = null;
+                Score += _tileScore;
+                stageGenerator.tileObjects[pos.y, pos.x] = null;
             }
         }
     }
 
+    // 패널티 적용
     void GetPenaltiy()
     {
         timeRemaining -= penaltyTime;
     }
 
     // 스테이지 클리어 여부 검사
+    // 모든 타일이 제거된 경우 클리어
     bool IsStageCleared()
     {
-        for (int y = 0; y < rows; y++)
+        for (int y = 0; y < _rows; y++)
         {
-            for (int x = 0; x < columns; x++)
+            for (int x = 0; x < _columns; x++)
             {
-                if (StageGenerator.grid[y, x] != TileColor.None)
+                if (stageGenerator.grid[y, x] != TileColor.None)
                     return false;
             }
         }
         return true;
     }
 
+    // 게임 종료
     void EndGame(bool result)
     {
         // 게임 종료 처리

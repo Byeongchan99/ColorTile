@@ -5,9 +5,11 @@ using UnityEngine.UI;
 
 public class ResultUI : MonoBehaviour
 {
+    [Header("UI Components")]
     public Button exitButton;
     public Button retryButton;
 
+    [Header("References")]
     public GameManager gameManager;
     public UIManager uiManager;
 
@@ -17,7 +19,7 @@ public class ResultUI : MonoBehaviour
         retryButton.onClick.AddListener(RetryGame);
     }
 
-    // 2. 게임 재시작
+    // 게임 재시작
     public void RetryGame()
     {
         gameManager.StartTime();
@@ -25,7 +27,7 @@ public class ResultUI : MonoBehaviour
         uiManager.StartGame();
     }
 
-    // 5. 메인 화면으로 이동
+    // 메인 화면으로 이동
     public void GoToMain()
     {
         gameManager.StopTime();

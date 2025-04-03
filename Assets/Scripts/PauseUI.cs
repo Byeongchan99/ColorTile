@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class PauseUI : MonoBehaviour
 {
+    [Header("UI Components")]
     public Button exitButton;
     public Button retryButton;
     public Button soundButton;
@@ -11,8 +12,8 @@ public class PauseUI : MonoBehaviour
     public Button mainButton;
 
     // 상태값 (UI 갱신 등에도 활용할 수 있음)
-    private bool isSoundOn = true;
-    private bool isVibrationOn = true;
+    private bool _isSoundOn = true;
+    private bool _isVibrationOn = true;
 
     [Header("References")]
     public GameManager gameManager;
@@ -47,22 +48,22 @@ public class PauseUI : MonoBehaviour
     public void SoundOnOff()
     {
         // 현재 상태 토글 (On이면 Off, Off이면 On)
-        isSoundOn = !isSoundOn;
+        _isSoundOn = !_isSoundOn;
         // AudioListener의 볼륨을 0 또는 1로 설정
-        AudioListener.volume = isSoundOn ? 1f : 0f;
+        AudioListener.volume = _isSoundOn ? 1f : 0f;
         // 필요하다면, UI 이미지나 텍스트도 업데이트합니다.
-        Debug.Log("Sound toggled: " + (isSoundOn ? "On" : "Off"));
+        Debug.Log("Sound toggled: " + (_isSoundOn ? "On" : "Off"));
     }
 
     // 4. 진동 On/Off
     public void VibrationOnOff()
     {
         // 진동 기능의 상태를 토글
-        isVibrationOn = !isVibrationOn;
+        _isVibrationOn = !_isVibrationOn;
         // 실제 진동 호출은 게임 내 이벤트에서 조건에 따라 수행하게 하고,
         // 여기서는 설정 값만 저장하거나 UI를 업데이트합니다.
-        PlayerPrefs.SetInt("Vibration", isVibrationOn ? 1 : 0);
-        Debug.Log("Vibration toggled: " + (isVibrationOn ? "On" : "Off"));
+        PlayerPrefs.SetInt("Vibration", _isVibrationOn ? 1 : 0);
+        Debug.Log("Vibration toggled: " + (_isVibrationOn ? "On" : "Off"));
     }
 
     // 5. 메인 화면으로 이동

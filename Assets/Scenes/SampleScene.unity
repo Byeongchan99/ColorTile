@@ -170,7 +170,7 @@ Transform:
   m_GameObject: {fileID: 31672772}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 430.6716, y: 466.13385, z: -3.7319622}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1120,7 +1120,7 @@ Transform:
   m_GameObject: {fileID: 460621656}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 274.9603, y: 494.86102, z: -4.5845532}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3108,16 +3108,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9de9ebffa13a784b87793b08f87e7a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellSize: 0.48
-  rows: 20
-  columns: 10
-  score: 0
-  tileScore: 1
-  playTime: 120
+  _playTime: 90
   timeRemaining: 60
   penaltyTime: 5
   uiManager: {fileID: 31672773}
   gameManager: {fileID: 460621657}
+  stageGenerator: {fileID: 2013358174}
 --- !u!4 &1509568681
 Transform:
   m_ObjectHideFlags: 0
@@ -3566,7 +3562,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1705835443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3808,8 +3804,7 @@ MonoBehaviour:
   rows: 20
   columns: 10
   cellSize: 0.48
-  pairCount: 7
-  colorCount: 10
+  totalTileCount: 0
   tilePrefabs:
   - {fileID: 1328728263180657370, guid: e599e6a17f4c5d04194b1da30e9eae75, type: 3}
   - {fileID: 2623143937281074210, guid: e50991985c6320f44a434d5bad29a647, type: 3}
