@@ -34,6 +34,9 @@ public class UIManager : MonoBehaviour
         // 점수 UI 업데이트 시 호출
         GameEvents.OnScoreChanged += UpdateScore;
 
+        // 게임 시작 시 호출
+        GameEvents.OnGameStarted += StartGame;
+
         // 게임 종료 시 호출
         GameEvents.OnGameEnded += EndGame;
 
