@@ -20,7 +20,7 @@ public class PlayManager : MonoBehaviour
         set
         {
             _score = value;
-            uiManager.UpdateScore(_score);
+            GameEvents.OnScoreChanged?.Invoke(_score);
         }
     }
     private int _tileScore = 1; // 타일 당 점수
@@ -32,9 +32,8 @@ public class PlayManager : MonoBehaviour
     [SerializeField] private float penaltyTime = 5f; // 틀린 클릭 시 감점 시간
 
     [Header("References")]
-    public UIManager uiManager;
-    public GameManager gameManager;
-    public StageGenerator stageGenerator;
+    public GameManager gameManager; // isPaused 참조
+    public StageGenerator stageGenerator; // grid 참조
 
     public void Awake()
     {
@@ -42,15 +41,14 @@ public class PlayManager : MonoBehaviour
         if (gameManager == null)
             gameManager = FindObjectOfType<GameManager>();
 
-        if (uiManager == null)
-            uiManager = FindObjectOfType<UIManager>();
-
         if (stageGenerator == null)
             stageGenerator = FindObjectOfType<StageGenerator>();
 
         _rows = stageGenerator.rows;
         _columns = stageGenerator.columns;
         _cellSize = stageGenerator.cellSize;
+
+        GameEvents.OnGameStarted += Initialize; // 게임 시작 시 초기화
 
         Initialize();
     }
@@ -67,7 +65,7 @@ public class PlayManager : MonoBehaviour
 
         // 타이머 업데이트
         timeRemaining -= Time.deltaTime;
-        uiManager.UpdateTimer(timeRemaining / _playTime);
+        GameEvents.OnTimerUpdated?.Invoke(timeRemaining / _playTime);
 
         if (timeRemaining <= 0) // 시간 종료로 인한 게임 종료
         {
@@ -256,6 +254,6 @@ public class PlayManager : MonoBehaviour
     void EndGame(bool result)
     {
         // 게임 종료 처리
-        uiManager.EndGame(result);
+        GameEvents.OnGameEnded?.Invoke(result);
     }
 }

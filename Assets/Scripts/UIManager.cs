@@ -26,6 +26,24 @@ public class UIManager : MonoBehaviour
         Initialize();
     }
 
+    private void OnEnable()
+    {
+        // 타이머 UI 업데이트 시 호출
+        GameEvents.OnTimerUpdated += UpdateTimer;
+
+        // 점수 UI 업데이트 시 호출
+        GameEvents.OnScoreChanged += UpdateScore;
+
+        // 게임 종료 시 호출
+        GameEvents.OnGameEnded += EndGame;
+
+        // 게임 재시작 시 호출
+        GameEvents.OnRetryGame += StartGame;
+
+        // 메인 화면으로 이동 시 호출
+        GameEvents.OnGoToMain += GoToMain;
+    }
+
     // 초기화
     public void Initialize()
     {
@@ -49,7 +67,8 @@ public class UIManager : MonoBehaviour
     // 게임 시작 버튼 클릭
     public void OnClickStartGameButton()
     {
-        gameManager.StartTime();
+        GameEvents.OnGameStarted?.Invoke(); // 게임 시작 이벤트 호출
+        //gameManager.StartTime();
         MainUI.SetActive(false);
         StartGame();
     }
@@ -59,22 +78,23 @@ public class UIManager : MonoBehaviour
     {
         resultText.gameObject.SetActive(false);
         ResultUI.SetActive(false);
-        playManager.Initialize();
+        //playManager.Initialize();
         Initialize();
-        stageGenerator.GenerateStage();
+        //stageGenerator.GenerateStage();
     }
 
     // 일시정지 버튼 클릭
     public void OnClickPauseButton()
     {
-        gameManager.StopTime();
+        GameEvents.OnPauseGame?.Invoke(); // 게임 일시정지 이벤트 호출
+        //gameManager.StopTime();
         PauseUI.SetActive(true); // 일시정지 UI 활성화
     }
 
     // 게임 종료 처리(win: true면 승리, false면 패배)
     public void EndGame(bool win)
     {
-        gameManager.StopTime();
+        //gameManager.StopTime();
         ShowResult(win);
         Debug.Log(win ? "Stage cleared! You win!" : "Time's up! Game Over!");
     }
@@ -104,6 +124,6 @@ public class UIManager : MonoBehaviour
     public void GoToMain()
     {
         gameManager.StopTime();
-        MainUI.SetActive(true);
+        //MainUI.SetActive(true);
     }
 }

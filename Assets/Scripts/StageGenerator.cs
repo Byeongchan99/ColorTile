@@ -24,6 +24,11 @@ public class StageGenerator : MonoBehaviour
     // 실제 타일 오브젝트들을 관리하는 배열
     public GameObject[,] tileObjects;
 
+    private void Awake()
+    {
+        GameEvents.OnGameStarted += GenerateStage; // 게임 시작 시 초기화
+    }
+
     public void InitStage()
     {
         // 1. grid와 tileObjects 초기화 (모든 칸을 None, null로 설정)

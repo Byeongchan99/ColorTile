@@ -4,39 +4,23 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    /*
-    public GameEventChannel eventChannel; // 이벤트 기반
-
-    void OnEnable()
-    {
-        eventChannel.onGameStart.AddListener(GameStart);
-        eventChannel.onGameOver.AddListener(GameOver);
-        eventChannel.onPause.AddListener(Pause);
-        eventChannel.onGameRestart.AddListener(GameRestart);
-        eventChannel.onGoToMain.AddListener(GoToMain);
-    }
-
-    void OnDisable()
-    {
-        eventChannel.onGameStart.RemoveListener(GameStart);
-        eventChannel.onGameOver.RemoveListener(GameOver);
-        eventChannel.onPause.RemoveListener(Pause);
-        eventChannel.onGameRestart.RemoveListener(GameRestart);
-        eventChannel.onGoToMain.RemoveListener(GoToMain);
-    }
-    */
-
     [Header("Time Settings")]
     public bool isPaused = true;
-
-    [Header("References")]
-    public UIManager uiManager;
-    public PlayManager playManager;
-    public StageGenerator stageGenerator;
 
     void Awake()
     {
         StopTime(); 
+    }
+
+    private void OnEnable()
+    {
+        GameEvents.OnGameStarted += StartTime; // 게임 시작 시 시간 재개
+        GameEvents.OnResumeGame += StartTime; // 게임 재개 시 시간 재개
+        GameEvents.OnRetryGame += StartTime; // 게임 재시작 시 시간 재개
+        GameEvents.OnPauseGame += StopTime; // 게임 일시정지 시 시간 정지
+        // OnGameEnded 이벤트는 bool 파라미터를 무시하고 StopTime() 실행
+        GameEvents.OnGameEnded += (bool result) => StopTime(); // 게임 종료 시 시간 정지
+        GameEvents.OnGoToMain += StopTime; // 메인 화면으로 이동 시 시간 정지
     }
 
     // 시간 정지 - 일시정지
