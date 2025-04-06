@@ -80,7 +80,7 @@ public class UIManager : MonoBehaviour
     public void StartGame()
     {
         resultText.gameObject.SetActive(false);
-        ResultUI.SetActive(false);
+        //ResultUI.SetActive(false);
         //playManager.Initialize();
         Initialize();
         //stageGenerator.GenerateStage();
@@ -127,6 +127,6 @@ public class UIManager : MonoBehaviour
     public void GoToMain()
     {
         gameManager.StopTime();
-        //MainUI.SetActive(true);
+        MainUI.SetActive(true);
     }
 }
