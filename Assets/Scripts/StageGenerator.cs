@@ -9,6 +9,7 @@ public class StageGenerator : MonoBehaviour
     public int rows = 20;
     public int columns = 10;
     public float cellSize = 0.4512f; // 한 칸의 크기
+    public Transform boardPos; // 보드 오브젝트의 위치
 
     [Header("Tile Pair Settings")]
     private int _pairCount = 7; // 각 색상별 쌍 개수
@@ -331,6 +332,8 @@ public class StageGenerator : MonoBehaviour
     // grid 좌표 → 월드 좌표 변환
     public Vector3 GetWorldPosition(Vector2Int gridPos)
     {
-        return new Vector3(gridPos.x * cellSize + cellSize / 2, gridPos.y * cellSize + cellSize / 2, 0);
+        // boardPos.position을 기준으로 각 셀의 오프셋을 더함.
+        return boardPos.position + new Vector3(gridPos.x * cellSize + cellSize / 2,
+                                                 gridPos.y * cellSize + cellSize / 2, 0);
     }
 }

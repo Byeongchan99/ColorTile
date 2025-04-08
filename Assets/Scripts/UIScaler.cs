@@ -11,19 +11,19 @@ using UnityEngine.UI;
 
 public class UIScaler : MonoBehaviour
 {
-    [Header("A (Middle) 영역, B (Top) 영역 RectTransform")]
-    public RectTransform middleArea; // A 영역
+    [Header("A (Top) 영역, B (Mid) 영역 RectTransform")]
     public RectTransform topArea;    // B 영역
+    public RectTransform midArea; // A 영역
 
-    [Header("B (Top) 영역 내 UI RectTransform")]
+    [Header("A (Top) 영역 내 UI RectTransform")]
     public RectTransform timerUI;    // 타이머
     public RectTransform scoreUI;    // 점수
     public RectTransform pauseUI;    // 일시정지 버튼
 
-    [Header("세로 비율(Top : Middle)")]
-    [Tooltip("예) 2:8이면 topRatio = 0.2, middleRatio = 0.8")]
-    [Range(0.1f, 0.9f)]
-    public float topRatio = 0.2f;
+    [Header("세로 비율(Top : Mid)")]
+    [Tooltip("예) 2:8이면 topRatio = 0.2, midRatio = 0.8")]
+    [Range(0.0f, 1.0f)]
+    public float topRatio = 0.05f;
 
     [Header("B (Top) 영역 내부 가로 비율")]
     [Tooltip("좌 → 패딩 5%, 타이머 40%, 점수 35%, 일시정지 15%, 패딩 5%")]
@@ -60,27 +60,27 @@ public class UIScaler : MonoBehaviour
         screenWidth = Screen.width;
         screenHeight = Screen.height;
 
-        // 1) 전체 화면을 세로로 A(중간 영역), B(상단 영역)으로 나누기
+        // 1) 전체 화면을 세로로 A(상단 영역), B(중단 영역)으로 나누기
         // --------------------------------------------------------
         // - anchorMin, anchorMax를 이용해 RectTransform의 영역을 잡는 방식
         // - Top Area는 화면 위쪽에 (0,1 - topRatio) ~ (1,1)
         // - Middle Area는 그 아래 (0,0) ~ (1,1 - topRatio)
         // --------------------------------------------------------
 
-        // Top Area (B 영역)
+        // Top Area (A 영역)
         topArea.anchorMin = new Vector2(0f, 1f - topRatio);
         topArea.anchorMax = new Vector2(1f, 1f);
         // offsetMin, offsetMax를 0으로 설정해서 앵커 기준으로 딱 맞추기
         topArea.offsetMin = Vector2.zero;
         topArea.offsetMax = Vector2.zero;
 
-        // Middle Area (A 영역)
-        middleArea.anchorMin = new Vector2(0f, 0f);
-        middleArea.anchorMax = new Vector2(1f, 1f - topRatio);
-        middleArea.offsetMin = Vector2.zero;
-        middleArea.offsetMax = Vector2.zero;
+        // Mid Area (B 영역)
+        midArea.anchorMin = new Vector2(0f, 0f);
+        midArea.anchorMax = new Vector2(1f, 1f - topRatio);
+        midArea.offsetMin = Vector2.zero;
+        midArea.offsetMax = Vector2.zero;
 
-        // 2) B(Top) 영역 내부를 가로 비율로 나누기
+        // 2) A(Top) 영역 내부를 가로 비율로 나누기
         // --------------------------------------------------------
         // - 패딩 5% : 타이머 40% : 점수 35% : 일시정지 15% : 패딩 5%
         // --------------------------------------------------------

@@ -11,6 +11,7 @@ public class PlayManager : MonoBehaviour
     private float _cellSize = 0.48f;
     private int _rows = 20;
     private int _columns = 10;
+    private Vector3 _boardPos;
 
     [Header("Game Score Settings")]
     private int _score = 0; // 점수
@@ -47,6 +48,7 @@ public class PlayManager : MonoBehaviour
         _rows = stageGenerator.rows;
         _columns = stageGenerator.columns;
         _cellSize = stageGenerator.cellSize;
+        _boardPos = stageGenerator.boardPos.position;
 
         GameEvents.OnGameStarted += Initialize; // 게임 시작 시 초기화
         GameEvents.OnRetryGame += Initialize; // 게임 재시작 시 초기화
@@ -85,11 +87,14 @@ public class PlayManager : MonoBehaviour
     // 터치 또는 마우스 클릭 입력 처리 - 현재 마우스 이벤트만 처리
     void HandleInput()
     {
+        /*
         // UI 요소 위에서 클릭한 경우 입력 무시
         if (EventSystem.current.IsPointerOverGameObject())
         {
+            Debug.Log("Pointer is over UI element. Ignoring input.");
             return;
         }
+        */
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -171,8 +176,10 @@ public class PlayManager : MonoBehaviour
     // 월드 좌표를 grid 좌표로 변환
     Vector2Int GetGridPos(Vector3 worldPos)
     {
-        int x = Mathf.FloorToInt(worldPos.x / _cellSize);
-        int y = Mathf.FloorToInt(worldPos.y / _cellSize);
+        // boardPos.position을 기준으로 로컬 좌표 계산
+        Vector3 localPos = worldPos - _boardPos;
+        int x = Mathf.FloorToInt(localPos.x / _cellSize);
+        int y = Mathf.FloorToInt(localPos.y / _cellSize);
         return new Vector2Int(x, y);
     }
 

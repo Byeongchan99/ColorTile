@@ -45,6 +45,8 @@ public class UIManager : MonoBehaviour
 
         // 메인 화면으로 이동 시 호출
         GameEvents.OnGoToMain += GoToMain;
+
+        MainUI.SetActive(true); // 메인 UI 활성화
     }
 
     // 초기화
