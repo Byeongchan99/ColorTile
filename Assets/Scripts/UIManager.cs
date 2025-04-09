@@ -78,6 +78,11 @@ public class UIManager : MonoBehaviour
         StartGame();
     }
 
+    public void OnClickRetryGameButton()
+    {
+        GameEvents.OnRetryGame?.Invoke(); // 게임 재시작 이벤트 호출
+    }
+
     // 게임 시작 처리
     public void StartGame()
     {
