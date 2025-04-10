@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: fdd023033568e124d94591df304eae8d
+guid: d1f52654238de9b4888daab02ed4e382
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -136,7 +136,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ColorTileUI_0
+      name: ColorTileUI 1_0
       rect:
         serializedVersion: 2
         x: 18
@@ -144,83 +144,83 @@ TextureImporter:
         width: 684
         height: 185
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 03c06b198de8bc84a979a13a030269da
-      internalID: 732207834
+      spriteID: 0a6e73aad5da89443a7e3910e562cf3e
+      internalID: 1185164908
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ColorTileUI_1
+      name: ColorTileUI 1_1
       rect:
         serializedVersion: 2
-        x: 753
-        y: 1174
-        width: 73
-        height: 73
+        x: 754
+        y: 1175
+        width: 71
+        height: 71
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6a7f71955d1d96143935c3cfe1db9c1e
-      internalID: -1665687198
+      spriteID: c51dc597f67f7874590406d13a0227e4
+      internalID: -1454347799
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ColorTileUI_2
+      name: ColorTileUI 1_2
       rect:
         serializedVersion: 2
-        x: 833
-        y: 1174
-        width: 494
-        height: 73
+        x: 834
+        y: 1175
+        width: 492
+        height: 71
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ea13c98b76a842d499f66685530db42e
-      internalID: -256087391
+      spriteID: 63bf5d8e8ce31d843b2817bd951fa0f2
+      internalID: -2020256208
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ColorTileUI_3
+      name: ColorTileUI 1_3
       rect:
         serializedVersion: 2
-        x: 1334
-        y: 1174
-        width: 73
-        height: 73
+        x: 1335
+        y: 1175
+        width: 71
+        height: 71
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cf0395fd19e43f9498b91de430640136
-      internalID: -1225514509
+      spriteID: 052d9d1c08eea7443bca786c63bdbc27
+      internalID: 636113969
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ColorTileUI_4
+      name: ColorTileUI 1_4
       rect:
         serializedVersion: 2
         x: 1458
@@ -228,224 +228,308 @@ TextureImporter:
         width: 684
         height: 185
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 20, y: 20, z: 20, w: 20}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d91ace1f844d16242b0a3e67daba93d8
-      internalID: -1613523410
+      spriteID: 1841655b5e3645741979ac72f074d1b2
+      internalID: 363758602
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ColorTileUI_5
+      name: ColorTileUI 1_5
       rect:
         serializedVersion: 2
-        x: 2193
-        y: 1174
-        width: 73
-        height: 73
+        x: 2194
+        y: 1175
+        width: 71
+        height: 71
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1e3df625289eb5642bb16e0324f537d2
-      internalID: 1500659359
+      spriteID: 3a7aa3fca0fda4d43bc368d42bf34f9e
+      internalID: -975958240
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ColorTileUI_6
+      name: ColorTileUI 1_6
       rect:
         serializedVersion: 2
-        x: 2273
-        y: 1174
-        width: 494
-        height: 73
+        x: 2274
+        y: 1175
+        width: 492
+        height: 71
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a557cf9379c15c54e97817fe6fe7277e
-      internalID: -1619817051
+      spriteID: c2da47f066f41e1478b3cecc919a5c49
+      internalID: 997871496
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ColorTileUI_7
+      name: ColorTileUI 1_7
       rect:
         serializedVersion: 2
-        x: 2774
-        y: 1174
-        width: 73
-        height: 73
+        x: 2775
+        y: 1175
+        width: 71
+        height: 71
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6c02b87467202164c802e01457777091
-      internalID: 1727498225
+      spriteID: 1cdf2377008c1e643998facde8cc3008
+      internalID: 1618303292
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ColorTileUI_8
+      name: ColorTileUI 1_8
       rect:
         serializedVersion: 2
-        x: 753
-        y: 1091
-        width: 654
-        height: 76
+        x: 754
+        y: 1092
+        width: 652
+        height: 74
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cd13319e3cd40fe488fe00247e0a8279
-      internalID: 1205666888
+      spriteID: 702c2cb9e2065264b8731a94ec5b2c39
+      internalID: 160121084
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ColorTileUI_9
+      name: ColorTileUI 1_9
       rect:
         serializedVersion: 2
-        x: 2193
-        y: 1091
-        width: 654
-        height: 76
+        x: 2194
+        y: 1092
+        width: 652
+        height: 74
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9badf3e3c3b462948aafbcb4e5b609a8
-      internalID: 1698389399
+      spriteID: 0295742832dd2b64da23e84fa7c64dad
+      internalID: 1367298680
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ColorTileUI_10
+      name: ColorTileUI 1_10
       rect:
         serializedVersion: 2
         x: 18
         y: 18
-        width: 683
-        height: 1042
+        width: 682
+        height: 1041
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ec565ac872437654887725b4c8efcfcf
-      internalID: 1073946653
+      spriteID: 0c981b86a2986924d958cda1941a784d
+      internalID: 31897018
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ColorTileUI_11
+      name: ColorTileUI 1_11
       rect:
         serializedVersion: 2
         x: 738
-        y: 549
-        width: 683
-        height: 511
+        y: 550
+        width: 682
+        height: 509
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 923dc906d7e279b48a191e0798c5caf1
-      internalID: 1948898921
+      spriteID: cba04619f3434e240a1195d3535185cc
+      internalID: 1654671742
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ColorTileUI_12
+      name: ColorTileUI 1_12
       rect:
         serializedVersion: 2
         x: 1458
         y: 18
-        width: 683
-        height: 1042
+        width: 682
+        height: 1041
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 20, y: 20, z: 20, w: 20}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1198b92f60984f94ca4fd8a2170764f1
-      internalID: 479758566
+      spriteID: 111c5c6703f9fdd4e844dc76634bbb61
+      internalID: -1725815187
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ColorTileUI_13
+      name: ColorTileUI 1_13
       rect:
         serializedVersion: 2
         x: 2192
-        y: 32
-        width: 654
-        height: 1011
+        y: 35
+        width: 653
+        height: 1010
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 20, y: 20, z: 20, w: 20}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7e4e3fb038b067a4c91813161f28f86b
-      internalID: -348533755
+      spriteID: 04461997aed31b646ab4c87a13f284f3
+      internalID: 1834323717
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ColorTileUI_14
+      name: ColorTileUI 1_14
       rect:
         serializedVersion: 2
         x: 738
         y: 316
-        width: 683
+        width: 682
         height: 185
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 57367a9bd653f9649a995811024de3ce
-      internalID: 1771029153
+      spriteID: 0d4cfaf96e80d8443a39342d31971379
+      internalID: 429419050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ColorTileUI 1_15
+      rect:
+        serializedVersion: 2
+        x: 745
+        y: 215
+        width: 72
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b842eb8de06b893448d0fe5424a5252c
+      internalID: 567503415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ColorTileUI 1_16
+      rect:
+        serializedVersion: 2
+        x: 835
+        y: 215
+        width: 72
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3336e8b1da4bb24498bcefa3ba1fc7e4
+      internalID: -1526705260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ColorTileUI 1_17
+      rect:
+        serializedVersion: 2
+        x: 924
+        y: 215
+        width: 72
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 044e4df8084ced843a13b3690a3d3e28
+      internalID: 1697645863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ColorTileUI 1_18
+      rect:
+        serializedVersion: 2
+        x: 1014
+        y: 217
+        width: 72
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb98262de581fa742b2883f7844b2df0
+      internalID: -2083261328
       vertices: []
       indices: 
       edges: []
@@ -461,21 +545,25 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      ColorTileUI_0: 732207834
-      ColorTileUI_1: -1665687198
-      ColorTileUI_10: 1073946653
-      ColorTileUI_11: 1948898921
-      ColorTileUI_12: 479758566
-      ColorTileUI_13: -348533755
-      ColorTileUI_14: 1771029153
-      ColorTileUI_2: -256087391
-      ColorTileUI_3: -1225514509
-      ColorTileUI_4: -1613523410
-      ColorTileUI_5: 1500659359
-      ColorTileUI_6: -1619817051
-      ColorTileUI_7: 1727498225
-      ColorTileUI_8: 1205666888
-      ColorTileUI_9: 1698389399
+      ColorTileUI 1_0: 1185164908
+      ColorTileUI 1_1: -1454347799
+      ColorTileUI 1_10: 31897018
+      ColorTileUI 1_11: 1654671742
+      ColorTileUI 1_12: -1725815187
+      ColorTileUI 1_13: 1834323717
+      ColorTileUI 1_14: 429419050
+      ColorTileUI 1_15: 567503415
+      ColorTileUI 1_16: -1526705260
+      ColorTileUI 1_17: 1697645863
+      ColorTileUI 1_18: -2083261328
+      ColorTileUI 1_2: -2020256208
+      ColorTileUI 1_3: 636113969
+      ColorTileUI 1_4: 363758602
+      ColorTileUI 1_5: -975958240
+      ColorTileUI 1_6: 997871496
+      ColorTileUI 1_7: 1618303292
+      ColorTileUI 1_8: 160121084
+      ColorTileUI 1_9: 1367298680
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

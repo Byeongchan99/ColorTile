@@ -8,12 +8,12 @@ public class PauseUI : MonoBehaviour
     public Button exitButton;
     public Button retryButton;
     public Button soundButton;
-    public Button vibrationButton;
+    //public Button vibrationButton;
     public Button mainButton;
 
     // 상태값 (UI 갱신 등에도 활용할 수 있음)
     private bool _isSoundOn = true;
-    private bool _isVibrationOn = true;
+    //private bool _isVibrationOn = true;
 
     void Awake()
     {
@@ -21,7 +21,7 @@ public class PauseUI : MonoBehaviour
         exitButton.onClick.AddListener(ClosePauseUI);
         retryButton.onClick.AddListener(RetryGame);
         soundButton.onClick.AddListener(SoundOnOff);
-        vibrationButton.onClick.AddListener(VibrationOnOff);
+        //vibrationButton.onClick.AddListener(VibrationOnOff);
         mainButton.onClick.AddListener(GoToMain);
     }
 
@@ -53,6 +53,7 @@ public class PauseUI : MonoBehaviour
         Debug.Log("Sound toggled: " + (_isSoundOn ? "On" : "Off"));
     }
 
+    /*
     // 4. 진동 On/Off
     public void VibrationOnOff()
     {
@@ -63,6 +64,7 @@ public class PauseUI : MonoBehaviour
         PlayerPrefs.SetInt("Vibration", _isVibrationOn ? 1 : 0);
         Debug.Log("Vibration toggled: " + (_isVibrationOn ? "On" : "Off"));
     }
+    */
 
     //civitai
     // 5. 메인 화면으로 이동
