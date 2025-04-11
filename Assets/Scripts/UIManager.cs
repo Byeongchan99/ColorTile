@@ -141,4 +141,9 @@ public class UIManager : MonoBehaviour
         gameManager.StopTime();
         MainUI.SetActive(true);
     }
+
+    public void OnClickOpenOption()
+    {
+        GameEvents.OnOpenOption?.Invoke();
+    }
 }
