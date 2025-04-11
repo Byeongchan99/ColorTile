@@ -116,7 +116,7 @@ public class UIManager : MonoBehaviour
         resultText.gameObject.SetActive(true);
         if (win)
         {
-            resultText.text = "Stage cleared!\nYou win!\nScore: " + playManager.Score;
+            resultText.text = "Stage cleared!\nYou win!\n\nScore: " + playManager.Score + "\nRemain Time: " + (int)playManager.timeRemaining;
         }
         else
         {
