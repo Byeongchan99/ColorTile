@@ -8,23 +8,31 @@ public class OptionUI : MonoBehaviour
     [Header("UI Components")]
     public Slider BGMSlider;
     public Slider SFXSlider;
+    public Button closeButton;
 
     private void Awake()
     {
         GameEvents.OnOpenOption += OpenOption; // 옵션 열기 이벤트 등록
-        GameEvents.OnCloseOption += CloseOption; // 옵션 닫기 이벤트 등록
+        
+        closeButton.onClick.AddListener(OnClickCloseOption); // 닫기 버튼 클릭 이벤트 등록
 
         // 슬라이더 값 변경 이벤트 등록
         BGMSlider.onValueChanged.AddListener(OnBGMSliderValueChanged);
         SFXSlider.onValueChanged.AddListener(OnSFXSliderValueChanged);
+
+        if (this.gameObject.activeSelf)
+        {
+            this.gameObject.SetActive(false); // 옵션 UI 비활성화
+        }
     }
 
     public void OpenOption()
     {
+        Debug.Log("Option UI Opened");
         this.gameObject.SetActive(true); // 옵션 UI 활성화
     }
 
-    public void CloseOption()
+    public void OnClickCloseOption()
     {
         this.gameObject.SetActive(false); // 옵션 UI 비활성화
     }

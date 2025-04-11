@@ -22,5 +22,4 @@ public static class GameEvents
 
     // PauseUI, OptionUI
     public static Action OnOpenOption; // 옵션 화면 열기
-    public static Action OnCloseOption; // 옵션 화면 닫기
 }
