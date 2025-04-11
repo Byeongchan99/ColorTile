@@ -19,4 +19,8 @@ public static class GameEvents
     // GameManager, UIManager, ResultUI, PauseUI
     public static Action OnRetryGame; // 게임 재시작 시 호출
     public static Action OnGoToMain; // 메인 화면으로 이동 시 호출
+
+    // PauseUI, OptionUI
+    public static Action OnOpenOption; // 옵션 화면 열기
+    public static Action OnCloseOption; // 옵션 화면 닫기
 }

@@ -7,7 +7,7 @@ public class PauseUI : MonoBehaviour
     [Header("UI Components")]
     public Button exitButton;
     public Button retryButton;
-    public Button soundButton;
+    public Button optionButton;
     //public Button vibrationButton;
     public Button mainButton;
 
@@ -20,7 +20,7 @@ public class PauseUI : MonoBehaviour
         // 버튼 클릭 이벤트 등록
         exitButton.onClick.AddListener(ClosePauseUI);
         retryButton.onClick.AddListener(RetryGame);
-        soundButton.onClick.AddListener(SoundOnOff);
+        optionButton.onClick.AddListener(OpenOption);
         //vibrationButton.onClick.AddListener(VibrationOnOff);
         mainButton.onClick.AddListener(GoToMain);
     }
@@ -51,6 +51,11 @@ public class PauseUI : MonoBehaviour
         AudioListener.volume = _isSoundOn ? 1f : 0f;
         // 필요하다면, UI 이미지나 텍스트도 업데이트합니다.
         Debug.Log("Sound toggled: " + (_isSoundOn ? "On" : "Off"));
+    }
+
+    public void OpenOption()
+    {
+        GameEvents.OnOpenOption?.Invoke();
     }
 
     /*

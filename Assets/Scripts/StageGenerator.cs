@@ -6,14 +6,14 @@ using static Enums;
 public class StageGenerator : MonoBehaviour
 {
     [Header("Grid Settings")]
-    public int rows = 20;
-    public int columns = 10;
-    public float cellSize = 0.4512f; // 한 칸의 크기
+    public int rows;
+    public int columns;
+    public float cellSize; // 한 칸의 크기
     public Transform boardPos; // 보드 오브젝트의 위치
 
     [Header("Tile Pair Settings")]
-    private int _pairCount = 7; // 각 색상별 쌍 개수
-    private int _colorCount = 10; // 사용 색상 개수 (None 제외)
+    [SerializeField] private int _pairCount; // 각 색상별 쌍 개수
+    [SerializeField] private int _colorCount; // 사용 색상 개수 (None 제외)
     public int totalTileCount; // 총 타일 개수(_pairCount * _colorCount * 2)
 
     [Header("Tile Prefab")]
@@ -36,6 +36,8 @@ public class StageGenerator : MonoBehaviour
         // 1. grid와 tileObjects 초기화 (모든 칸을 None, null로 설정)
         grid = new TileColor[rows, columns];
         tileObjects = new GameObject[rows, columns];
+        totalTileCount = _pairCount * _colorCount * 2; // 총 타일 개수 계산
+
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < columns; x++)
