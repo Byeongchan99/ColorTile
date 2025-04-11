@@ -6,19 +6,25 @@ using UnityEngine.UI;
 public class OptionUI : MonoBehaviour
 {
     [Header("UI Components")]
-    public Slider BGMSlider;
-    public Slider SFXSlider;
+    public Button BGMButton;
+    public Button SFXButton;
+    public Button vibrationButton; // 진동 버튼
     public Button closeButton;
+
+    [Header("Flags")]
+    public bool _isBGMOn = true; // BGM 여부
+    public bool _isSFXOn = true; // SFX 여부
+    public bool _isVibrationOn = true; // 진동 여부
 
     private void Awake()
     {
         GameEvents.OnOpenOption += OpenOption; // 옵션 열기 이벤트 등록
         
-        closeButton.onClick.AddListener(OnClickCloseOption); // 닫기 버튼 클릭 이벤트 등록
-
-        // 슬라이더 값 변경 이벤트 등록
-        BGMSlider.onValueChanged.AddListener(OnBGMSliderValueChanged);
-        SFXSlider.onValueChanged.AddListener(OnSFXSliderValueChanged);
+        // 버튼 클릭 이벤트 등록
+        closeButton.onClick.AddListener(OnClickCloseOption);
+        BGMButton.onClick.AddListener(BGMOnOff);
+        SFXButton.onClick.AddListener(SFXOnOff);
+        vibrationButton.onClick.AddListener(VibrationOnOff);
 
         if (this.gameObject.activeSelf)
         {
@@ -37,19 +43,24 @@ public class OptionUI : MonoBehaviour
         this.gameObject.SetActive(false); // 옵션 UI 비활성화
     }
 
-    // BGM 슬라이더 값 변경 시 호출되는 메서드
-    private void OnBGMSliderValueChanged(float value)
+    void BGMOnOff()
     {
-        // BGM 볼륨 조정
-        //AudioManager.Instance.SetBGMVolume(value);
-        Debug.Log("BGM Volume: " + value);
+        _isBGMOn = !_isBGMOn;
+        PlayerPrefs.SetInt("BGM", _isBGMOn ? 1 : 0);
+        Debug.Log("BGM toggled: " + (_isBGMOn ? "On" : "Off"));
     }
 
-    // SFX 슬라이더 값 변경 시 호출되는 메서드
-    private void OnSFXSliderValueChanged(float value)
+    void SFXOnOff()
     {
-        // SFX 볼륨 조정
-        //AudioManager.Instance.SetSFXVolume(value);
-        Debug.Log("SFX Volume: " + value);
+        _isSFXOn = !_isSFXOn; 
+        PlayerPrefs.SetInt("SFX", _isSFXOn ? 1 : 0);
+        Debug.Log("SFX toggled: " + (_isSFXOn ? "On" : "Off"));
+    }
+
+    public void VibrationOnOff()
+    {
+        _isVibrationOn = !_isVibrationOn;
+        PlayerPrefs.SetInt("Vibration", _isVibrationOn ? 1 : 0);
+        Debug.Log("Vibration toggled: " + (_isVibrationOn ? "On" : "Off"));
     }
 }

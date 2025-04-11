@@ -130,6 +130,11 @@ public class UIManager : MonoBehaviour
         MainUI.SetActive(false);
     }
 
+    public void OnClickGoToMain()
+    {
+        GoToMain();
+    }
+
     // 메인 화면으로 이동
     public void GoToMain()
     {
