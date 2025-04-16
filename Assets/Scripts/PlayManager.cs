@@ -11,7 +11,8 @@ public class PlayManager : MonoBehaviour
     private float _cellSize = 0.48f;
     private int _rows = 20;
     private int _columns = 10;
-    private Vector3 _boardPos;
+    private Vector3 _boardPos;  
+    private HashSet<Vector2Int> candidateEmptyCells = new HashSet<Vector2Int>(); // 후보 빈 칸들을 저장할 리스트
 
     [Header("Game Score Settings")]
     private int _score = 0; // 점수
@@ -88,6 +89,19 @@ public class PlayManager : MonoBehaviour
         timeRemaining = _playTime;
         Score = 0;
         _totalTileCount = stageGenerator.totalTileCount;
+
+        // 빈 칸 리스트 초기화
+        candidateEmptyCells.Clear();
+        for (int y = 0; y < _rows; y++)
+        {
+            for (int x = 0; x < _columns; x++)
+            {
+                if (stageGenerator.grid[y, x] == TileColor.None)
+                {
+                    candidateEmptyCells.Add(new Vector2Int(x, y));
+                }
+            }
+        }
     }
 
     // 터치 또는 마우스 클릭 입력 처리 - 현재 마우스 이벤트만 처리
@@ -238,9 +252,48 @@ public class PlayManager : MonoBehaviour
             {
                 Destroy(tileObj);
                 Score += _tileScore;
+                candidateEmptyCells.Add(pos); // 제거된 타일의 위치를 후보 빈 칸 리스트에 추가
                 stageGenerator.tileObjects[pos.y, pos.x] = null;
             }
         }
+
+        // 남은 후보 리스트에서 제거 가능한 타일이 없으면 게임 종료
+        if (HasNoRemovableTiles())
+        {
+            EndGame(false);
+        }
+    }
+
+    // 후보 빈 칸 리스트만 순회하여 더 이상 제거 가능한 타일이 없는지 검사
+    bool HasNoRemovableTiles()
+    {
+        // 후보 빈 칸이 하나도 없으면 제거할 수 있는 타일이 없는 것으로 판단
+        if (candidateEmptyCells.Count == 0)
+            return true;
+
+        foreach (Vector2Int emptyPos in candidateEmptyCells)
+        {
+            List<Vector2Int> adjacentTiles = GetOrthogonalTiles(emptyPos);
+            Dictionary<TileColor, int> colorCount = new Dictionary<TileColor, int>();
+
+            foreach (Vector2Int tilePos in adjacentTiles)
+            {
+                TileColor color = stageGenerator.grid[tilePos.y, tilePos.x];
+                if (color == TileColor.None) continue;
+                if (!colorCount.ContainsKey(color))
+                    colorCount[color] = 0;
+                colorCount[color]++;
+            }
+
+            // 동일 색상의 타일이 2개 이상 존재하면 이동(제거)이 가능한 것으로 판단
+            foreach (var kvp in colorCount)
+            {
+                if (kvp.Value >= 2)
+                    return false;
+            }
+        }
+        // 모든 후보에서 검사했지만 제거 가능한 그룹이 없다면, 더 이상 제거할 수 없음.
+        return true;
     }
 
     // 패널티 적용
