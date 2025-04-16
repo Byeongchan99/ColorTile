@@ -55,7 +55,7 @@ public class PlayManager : MonoBehaviour
         GameEvents.OnGameStarted += Initialize; // 게임 시작 시 초기화
         GameEvents.OnRetryGame += Initialize; // 게임 재시작 시 초기화
 
-        Initialize();
+        //Initialize();
     }
 
     void Update()
