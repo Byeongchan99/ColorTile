@@ -28,6 +28,7 @@ public class PlayManager : MonoBehaviour
     private int _totalTileCount; // 총 타일 수
 
     [Header("Game Timer Settings")]
+    [SerializeField] private GameMode _gameMode;
     [SerializeField] float _playTime; // 게임 시간 (초)
     public float timeRemaining; // 남은 시간
     [SerializeField] private float penaltyTime = 5f; // 틀린 클릭 시 감점 시간
@@ -65,6 +66,11 @@ public class PlayManager : MonoBehaviour
         }
 
         HandleInput();
+
+        if (_gameMode == GameMode.Infinite)
+        {
+            return; // 무한 모드에서는 타이머를 사용하지 않음
+        }
 
         // 타이머 업데이트
         timeRemaining -= Time.deltaTime;

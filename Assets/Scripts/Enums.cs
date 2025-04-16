@@ -31,4 +31,10 @@ public class Enums
             height = h;
         }
     }
+
+    public enum GameMode
+    {
+        Normal,
+        Infinite
+    }
 }
