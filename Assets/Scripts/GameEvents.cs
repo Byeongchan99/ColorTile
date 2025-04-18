@@ -23,4 +23,9 @@ public static class GameEvents
 
     // PauseUI, OptionUI
     public static Action OnOpenOption; // 옵션 화면 열기
+
+    // OptionUI, AudioVibrationManager
+    public static Action<bool> OnBGMChanged; // BGM 설정 변경 시 호출
+    public static Action<bool> OnSFXChanged; // SFX 설정 변경 시 호출
+    public static Action<bool> OnVibrationChanged; // 진동 설정 변경 시 호출
 }

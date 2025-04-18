@@ -22,14 +22,29 @@ public class OptionUI : MonoBehaviour
         
         // 버튼 클릭 이벤트 등록
         closeButton.onClick.AddListener(OnClickCloseOption);
-        BGMButton.onClick.AddListener(BGMOnOff);
-        SFXButton.onClick.AddListener(SFXOnOff);
-        vibrationButton.onClick.AddListener(VibrationOnOff);
+        BGMButton.onClick.AddListener(ToggleBGM);
+        SFXButton.onClick.AddListener(ToggleSFX);
+        vibrationButton.onClick.AddListener(ToggleVibration);
 
         if (this.gameObject.activeSelf)
         {
             this.gameObject.SetActive(false); // 옵션 UI 비활성화
         }
+    }
+
+    private void Start()
+    {
+        // 저장된 설정 불러오기
+        _isBGMOn = Settings.GetBool(Settings.KEY_BGM);
+        _isSFXOn = Settings.GetBool(Settings.KEY_SFX);
+        _isVibrationOn = Settings.GetBool(Settings.KEY_VIBRATION);
+
+        RefreshButtons();
+
+        // 앱 시작 시에도 한 번 발행해서, 구독자들이 초기 상태를 알게끔
+        GameEvents.OnBGMChanged?.Invoke(_isBGMOn);
+        GameEvents.OnSFXChanged?.Invoke(_isSFXOn);
+        GameEvents.OnVibrationChanged?.Invoke(_isVibrationOn);
     }
 
     public void OpenOption()
@@ -43,24 +58,37 @@ public class OptionUI : MonoBehaviour
         this.gameObject.SetActive(false); // 옵션 UI 비활성화
     }
 
-    void BGMOnOff()
+    void ToggleBGM()
     {
         _isBGMOn = !_isBGMOn;
-        PlayerPrefs.SetInt("BGM", _isBGMOn ? 1 : 0);
-        Debug.Log("BGM toggled: " + (_isBGMOn ? "On" : "Off"));
+        Settings.SetBool(Settings.KEY_BGM, _isBGMOn);
+        RefreshButtons();
+        GameEvents.OnBGMChanged?.Invoke(_isBGMOn);
+        Debug.Log($"BGM: {(_isBGMOn ? "On" : "Off")}");
     }
 
-    void SFXOnOff()
+    void ToggleSFX()
     {
-        _isSFXOn = !_isSFXOn; 
-        PlayerPrefs.SetInt("SFX", _isSFXOn ? 1 : 0);
-        Debug.Log("SFX toggled: " + (_isSFXOn ? "On" : "Off"));
+        _isSFXOn = !_isSFXOn;
+        Settings.SetBool(Settings.KEY_SFX, _isSFXOn);
+        RefreshButtons();
+        GameEvents.OnSFXChanged?.Invoke(_isSFXOn);
+        Debug.Log($"SFX: {(_isSFXOn ? "On" : "Off")}");
     }
 
-    public void VibrationOnOff()
+    void ToggleVibration()
     {
         _isVibrationOn = !_isVibrationOn;
-        PlayerPrefs.SetInt("Vibration", _isVibrationOn ? 1 : 0);
-        Debug.Log("Vibration toggled: " + (_isVibrationOn ? "On" : "Off"));
+        Settings.SetBool(Settings.KEY_VIBRATION, _isVibrationOn);
+        RefreshButtons();
+        GameEvents.OnVibrationChanged?.Invoke(_isVibrationOn);
+        Debug.Log($"Vibration: {(_isVibrationOn ? "On" : "Off")}");
+    }
+
+    void RefreshButtons()
+    {
+        BGMButton.image.color = _isBGMOn ? Color.white : Color.gray;
+        SFXButton.image.color = _isSFXOn ? Color.white : Color.gray;
+        vibrationButton.image.color = _isVibrationOn ? Color.white : Color.gray;
     }
 }
