@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Enums; // Enums.cs에서 정의한 enum 사용
 
 public class GameManager : MonoBehaviour
 {
     [Header("Time Settings")]
     public bool isPaused = true;
+    public static GameMode gameMode; // 게임 모드 (Normal, Infinite)
 
     void Awake()
     {
@@ -19,7 +21,7 @@ public class GameManager : MonoBehaviour
         GameEvents.OnRetryGame += StartTime; // 게임 재시작 시 시간 재개
         GameEvents.OnPauseGame += StopTime; // 게임 일시정지 시 시간 정지
         // OnGameEnded 이벤트는 bool 파라미터를 무시하고 StopTime() 실행
-        GameEvents.OnGameEnded += (bool result) => StopTime(); // 게임 종료 시 시간 정지
+        GameEvents.OnGameEnded += (GameResult result) => StopTime(); // 게임 종료 시 시간 정지
         GameEvents.OnGoToMain += StopTime; // 메인 화면으로 이동 시 시간 정지
     }
 

@@ -37,4 +37,11 @@ public class Enums
         Normal,
         Infinite
     }
+
+    public enum GameResult
+    {
+        TimeOver, // 시간 종료
+        NoRemovableTiles, // 더 이상 제거 가능한 타일이 없어 게임 종료
+        Cleared // 게임 클리어
+    }
 }

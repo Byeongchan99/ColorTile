@@ -2,13 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Enums; // Enums.cs에서 정의한 enum 사용
 
 public static class GameEvents
 {
     // PlayManager
     public static Action<int> OnScoreChanged; // 점수 변경 시 호출
     public static Action<float> OnTimerUpdated; // 타이머 업데이트 시 호출
-    public static Action<bool> OnGameEnded; // 게임 종료 시 호출
+    public static Action<GameResult> OnGameEnded; // 게임 종료 시 호출
 
     // StageGenerator
     public static Action OnGameStarted; // 게임 시작 시 호출

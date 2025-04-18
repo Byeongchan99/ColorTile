@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
+using static Enums; // Enums.cs에서 정의한 enum 사용
 
 public class UIManager : MonoBehaviour
 {
@@ -15,6 +16,9 @@ public class UIManager : MonoBehaviour
     public GameObject PauseUI;
     public GameObject MainUI;
     public GameObject ResultUI;
+
+    public GameObject TimerArea;
+    public GameObject ScoreArea;
 
     [Header("References")]
     public PlayManager playManager;
@@ -55,6 +59,15 @@ public class UIManager : MonoBehaviour
         resultText.gameObject.SetActive(false);
         timerSlider.value = 1f; // 100% 남은 시간
         scoreText.text = "0";
+
+        if (GameManager.gameMode == GameMode.Normal)
+        {
+            TimerArea.SetActive(true); // 타이머 UI 활성화
+        }
+        else if (GameManager.gameMode == GameMode.Infinite)
+        {
+            TimerArea.SetActive(false); // 타이머 UI 비활성화
+        }
     }
 
     // 타이머 UI 업데이트
@@ -70,8 +83,18 @@ public class UIManager : MonoBehaviour
     }
 
     // 게임 시작 버튼 클릭
-    public void OnClickStartGameButton()
+    public void OnClickStartNormalButton()
     {
+        GameManager.gameMode = GameMode.Normal; // 게임 모드 설정
+        GameEvents.OnGameStarted?.Invoke(); // 게임 시작 이벤트 호출
+        //gameManager.StartTime();
+        MainUI.SetActive(false);
+        StartGame();
+    }
+
+    public void OnClickStartInfiniteButton()
+    {
+        GameManager.gameMode = GameMode.Infinite; // 게임 모드 설정
         GameEvents.OnGameStarted?.Invoke(); // 게임 시작 이벤트 호출
         //gameManager.StartTime();
         MainUI.SetActive(false);
@@ -102,23 +125,26 @@ public class UIManager : MonoBehaviour
     }
 
     // 게임 종료 처리(win: true면 승리, false면 패배)
-    public void EndGame(bool win)
+    public void EndGame(GameResult result)
     {
         //gameManager.StopTime();
-        ShowResult(win);
-        Debug.Log(win ? "Stage cleared! You win!" : "Time's up! Game Over!");
+        ShowResult(result);      
     }
 
     // 게임 종료 결과 UI 표시
-    public void ShowResult(bool win)
+    public void ShowResult(GameResult result)
     {
         ResultUI.SetActive(true);
         resultText.gameObject.SetActive(true);
-        if (win)
+        if (result == GameResult.Cleared)
         {
             resultText.text = "Stage cleared!\nYou win!\n\nScore: " + playManager.Score + "\nRemain Time: " + (int)playManager.timeRemaining;
         }
-        else
+        else if (result == GameResult.NoRemovableTiles)
+        {
+            resultText.text = "No removable tiles!\nGame Over!\nScore: " + playManager.Score;
+        }
+        else if (result == GameResult.TimeOver)
         {
             resultText.text = "Time's up!\nGame Over!\nScore: " + playManager.Score;
         }

@@ -79,7 +79,7 @@ public class PlayManager : MonoBehaviour
 
         if (timeRemaining <= 0) // 시간 종료로 인한 게임 종료
         {
-            EndGame(false);
+            EndGame(GameResult.NoRemovableTiles);
         }
     }
 
@@ -89,6 +89,7 @@ public class PlayManager : MonoBehaviour
         timeRemaining = _playTime;
         Score = 0;
         _totalTileCount = stageGenerator.totalTileCount;
+        _gameMode = GameManager.gameMode; // 게임 모드 설정
 
         // 빈 칸 리스트 초기화
         candidateEmptyCells.Clear();
@@ -170,7 +171,7 @@ public class PlayManager : MonoBehaviour
                             // 스테이지 클리어 처리
                             if (IsStageCleared())
                             {
-                                EndGame(true);
+                                EndGame(GameResult.NoRemovableTiles);
                             }
                         }              
                     }
@@ -260,7 +261,7 @@ public class PlayManager : MonoBehaviour
         // 남은 후보 리스트에서 제거 가능한 타일이 없으면 게임 종료
         if (HasNoRemovableTiles())
         {
-            EndGame(false);
+            EndGame(GameResult.NoRemovableTiles);
         }
     }
 
@@ -299,6 +300,10 @@ public class PlayManager : MonoBehaviour
     // 패널티 적용
     void GetPenaltiy()
     {
+        // 무한 모드에서는 패널티 없음  
+        if (_gameMode == GameMode.Infinite)
+            return;
+
         timeRemaining -= penaltyTime;
     }
 
@@ -318,7 +323,7 @@ public class PlayManager : MonoBehaviour
     }
 
     // 게임 종료
-    void EndGame(bool result)
+    void EndGame(GameResult result)
     {
         // 게임 종료 처리
         GameEvents.OnGameEnded?.Invoke(result);
