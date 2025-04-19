@@ -360,8 +360,14 @@ MonoBehaviour:
   PauseUI: {fileID: 459412676}
   MainUI: {fileID: 1163778019}
   ResultUI: {fileID: 1705835442}
-  TimerArea: {fileID: 1990978698}
-  ScoreArea: {fileID: 1016357981}
+  NormalModeArea: {fileID: 1990978698}
+  InfiniteModeArea: {fileID: 1016357981}
+  panelRect: {fileID: 736821476}
+  topLayoutLE: {fileID: 20230803}
+  normalRT: {fileID: 1990978699}
+  infiniteRT: {fileID: 1016357982}
+  NormalModeGrid: {fileID: 1750721161}
+  InfiniteModeGrid: {fileID: 2132755143}
   playManager: {fileID: 1509568680}
   gameManager: {fileID: 460621657}
   stageGenerator: {fileID: 2013358174}
@@ -2515,7 +2521,7 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_Spacing: 15
   m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 1
+  m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
@@ -3315,9 +3321,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
   m_MinWidth: -1
-  m_MinHeight: -1
+  m_MinHeight: 0
   m_PreferredWidth: -1
-  m_PreferredHeight: -1
+  m_PreferredHeight: 0
   m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -3333,7 +3339,7 @@ GameObject:
   - component: {fileID: 1016357984}
   - component: {fileID: 1016357983}
   m_Layer: 5
-  m_Name: Score Area
+  m_Name: Infinite Mode Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4935,12 +4941,12 @@ GameObject:
   - component: {fileID: 1750721162}
   - component: {fileID: 1750721163}
   m_Layer: 0
-  m_Name: grid16x9
+  m_Name: grid16x9Normal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1750721162
 Transform:
   m_ObjectHideFlags: 0
@@ -4950,7 +4956,7 @@ Transform:
   m_GameObject: {fileID: 1750721161}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.38, y: 0.5, z: 0}
+  m_LocalPosition: {x: 0.4, y: 0.5, z: 0}
   m_LocalScale: {x: 0.37, y: 0.37, z: 0.37}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -5445,7 +5451,7 @@ GameObject:
   - component: {fileID: 1990978701}
   - component: {fileID: 1990978700}
   m_Layer: 5
-  m_Name: Timer Area
+  m_Name: Normal Mode Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5675,21 +5681,23 @@ MonoBehaviour:
   rows: 16
   columns: 9
   cellSize: 0.444
+  normalboardPos: {fileID: 1750721162}
+  infiniteboardPos: {fileID: 2132755144}
   boardPos: {fileID: 1750721162}
   _pairCount: 5
   _colorCount: 10
   totalTileCount: 0
-  tilePrefabs:
-  - {fileID: 1328728263180657370, guid: e599e6a17f4c5d04194b1da30e9eae75, type: 3}
-  - {fileID: 2623143937281074210, guid: e50991985c6320f44a434d5bad29a647, type: 3}
+  TilePrefabs:
+  - {fileID: 1013087852384782845, guid: 080e821ba7396b3439542cecff977f56, type: 3}
   - {fileID: 3201441611351008911, guid: 1368cd5c38ad6004a95993dd3b63b04e, type: 3}
   - {fileID: 7502561436463056045, guid: f9aff31eda783504f8bf2c5973fefda9, type: 3}
-  - {fileID: 4219133518455607408, guid: b99f0cc869bdcf74885e45f3d3590068, type: 3}
   - {fileID: 5561266232563233018, guid: bb004731855dfe2419fbb11d390db567, type: 3}
   - {fileID: 3408144753225075697, guid: 7f0c8042bbe359d489c495f818f5bc10, type: 3}
-  - {fileID: 1013087852384782845, guid: 080e821ba7396b3439542cecff977f56, type: 3}
-  - {fileID: 3742095679469759135, guid: 68a95cfa6b23b37449ae0f30dabb3c29, type: 3}
+  - {fileID: 2623143937281074210, guid: e50991985c6320f44a434d5bad29a647, type: 3}
   - {fileID: 5256468732765958890, guid: 23c44f55b36319b489b22f70b0555d2d, type: 3}
+  - {fileID: 3742095679469759135, guid: 68a95cfa6b23b37449ae0f30dabb3c29, type: 3}
+  - {fileID: 1328728263180657370, guid: e599e6a17f4c5d04194b1da30e9eae75, type: 3}
+  - {fileID: 4219133518455607408, guid: b99f0cc869bdcf74885e45f3d3590068, type: 3}
   tileContainer: {fileID: 721138805}
 --- !u!4 &2013358175
 Transform:
@@ -6204,12 +6212,12 @@ GameObject:
   - component: {fileID: 2132755144}
   - component: {fileID: 2132755145}
   m_Layer: 0
-  m_Name: grid16x9 (1)
+  m_Name: grid18x9Infinite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2132755144
 Transform:
   m_ObjectHideFlags: 0
@@ -6219,7 +6227,7 @@ Transform:
   m_GameObject: {fileID: 2132755143}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.38, y: 0.5, z: 0}
+  m_LocalPosition: {x: 0.4, y: 0.35, z: 0}
   m_LocalScale: {x: 0.37, y: 0.37, z: 0.37}
   m_ConstrainProportionsScale: 1
   m_Children: []

@@ -9,7 +9,9 @@ public class StageGenerator : MonoBehaviour
     public int rows;
     public int columns;
     public float cellSize; // 한 칸의 크기
-    public Transform boardPos; // 보드 오브젝트의 위치
+    public Transform normalboardPos; // 노말 모드 보드 오브젝트의 위치
+    public Transform infiniteboardPos; // 무한 모드 보드 오브젝트의 위치
+    public Transform boardPos; // 보드 오브젝트의 위치(Normal 또는 Infinite에 따라 다름)
 
     [Header("Tile Pair Settings")]
     [SerializeField] private int _pairCount; // 각 색상별 쌍 개수
@@ -17,7 +19,7 @@ public class StageGenerator : MonoBehaviour
     public int totalTileCount; // 총 타일 개수(_pairCount * _colorCount * 2)
 
     [Header("Tile Prefab")]
-    public GameObject[] tilePrefabs; // 타일 프리팹 (Inspector에 할당)
+    public GameObject[] TilePrefabs; // 타일 프리팹 (Inspector에 할당)
     public Transform tileContainer; // 타일 오브젝트들을 담을 부모 오브젝트
 
     // 스테이지 전체를 관리하는 2차원 배열 (PlayManager에서 참조)
@@ -31,8 +33,31 @@ public class StageGenerator : MonoBehaviour
         GameEvents.OnRetryGame += GenerateStage; // 게임 재시작 시 초기화
     }
 
+    // 스테이지 초기화
     public void InitStage()
     {
+        // 모드에 따라 값 설정
+        // columns은 동일
+        if (GameManager.gameMode == GameMode.Normal)
+        {
+            _pairCount = 5; // Normal 모드의 쌍 개수
+            _colorCount = 10; // Normal 모드의 색상 개수
+            rows = 16;
+            boardPos = normalboardPos;
+        }
+        else if (GameManager.gameMode == GameMode.Infinite)
+        {
+            _pairCount = 6; // Infinite 모드의 쌍 개수
+            _colorCount = 10; // Infinite 모드의 색상 개수
+            rows = 18;
+            boardPos = infiniteboardPos;
+        }
+        else
+        {
+            Debug.LogError("Invalid game mode.");
+            return;
+        }
+
         // 1. grid와 tileObjects 초기화 (모든 칸을 None, null로 설정)
         grid = new TileColor[rows, columns];
         tileObjects = new GameObject[rows, columns];
@@ -321,10 +346,10 @@ public class StageGenerator : MonoBehaviour
         Vector3 worldPos1 = GetWorldPosition(pos1);
         Vector3 worldPos2 = GetWorldPosition(pos2);
 
-        if (tilePrefabs[(int)color - 1] != null)
+        if (TilePrefabs[(int)color - 1] != null)
         {
-            GameObject tile1 = Instantiate(tilePrefabs[(int)color - 1], worldPos1, Quaternion.identity, tileContainer);
-            GameObject tile2 = Instantiate(tilePrefabs[(int)color - 1], worldPos2, Quaternion.identity, tileContainer);
+            GameObject tile1 = Instantiate(TilePrefabs[(int)color - 1], worldPos1, Quaternion.identity, tileContainer);
+            GameObject tile2 = Instantiate(TilePrefabs[(int)color - 1], worldPos2, Quaternion.identity, tileContainer);
 
             tileObjects[pos1.y, pos1.x] = tile1;
             tileObjects[pos2.y, pos2.x] = tile2;

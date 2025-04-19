@@ -17,8 +17,17 @@ public class UIManager : MonoBehaviour
     public GameObject MainUI;
     public GameObject ResultUI;
 
-    public GameObject TimerArea;
-    public GameObject ScoreArea;
+    [Header("Game Mode Settings")]
+    public GameObject NormalModeArea;
+    public GameObject InfiniteModeArea;
+
+    public RectTransform panelRect;      // Panel의 RectTransform
+    public LayoutElement topLayoutLE;    // Top Area의 LayoutElement
+    public RectTransform normalRT;       // NormalModeArea의 RectTransform
+    public RectTransform infiniteRT;     // InfiniteModeArea의 RectTransform
+
+    public GameObject NormalModeGrid;
+    public GameObject InfiniteModeGrid;
 
     [Header("References")]
     public PlayManager playManager;
@@ -40,6 +49,7 @@ public class UIManager : MonoBehaviour
 
         // 게임 시작 시 호출
         GameEvents.OnGameStarted += StartGame;
+        GameEvents.OnGameStarted += SwitchMode;
 
         // 게임 종료 시 호출
         GameEvents.OnGameEnded += EndGame;
@@ -59,15 +69,6 @@ public class UIManager : MonoBehaviour
         resultText.gameObject.SetActive(false);
         timerSlider.value = 1f; // 100% 남은 시간
         scoreText.text = "0";
-
-        if (GameManager.gameMode == GameMode.Normal)
-        {
-            TimerArea.SetActive(true); // 타이머 UI 활성화
-        }
-        else if (GameManager.gameMode == GameMode.Infinite)
-        {
-            TimerArea.SetActive(false); // 타이머 UI 비활성화
-        }
     }
 
     // 타이머 UI 업데이트
@@ -82,7 +83,7 @@ public class UIManager : MonoBehaviour
         scoreText.text = score.ToString();
     }
 
-    // 게임 시작 버튼 클릭
+    // 노말 모드 게임 시작 버튼 클릭
     public void OnClickStartNormalButton()
     {
         GameManager.gameMode = GameMode.Normal; // 게임 모드 설정
@@ -92,6 +93,7 @@ public class UIManager : MonoBehaviour
         StartGame();
     }
 
+    // 무한 모드 게임 시작 버튼 클릭
     public void OnClickStartInfiniteButton()
     {
         GameManager.gameMode = GameMode.Infinite; // 게임 모드 설정
@@ -99,6 +101,31 @@ public class UIManager : MonoBehaviour
         //gameManager.StartTime();
         MainUI.SetActive(false);
         StartGame();
+    }
+
+    public void SwitchMode()
+    {
+        bool isNormal = GameManager.gameMode == GameMode.Normal;
+
+        // 1) 두 모드를 한 번에 토글
+        NormalModeArea.SetActive(isNormal);
+
+        NormalModeGrid.SetActive(isNormal);
+        InfiniteModeGrid.SetActive(!isNormal);
+
+        // 2) 캔버스 레이아웃 최신화 (GetPreferredHeight 전)
+        Canvas.ForceUpdateCanvases();
+
+        // 3) 현재 활성화된 RectTransform으로 높이 계산
+        RectTransform activeRT = isNormal ? normalRT : infiniteRT;
+        float contentH = LayoutUtility.GetPreferredHeight(activeRT);
+
+        // 4) Top Area 높이 할당 (min/preferred 동시)
+        topLayoutLE.minHeight = contentH;
+        topLayoutLE.preferredHeight = contentH;
+
+        // 5) 패널 전체 레이아웃 재계산
+        LayoutRebuilder.ForceRebuildLayoutImmediate(panelRect);
     }
 
     public void OnClickRetryGameButton()

@@ -47,11 +47,6 @@ public class PlayManager : MonoBehaviour
         if (stageGenerator == null)
             stageGenerator = FindObjectOfType<StageGenerator>();
 
-        _rows = stageGenerator.rows;
-        _columns = stageGenerator.columns;
-        _cellSize = stageGenerator.cellSize;
-        _boardPos = stageGenerator.boardPos.position;
-
         GameEvents.OnGameStarted += Initialize; // 게임 시작 시 초기화
         GameEvents.OnRetryGame += Initialize; // 게임 재시작 시 초기화
 
@@ -89,7 +84,13 @@ public class PlayManager : MonoBehaviour
         timeRemaining = _playTime;
         Score = 0;
         _totalTileCount = stageGenerator.totalTileCount;
-        _gameMode = GameManager.gameMode; // 게임 모드 설정
+
+        // 게임 모드 설정 및 모드에 따른 값 설정
+        _gameMode = GameManager.gameMode;
+        _rows = stageGenerator.rows;
+        _columns = stageGenerator.columns;
+        _cellSize = stageGenerator.cellSize;
+        _boardPos = stageGenerator.boardPos.position;
 
         // 빈 칸 리스트 초기화
         candidateEmptyCells.Clear();
