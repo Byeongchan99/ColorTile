@@ -31,6 +31,7 @@ public class StageGenerator : MonoBehaviour
     {
         GameEvents.OnGameStarted += GenerateStage; // 게임 시작 시 초기화
         GameEvents.OnRetryGame += GenerateStage; // 게임 재시작 시 초기화
+        GameEvents.OnClearBoard += GenerateStage; // 보드 클리어 시 초기화
     }
 
     // 스테이지 초기화

@@ -27,6 +27,7 @@ public class PlayManager : MonoBehaviour
     }
     private int _tileScore = 1; // 타일 당 점수
     private int _totalTileCount; // 총 타일 수
+    private int _remainTileCount; // 남은 타일 수
 
     [Header("Game Timer Settings")]
     [SerializeField] private GameMode _gameMode;
@@ -49,6 +50,7 @@ public class PlayManager : MonoBehaviour
 
         GameEvents.OnGameStarted += Initialize; // 게임 시작 시 초기화
         GameEvents.OnRetryGame += Initialize; // 게임 재시작 시 초기화
+        GameEvents.OnClearBoard += InitStage; // 무한 모드에서 보드 클리어 시 스테이지 초기화
 
         //Initialize();
     }
@@ -83,12 +85,18 @@ public class PlayManager : MonoBehaviour
     {
         timeRemaining = _playTime;
         Score = 0;
-        _totalTileCount = stageGenerator.totalTileCount;
 
+        InitStage();
+    }
+
+    public void InitStage()
+    {
         // 게임 모드 설정 및 모드에 따른 값 설정
         _gameMode = GameManager.gameMode;
         _rows = stageGenerator.rows;
         _columns = stageGenerator.columns;
+        _totalTileCount = stageGenerator.totalTileCount;
+        _remainTileCount = _totalTileCount; // 남은 타일 수 초기화
         _cellSize = stageGenerator.cellSize;
         _boardPos = stageGenerator.boardPos.position;
 
@@ -172,7 +180,14 @@ public class PlayManager : MonoBehaviour
                             // 스테이지 클리어 처리
                             if (IsStageCleared())
                             {
-                                EndGame(GameResult.NoRemovableTiles);
+                                if (_gameMode == GameMode.Normal)
+                                {
+                                    EndGame(GameResult.NoRemovableTiles);
+                                }
+                                else
+                                {
+                                    GameEvents.OnClearBoard?.Invoke(); // 무한 모드에서 보드 클리어 시 호출
+                                }
                             }
                         }              
                     }
@@ -254,13 +269,14 @@ public class PlayManager : MonoBehaviour
             {
                 Destroy(tileObj);
                 Score += _tileScore;
+                _remainTileCount--;
                 candidateEmptyCells.Add(pos); // 제거된 타일의 위치를 후보 빈 칸 리스트에 추가
                 stageGenerator.tileObjects[pos.y, pos.x] = null;
             }
         }
 
         // 남은 후보 리스트에서 제거 가능한 타일이 없으면 게임 종료
-        if (HasNoRemovableTiles())
+        if (HasNoRemovableTiles() && _remainTileCount > 0)
         {
             EndGame(GameResult.NoRemovableTiles);
         }

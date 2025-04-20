@@ -10,10 +10,12 @@ public static class GameEvents
     public static Action<int> OnScoreChanged; // 점수 변경 시 호출
     public static Action<float> OnTimerUpdated; // 타이머 업데이트 시 호출
     public static Action<GameResult> OnGameEnded; // 게임 종료 시 호출
+    public static Action OnClearBoard; // 보드 클리어 시 호출(무한 모드)
 
     // StageGenerator
     public static Action OnGameStarted; // 게임 시작 시 호출
     public static Action OnPauseGame; // 게임 일시정지 시 호출
+    
     // PauseUI, GameManager
     public static Action OnResumeGame; // 게임 재개 시 호출
 
