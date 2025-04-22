@@ -48,7 +48,7 @@ public class StageGenerator : MonoBehaviour
         }
         else if (GameManager.gameMode == GameMode.Infinite)
         {
-            _pairCount = 6; // Infinite 모드의 쌍 개수
+            _pairCount = 5; // Infinite 모드의 쌍 개수
             _colorCount = 10; // Infinite 모드의 색상 개수
             rows = 18;
             boardPos = infiniteboardPos;

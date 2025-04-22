@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -282,6 +283,24 @@ public class PlayManager : MonoBehaviour
         }
     }
 
+    bool isEmptyLine(Vector2Int pos)
+    {
+        // 해당 빈 칸의 행과 열에 타일이 없는지 검사
+        for (int x = 0; x < _columns; x++)
+        {
+            if (stageGenerator.grid[pos.y, x] != TileColor.None && stageGenerator.tileObjects[pos.y, x] != null)
+                return false;
+        }
+        
+        for (int y = 0; y < _rows; y++)
+        {
+            if (stageGenerator.grid[y, pos.x] != TileColor.None && stageGenerator.tileObjects[y, pos.x] != null)
+                return false;
+        }
+
+        return true;
+    }
+
     // 후보 빈 칸 리스트만 순회하여 더 이상 제거 가능한 타일이 없는지 검사
     bool HasNoRemovableTiles()
     {
@@ -289,8 +308,18 @@ public class PlayManager : MonoBehaviour
         if (candidateEmptyCells.Count == 0)
             return true;
 
-        foreach (Vector2Int emptyPos in candidateEmptyCells)
+        // 순회용 리스트 복사본
+        var cells = candidateEmptyCells.ToList();
+
+        foreach (var emptyPos in cells)
         {
+            // 후보 빈 칸의 행과 열에 타일이 없는 경우는 후보 리스트에서 제거
+            if (isEmptyLine(emptyPos))
+            {
+                candidateEmptyCells.Remove(emptyPos);
+                continue;
+            }
+
             List<Vector2Int> adjacentTiles = GetOrthogonalTiles(emptyPos);
             Dictionary<TileColor, int> colorCount = new Dictionary<TileColor, int>();
 
