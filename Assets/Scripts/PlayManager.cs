@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -39,6 +40,11 @@ public class PlayManager : MonoBehaviour
     [Header("References")]
     public GameManager gameManager; // isPaused 참조
     public StageGenerator stageGenerator; // grid 참조
+
+    [Header("Overlay Settings")]
+    public Transform overlaysContainer; // 오버레이를 담을 컨테이너
+    public GameObject circleOverlayPrefab; // 원형 오버레이 프리팹
+    private List<GameObject> activeOverlays = new List<GameObject>();
 
     public void Awake()
     {
@@ -169,6 +175,9 @@ public class PlayManager : MonoBehaviour
                     // 제거할 타일이 있는 경우
                     if (tilesToErase.Count > 0)
                     {
+                        // Show path overlays before erasing
+                        ShowRemovalPath(gridPos, tilesToErase);
+
                         EraseTiles(tilesToErase);
                         //uiManager.UpdateScore(_score); // 점수 업데이트 - 프로퍼티에서 바로 처리
 
@@ -202,6 +211,70 @@ public class PlayManager : MonoBehaviour
             }
         }
     }
+
+    #region // 타일 제거 오버레이 관련
+    // 타일을 제거하기 전 경로상 모든 셀에 원 오버레이를 표시
+    void ShowRemovalPath(Vector2Int clickPos, List<Vector2Int> removedTiles)
+    {
+        var path = GetPathPositions(clickPos, removedTiles);
+
+        // 오버레이 표시
+        foreach (var cell in path)
+        {
+            Vector3 world = CellToWorldPosition(cell);
+            GameObject overlay = Instantiate(circleOverlayPrefab, overlaysContainer);
+            overlay.transform.position = world;
+            activeOverlays.Add(overlay);
+        }
+
+        StartCoroutine(HideOverlaysAfterDelay(0.5f));
+    }
+
+    // 클릭 위치와 제거될 각 타일의 위치 사이에 놓인 모든 셀의 좌표를 반환
+    HashSet<Vector2Int> GetPathPositions(Vector2Int clickPos, List<Vector2Int> removedTiles)
+    {
+        var set = new HashSet<Vector2Int>();
+        foreach (var tile in removedTiles)
+        {
+            // 같은 행
+            if (tile.x == clickPos.x)
+            {
+                int minY = Mathf.Min(tile.y, clickPos.y);
+                int maxY = Mathf.Max(tile.y, clickPos.y);
+                for (int y = minY; y <= maxY; y++)
+                    set.Add(new Vector2Int(clickPos.x, y));
+            }
+            // 같은 열
+            else if (tile.y == clickPos.y)
+            {
+                int minX = Mathf.Min(tile.x, clickPos.x);
+                int maxX = Mathf.Max(tile.x, clickPos.x);
+                for (int x = minX; x <= maxX; x++)
+                    set.Add(new Vector2Int(x, clickPos.y));
+            }
+        }
+        return set;
+    }
+
+    // 화면에 띄운 오버레이를 일정 시간 후에 제거
+    IEnumerator HideOverlaysAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        foreach (var ov in activeOverlays)
+            Destroy(ov);
+        activeOverlays.Clear();
+    }
+
+    // 그리드 좌표를 월드 공간으로 변환
+    Vector3 CellToWorldPosition(Vector2Int cell)
+    {
+        return new Vector3(
+            _boardPos.x + (cell.x + 0.5f) * _cellSize,
+            _boardPos.y + (cell.y + 0.5f) * _cellSize,
+            0f
+        );
+    }
+    #endregion
 
     // 화면 좌표를 월드 좌표로 변환
     Vector3 GetWorldPos(Vector3 screenPos)
@@ -283,6 +356,7 @@ public class PlayManager : MonoBehaviour
         }
     }
 
+    #region // 게임 조기 종료 검사
     bool isEmptyLine(Vector2Int pos)
     {
         // 해당 빈 칸의 행과 열에 타일이 없는지 검사
@@ -342,6 +416,7 @@ public class PlayManager : MonoBehaviour
         // 모든 후보에서 검사했지만 제거 가능한 그룹이 없다면, 더 이상 제거할 수 없음.
         return true;
     }
+    #endregion
 
     // 패널티 적용
     void GetPenaltiy()
