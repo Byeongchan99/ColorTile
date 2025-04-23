@@ -42,8 +42,7 @@ public class PlayManager : MonoBehaviour
     public StageGenerator stageGenerator; // grid 참조
 
     [Header("Overlay Settings")]
-    public Transform overlaysContainer; // 오버레이를 담을 컨테이너
-    public GameObject circleOverlayPrefab; // 원형 오버레이 프리팹
+    public OverlayPool overlayPool; // 오버레이를 담을 컨테이너
     private List<GameObject> activeOverlays = new List<GameObject>();
 
     [Header("Tile Animation Settings")]
@@ -228,12 +227,12 @@ public class PlayManager : MonoBehaviour
         foreach (var cell in path)
         {
             Vector3 world = CellToWorldPosition(cell);
-            GameObject overlay = Instantiate(circleOverlayPrefab, overlaysContainer);
-            overlay.transform.position = world;
-            activeOverlays.Add(overlay);
+            GameObject ov = overlayPool.Get();
+            ov.transform.position = world;
+            activeOverlays.Add(ov);
         }
 
-        StartCoroutine(HideOverlaysAfterDelay(0.5f));
+        StartCoroutine(HideOverlaysAfterDelay(0.2f));
     }
 
     // 클릭 위치와 제거될 각 타일의 위치 사이에 놓인 모든 셀의 좌표를 반환
@@ -267,7 +266,7 @@ public class PlayManager : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         foreach (var ov in activeOverlays)
-            Destroy(ov);
+            overlayPool.Return(ov);
         activeOverlays.Clear();
     }
 

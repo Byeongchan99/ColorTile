@@ -4413,8 +4413,7 @@ MonoBehaviour:
   penaltyTime: 5
   gameManager: {fileID: 460621657}
   stageGenerator: {fileID: 2013358174}
-  overlaysContainer: {fileID: 0}
-  circleOverlayPrefab: {fileID: 500226093977665208, guid: f7d096bf83e995b488bbfbfb80fa6b2f, type: 3}
+  overlayPool: {fileID: 1909523889}
   minHeightCoeff: 25
   maxHeightCoeff: 30
   minLengthCoeff: 5
@@ -5454,6 +5453,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1909523888}
+  - component: {fileID: 1909523889}
   m_Layer: 0
   m_Name: Overlays
   m_TagString: Untagged
@@ -5476,6 +5476,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1909523889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1909523887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6262538c55f169c4ab30d4a6d42c38c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  overlayPrefab: {fileID: 500226093977665208, guid: f7d096bf83e995b488bbfbfb80fa6b2f, type: 3}
+  overlayContainer: {fileID: 1909523888}
+  initialSize: 30
 --- !u!1 &1990978698
 GameObject:
   m_ObjectHideFlags: 0
