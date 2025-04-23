@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -14,10 +14,10 @@ public class PlayManager : MonoBehaviour
     private int _rows = 20;
     private int _columns = 10;
     private Vector3 _boardPos;  
-    private HashSet<Vector2Int> candidateEmptyCells = new HashSet<Vector2Int>(); // ÈÄº¸ ºó Ä­µéÀ» ÀúÀåÇÒ ¸®½ºÆ®
+    private HashSet<Vector2Int> candidateEmptyCells = new HashSet<Vector2Int>(); // í›„ë³´ ë¹ˆ ì¹¸ë“¤ì„ ì €ì¥í•  ë¦¬ìŠ¤íŠ¸
 
     [Header("Game Score Settings")]
-    private int _score = 0; // Á¡¼ö
+    private int _score = 0; // ì ìˆ˜
     public int Score
     {
         get { return _score; }
@@ -27,44 +27,50 @@ public class PlayManager : MonoBehaviour
             GameEvents.OnScoreChanged?.Invoke(_score);
         }
     }
-    private int _tileScore = 1; // Å¸ÀÏ ´ç Á¡¼ö
-    private int _totalTileCount; // ÃÑ Å¸ÀÏ ¼ö
-    private int _remainTileCount; // ³²Àº Å¸ÀÏ ¼ö
+    private int _tileScore = 1; // íƒ€ì¼ ë‹¹ ì ìˆ˜
+    private int _totalTileCount; // ì´ íƒ€ì¼ ìˆ˜
+    private int _remainTileCount; // ë‚¨ì€ íƒ€ì¼ ìˆ˜
 
     [Header("Game Timer Settings")]
     [SerializeField] private GameMode _gameMode;
-    [SerializeField] float _playTime; // °ÔÀÓ ½Ã°£ (ÃÊ)
-    public float timeRemaining; // ³²Àº ½Ã°£
-    [SerializeField] private float penaltyTime = 5f; // Æ²¸° Å¬¸¯ ½Ã °¨Á¡ ½Ã°£
+    [SerializeField] float _playTime; // ê²Œì„ ì‹œê°„ (ì´ˆ)
+    public float timeRemaining; // ë‚¨ì€ ì‹œê°„
+    [SerializeField] private float penaltyTime = 5f; // í‹€ë¦° í´ë¦­ ì‹œ ê°ì  ì‹œê°„
 
     [Header("References")]
-    public GameManager gameManager; // isPaused ÂüÁ¶
-    public StageGenerator stageGenerator; // grid ÂüÁ¶
+    public GameManager gameManager; // isPaused ì°¸ì¡°
+    public StageGenerator stageGenerator; // grid ì°¸ì¡°
 
     [Header("Overlay Settings")]
-    public Transform overlaysContainer; // ¿À¹ö·¹ÀÌ¸¦ ´ãÀ» ÄÁÅ×ÀÌ³Ê
-    public GameObject circleOverlayPrefab; // ¿øÇü ¿À¹ö·¹ÀÌ ÇÁ¸®ÆÕ
+    public Transform overlaysContainer; // ì˜¤ë²„ë ˆì´ë¥¼ ë‹´ì„ ì»¨í…Œì´ë„ˆ
+    public GameObject circleOverlayPrefab; // ì›í˜• ì˜¤ë²„ë ˆì´ í”„ë¦¬íŒ¹
     private List<GameObject> activeOverlays = new List<GameObject>();
+
+    [Header("Tile Animation Settings")]
+    [SerializeField] float minHeightCoeff;
+    [SerializeField] float maxHeightCoeff;
+    [SerializeField] float minLengthCoeff;
+    [SerializeField] float maxLengthCoeff;
 
     public void Awake()
     {
-        // ÂüÁ¶
+        // ì°¸ì¡°
         if (gameManager == null)
             gameManager = FindObjectOfType<GameManager>();
 
         if (stageGenerator == null)
             stageGenerator = FindObjectOfType<StageGenerator>();
 
-        GameEvents.OnGameStarted += Initialize; // °ÔÀÓ ½ÃÀÛ ½Ã ÃÊ±âÈ­
-        GameEvents.OnRetryGame += Initialize; // °ÔÀÓ Àç½ÃÀÛ ½Ã ÃÊ±âÈ­
-        GameEvents.OnClearBoard += InitStage; // ¹«ÇÑ ¸ğµå¿¡¼­ º¸µå Å¬¸®¾î ½Ã ½ºÅ×ÀÌÁö ÃÊ±âÈ­
+        GameEvents.OnGameStarted += Initialize; // ê²Œì„ ì‹œì‘ ì‹œ ì´ˆê¸°í™”
+        GameEvents.OnRetryGame += Initialize; // ê²Œì„ ì¬ì‹œì‘ ì‹œ ì´ˆê¸°í™”
+        GameEvents.OnClearBoard += InitStage; // ë¬´í•œ ëª¨ë“œì—ì„œ ë³´ë“œ í´ë¦¬ì–´ ì‹œ ìŠ¤í…Œì´ì§€ ì´ˆê¸°í™”
 
         //Initialize();
     }
 
     void Update()
     {
-        // °ÔÀÓÀÌ ÀÏ½ÃÁ¤Áö »óÅÂÀÎ °æ¿ì
+        // ê²Œì„ì´ ì¼ì‹œì •ì§€ ìƒíƒœì¸ ê²½ìš°
         if (gameManager.isPaused == true)
         {
             return;
@@ -74,20 +80,20 @@ public class PlayManager : MonoBehaviour
 
         if (_gameMode == GameMode.Infinite)
         {
-            return; // ¹«ÇÑ ¸ğµå¿¡¼­´Â Å¸ÀÌ¸Ó¸¦ »ç¿ëÇÏÁö ¾ÊÀ½
+            return; // ë¬´í•œ ëª¨ë“œì—ì„œëŠ” íƒ€ì´ë¨¸ë¥¼ ì‚¬ìš©í•˜ì§€ ì•ŠìŒ
         }
 
-        // Å¸ÀÌ¸Ó ¾÷µ¥ÀÌÆ®
+        // íƒ€ì´ë¨¸ ì—…ë°ì´íŠ¸
         timeRemaining -= Time.deltaTime;
         GameEvents.OnTimerUpdated?.Invoke(timeRemaining / _playTime);
 
-        if (timeRemaining <= 0) // ½Ã°£ Á¾·á·Î ÀÎÇÑ °ÔÀÓ Á¾·á
+        if (timeRemaining <= 0) // ì‹œê°„ ì¢…ë£Œë¡œ ì¸í•œ ê²Œì„ ì¢…ë£Œ
         {
             EndGame(GameResult.NoRemovableTiles);
         }
     }
 
-    // ÃÊ±âÈ­
+    // ì´ˆê¸°í™”
     public void Initialize()
     {
         timeRemaining = _playTime;
@@ -98,16 +104,16 @@ public class PlayManager : MonoBehaviour
 
     public void InitStage()
     {
-        // °ÔÀÓ ¸ğµå ¼³Á¤ ¹× ¸ğµå¿¡ µû¸¥ °ª ¼³Á¤
+        // ê²Œì„ ëª¨ë“œ ì„¤ì • ë° ëª¨ë“œì— ë”°ë¥¸ ê°’ ì„¤ì •
         _gameMode = GameManager.gameMode;
         _rows = stageGenerator.rows;
         _columns = stageGenerator.columns;
         _totalTileCount = stageGenerator.totalTileCount;
-        _remainTileCount = _totalTileCount; // ³²Àº Å¸ÀÏ ¼ö ÃÊ±âÈ­
+        _remainTileCount = _totalTileCount; // ë‚¨ì€ íƒ€ì¼ ìˆ˜ ì´ˆê¸°í™”
         _cellSize = stageGenerator.cellSize;
         _boardPos = stageGenerator.boardPos.position;
 
-        // ºó Ä­ ¸®½ºÆ® ÃÊ±âÈ­
+        // ë¹ˆ ì¹¸ ë¦¬ìŠ¤íŠ¸ ì´ˆê¸°í™”
         candidateEmptyCells.Clear();
         for (int y = 0; y < _rows; y++)
         {
@@ -121,11 +127,11 @@ public class PlayManager : MonoBehaviour
         }
     }
 
-    // ÅÍÄ¡ ¶Ç´Â ¸¶¿ì½º Å¬¸¯ ÀÔ·Â Ã³¸® - ÇöÀç ¸¶¿ì½º ÀÌº¥Æ®¸¸ Ã³¸®
+    // í„°ì¹˜ ë˜ëŠ” ë§ˆìš°ìŠ¤ í´ë¦­ ì…ë ¥ ì²˜ë¦¬ - í˜„ì¬ ë§ˆìš°ìŠ¤ ì´ë²¤íŠ¸ë§Œ ì²˜ë¦¬
     void HandleInput()
     {
         /*
-        // UI ¿ä¼Ò À§¿¡¼­ Å¬¸¯ÇÑ °æ¿ì ÀÔ·Â ¹«½Ã
+        // UI ìš”ì†Œ ìœ„ì—ì„œ í´ë¦­í•œ ê²½ìš° ì…ë ¥ ë¬´ì‹œ
         if (EventSystem.current.IsPointerOverGameObject())
         {
             Debug.Log("Pointer is over UI element. Ignoring input.");
@@ -139,19 +145,19 @@ public class PlayManager : MonoBehaviour
             Vector3 worldPos = GetWorldPos(screenPos);
             Vector2Int gridPos = GetGridPos(worldPos);
 
-            // À¯È¿ ¹üÀ§ °Ë»ç
+            // ìœ íš¨ ë²”ìœ„ ê²€ì‚¬
             if (IsValidGridPos(gridPos))
             {
                 Debug.Log("Clicked grid position: " + gridPos);
 
-                // Å¬¸¯ÇÑ À§Ä¡°¡ ºó Ä­ÀÏ ¶§¸¸ ÁøÇà
+                // í´ë¦­í•œ ìœ„ì¹˜ê°€ ë¹ˆ ì¹¸ì¼ ë•Œë§Œ ì§„í–‰
                 if (stageGenerator.grid[gridPos.y, gridPos.x] == TileColor.None)
                 {
-                    // ºó Ä­¿¡¼­ °¡Àå °¡±î¿î Á÷±³ Å¸ÀÏ °Ë»ö(»óÇÏÁÂ¿ì °¢ 4¹æÇâ¿¡¼­ °¡Àå °¡±î¿î Å¸ÀÏ °Ë»ö)
+                    // ë¹ˆ ì¹¸ì—ì„œ ê°€ì¥ ê°€ê¹Œìš´ ì§êµ íƒ€ì¼ ê²€ìƒ‰(ìƒí•˜ì¢Œìš° ê° 4ë°©í–¥ì—ì„œ ê°€ì¥ ê°€ê¹Œìš´ íƒ€ì¼ ê²€ìƒ‰)
                     List<Vector2Int> matchingTiles = GetOrthogonalTiles(gridPos);
                     Debug.Log("Total adjacent tiles found: " + matchingTiles.Count);
 
-                    // µñ¼Å³Ê¸®¿¡ °¡Á®¿Â Å¸ÀÏ »ö»ó°ú À§Ä¡ ÀúÀå
+                    // ë”•ì…”ë„ˆë¦¬ì— ê°€ì ¸ì˜¨ íƒ€ì¼ ìƒ‰ìƒê³¼ ìœ„ì¹˜ ì €ì¥
                     Dictionary<TileColor, List<Vector2Int>> groups = new Dictionary<TileColor, List<Vector2Int>>();
                     foreach (var pos in matchingTiles)
                     {
@@ -161,7 +167,7 @@ public class PlayManager : MonoBehaviour
                         groups[tileColor].Add(pos);
                     }
 
-                    // °°Àº »ö»óÀÇ Å¸ÀÏÀÌ 2°³ ÀÌ»óÀÎ °æ¿ì¿¡¸¸ Á¦°Å ¸®½ºÆ®¿¡ Ãß°¡
+                    // ê°™ì€ ìƒ‰ìƒì˜ íƒ€ì¼ì´ 2ê°œ ì´ìƒì¸ ê²½ìš°ì—ë§Œ ì œê±° ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€
                     List<Vector2Int> tilesToErase = new List<Vector2Int>();
                     foreach (var kvp in groups)
                     {
@@ -172,22 +178,22 @@ public class PlayManager : MonoBehaviour
                         }
                     }
 
-                    // Á¦°ÅÇÒ Å¸ÀÏÀÌ ÀÖ´Â °æ¿ì
+                    // ì œê±°í•  íƒ€ì¼ì´ ìˆëŠ” ê²½ìš°
                     if (tilesToErase.Count > 0)
                     {
                         // Show path overlays before erasing
                         ShowRemovalPath(gridPos, tilesToErase);
 
                         EraseTiles(tilesToErase);
-                        //uiManager.UpdateScore(_score); // Á¡¼ö ¾÷µ¥ÀÌÆ® - ÇÁ·ÎÆÛÆ¼¿¡¼­ ¹Ù·Î Ã³¸®
+                        //uiManager.UpdateScore(_score); // ì ìˆ˜ ì—…ë°ì´íŠ¸ - í”„ë¡œí¼í‹°ì—ì„œ ë°”ë¡œ ì²˜ë¦¬
 
-                        // ³²Àº Å¸ÀÏ ¼ö °¨¼Ò
+                        // ë‚¨ì€ íƒ€ì¼ ìˆ˜ ê°ì†Œ
                         _totalTileCount -= tilesToErase.Count; 
 
-                        // ¸ğµç Å¸ÀÏÀÌ Á¦°ÅµÈ °æ¿ì - ½ºÅ×ÀÌÁö Å¬¸®¾î
+                        // ëª¨ë“  íƒ€ì¼ì´ ì œê±°ëœ ê²½ìš° - ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´
                         if (_totalTileCount <= 0)
                         {
-                            // ½ºÅ×ÀÌÁö Å¬¸®¾î Ã³¸®
+                            // ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´ ì²˜ë¦¬
                             if (IsStageCleared())
                             {
                                 if (_gameMode == GameMode.Normal)
@@ -196,12 +202,12 @@ public class PlayManager : MonoBehaviour
                                 }
                                 else
                                 {
-                                    GameEvents.OnClearBoard?.Invoke(); // ¹«ÇÑ ¸ğµå¿¡¼­ º¸µå Å¬¸®¾î ½Ã È£Ãâ
+                                    GameEvents.OnClearBoard?.Invoke(); // ë¬´í•œ ëª¨ë“œì—ì„œ ë³´ë“œ í´ë¦¬ì–´ ì‹œ í˜¸ì¶œ
                                 }
                             }
                         }              
                     }
-                    // Á¦°ÅÇÒ Å¸ÀÏÀÌ ¾ø´Â °æ¿ì - Àß¸øµÈ ÀÔ·Â -> ÆĞ³ÎÆ¼ Àû¿ë
+                    // ì œê±°í•  íƒ€ì¼ì´ ì—†ëŠ” ê²½ìš° - ì˜ëª»ëœ ì…ë ¥ -> íŒ¨ë„í‹° ì ìš©
                     else
                     {
                         GetPenaltiy();
@@ -212,13 +218,13 @@ public class PlayManager : MonoBehaviour
         }
     }
 
-    #region // Å¸ÀÏ Á¦°Å ¿À¹ö·¹ÀÌ °ü·Ã
-    // Å¸ÀÏÀ» Á¦°ÅÇÏ±â Àü °æ·Î»ó ¸ğµç ¼¿¿¡ ¿ø ¿À¹ö·¹ÀÌ¸¦ Ç¥½Ã
+    #region // íƒ€ì¼ ì œê±° ì˜¤ë²„ë ˆì´ ê´€ë ¨
+    // íƒ€ì¼ì„ ì œê±°í•˜ê¸° ì „ ê²½ë¡œìƒ ëª¨ë“  ì…€ì— ì› ì˜¤ë²„ë ˆì´ë¥¼ í‘œì‹œ
     void ShowRemovalPath(Vector2Int clickPos, List<Vector2Int> removedTiles)
     {
         var path = GetPathPositions(clickPos, removedTiles);
 
-        // ¿À¹ö·¹ÀÌ Ç¥½Ã
+        // ì˜¤ë²„ë ˆì´ í‘œì‹œ
         foreach (var cell in path)
         {
             Vector3 world = CellToWorldPosition(cell);
@@ -230,13 +236,13 @@ public class PlayManager : MonoBehaviour
         StartCoroutine(HideOverlaysAfterDelay(0.5f));
     }
 
-    // Å¬¸¯ À§Ä¡¿Í Á¦°ÅµÉ °¢ Å¸ÀÏÀÇ À§Ä¡ »çÀÌ¿¡ ³õÀÎ ¸ğµç ¼¿ÀÇ ÁÂÇ¥¸¦ ¹İÈ¯
+    // í´ë¦­ ìœ„ì¹˜ì™€ ì œê±°ë  ê° íƒ€ì¼ì˜ ìœ„ì¹˜ ì‚¬ì´ì— ë†“ì¸ ëª¨ë“  ì…€ì˜ ì¢Œí‘œë¥¼ ë°˜í™˜
     HashSet<Vector2Int> GetPathPositions(Vector2Int clickPos, List<Vector2Int> removedTiles)
     {
         var set = new HashSet<Vector2Int>();
         foreach (var tile in removedTiles)
         {
-            // °°Àº Çà
+            // ê°™ì€ í–‰
             if (tile.x == clickPos.x)
             {
                 int minY = Mathf.Min(tile.y, clickPos.y);
@@ -244,7 +250,7 @@ public class PlayManager : MonoBehaviour
                 for (int y = minY; y <= maxY; y++)
                     set.Add(new Vector2Int(clickPos.x, y));
             }
-            // °°Àº ¿­
+            // ê°™ì€ ì—´
             else if (tile.y == clickPos.y)
             {
                 int minX = Mathf.Min(tile.x, clickPos.x);
@@ -256,7 +262,7 @@ public class PlayManager : MonoBehaviour
         return set;
     }
 
-    // È­¸é¿¡ ¶ç¿î ¿À¹ö·¹ÀÌ¸¦ ÀÏÁ¤ ½Ã°£ ÈÄ¿¡ Á¦°Å
+    // í™”ë©´ì— ë„ìš´ ì˜¤ë²„ë ˆì´ë¥¼ ì¼ì • ì‹œê°„ í›„ì— ì œê±°
     IEnumerator HideOverlaysAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -265,7 +271,7 @@ public class PlayManager : MonoBehaviour
         activeOverlays.Clear();
     }
 
-    // ±×¸®µå ÁÂÇ¥¸¦ ¿ùµå °ø°£À¸·Î º¯È¯
+    // ê·¸ë¦¬ë“œ ì¢Œí‘œë¥¼ ì›”ë“œ ê³µê°„ìœ¼ë¡œ ë³€í™˜
     Vector3 CellToWorldPosition(Vector2Int cell)
     {
         return new Vector3(
@@ -276,7 +282,7 @@ public class PlayManager : MonoBehaviour
     }
     #endregion
 
-    // È­¸é ÁÂÇ¥¸¦ ¿ùµå ÁÂÇ¥·Î º¯È¯
+    // í™”ë©´ ì¢Œí‘œë¥¼ ì›”ë“œ ì¢Œí‘œë¡œ ë³€í™˜
     Vector3 GetWorldPos(Vector3 screenPos)
     {
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
@@ -284,27 +290,27 @@ public class PlayManager : MonoBehaviour
         return worldPos;
     }
 
-    // ¿ùµå ÁÂÇ¥¸¦ grid ÁÂÇ¥·Î º¯È¯
+    // ì›”ë“œ ì¢Œí‘œë¥¼ grid ì¢Œí‘œë¡œ ë³€í™˜
     Vector2Int GetGridPos(Vector3 worldPos)
     {
-        // boardPos.positionÀ» ±âÁØÀ¸·Î ·ÎÄÃ ÁÂÇ¥ °è»ê
+        // boardPos.positionì„ ê¸°ì¤€ìœ¼ë¡œ ë¡œì»¬ ì¢Œí‘œ ê³„ì‚°
         Vector3 localPos = worldPos - _boardPos;
         int x = Mathf.FloorToInt(localPos.x / _cellSize);
         int y = Mathf.FloorToInt(localPos.y / _cellSize);
         return new Vector2Int(x, y);
     }
 
-    // grid ¹üÀ§ ³» À¯È¿ÇÑ ÁÂÇ¥ÀÎÁö °Ë»ç
+    // grid ë²”ìœ„ ë‚´ ìœ íš¨í•œ ì¢Œí‘œì¸ì§€ ê²€ì‚¬
     bool IsValidGridPos(Vector2Int pos)
     {
         return pos.x >= 0 && pos.x < _columns && pos.y >= 0 && pos.y < _rows;
     }
 
-    // Á÷±³ À§Ä¡¿¡¼­ °¡Àå °¡±î¿î Å¸ÀÏµéÀ» ¹İÈ¯
+    // ì§êµ ìœ„ì¹˜ì—ì„œ ê°€ì¥ ê°€ê¹Œìš´ íƒ€ì¼ë“¤ì„ ë°˜í™˜
     List<Vector2Int> GetOrthogonalTiles(Vector2Int pos)
     {
         List<Vector2Int> matched = new List<Vector2Int>();
-        // »óÇÏÁÂ¿ì 4¹æÇâ Å½»ö
+        // ìƒí•˜ì¢Œìš° 4ë°©í–¥ íƒìƒ‰
         Vector2Int[] directions = {
             new Vector2Int(0, 1),
             new Vector2Int(0, -1),
@@ -319,7 +325,7 @@ public class PlayManager : MonoBehaviour
             Vector2Int checkPos = pos + dir;
             while (IsValidGridPos(checkPos))
             {
-                // ºó Ä­ÀÌ ¾Æ´Ñ Å¸ÀÏ
+                // ë¹ˆ ì¹¸ì´ ì•„ë‹Œ íƒ€ì¼
                 if (stageGenerator.grid[checkPos.y, checkPos.x] != TileColor.None)
                 {
                     Debug.Log("Matched tile found at " + checkPos + " color: " + stageGenerator.grid[checkPos.y, checkPos.x]);
@@ -332,34 +338,106 @@ public class PlayManager : MonoBehaviour
         return matched;
     }
 
-    // grid¿¡¼­ Å¸ÀÏ Á¦°Å(Å¸ÀÏ »ö»óÀ» NoneÀ¸·Î º¯°æÇÏ°í, ÇØ´ç GameObject Á¦°Å)
+    // gridì—ì„œ íƒ€ì¼ ì œê±°(íƒ€ì¼ ìƒ‰ìƒì„ Noneìœ¼ë¡œ ë³€ê²½í•˜ê³ , í•´ë‹¹ GameObject ì œê±°)
     void EraseTiles(List<Vector2Int> positions)
     {
+        var tilesToAnimate = new List<GameObject>();
+
         foreach (Vector2Int pos in positions)
         {
             stageGenerator.grid[pos.y, pos.x] = TileColor.None;
             GameObject tileObj = stageGenerator.tileObjects[pos.y, pos.x];
             if (tileObj != null)
             {
-                Destroy(tileObj);
+                tilesToAnimate.Add(tileObj);
+                stageGenerator.tileObjects[pos.y, pos.x] = null;
+
                 Score += _tileScore;
                 _remainTileCount--;
-                candidateEmptyCells.Add(pos); // Á¦°ÅµÈ Å¸ÀÏÀÇ À§Ä¡¸¦ ÈÄº¸ ºó Ä­ ¸®½ºÆ®¿¡ Ãß°¡
-                stageGenerator.tileObjects[pos.y, pos.x] = null;
+                candidateEmptyCells.Add(pos); // ì œê±°ëœ íƒ€ì¼ì˜ ìœ„ì¹˜ë¥¼ í›„ë³´ ë¹ˆ ì¹¸ ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€
             }
         }
 
-        // ³²Àº ÈÄº¸ ¸®½ºÆ®¿¡¼­ Á¦°Å °¡´ÉÇÑ Å¸ÀÏÀÌ ¾øÀ¸¸é °ÔÀÓ Á¾·á
+        // ë–¨ì–´ì§€ëŠ” ì• ë‹ˆë©”ì´ì…˜ ì½”ë£¨í‹´ ì‹¤í–‰
+        StartCoroutine(PlayTileFallAndDestroy(tilesToAnimate));
+
+        // ë‚¨ì€ í›„ë³´ ë¦¬ìŠ¤íŠ¸ì—ì„œ ì œê±° ê°€ëŠ¥í•œ íƒ€ì¼ì´ ì—†ìœ¼ë©´ ê²Œì„ ì¢…ë£Œ
         if (HasNoRemovableTiles() && _remainTileCount > 0)
         {
             EndGame(GameResult.NoRemovableTiles);
         }
     }
 
-    #region // °ÔÀÓ Á¶±â Á¾·á °Ë»ç
+    #region // íƒ€ì¼ ì œê±° ì• ë‹ˆë©”ì´ì…˜
+    // íƒ€ì¼ì„ ë–¨ì–´ëœ¨ë¦¬ê³  íŒŒê´´í•˜ëŠ” ì• ë‹ˆë©”ì´ì…˜ ì½”ë£¨í‹´
+    IEnumerator PlayTileFallAndDestroy(List<GameObject> tiles)
+    {
+        float fallDistance = _rows * _cellSize + 1f; // ë³´ë“œ ì•„ë˜ë¡œ ì¶©ë¶„íˆ ë–¨ì–´ëœ¨ë¦´ ê±°ë¦¬
+
+        foreach (GameObject tile in tiles)
+        {
+            // ê°ê° ë‹¤ë¥¸ ì†ë„ë¡œ, ì¡°ê¸ˆì”© ì§€ì—°ì„ ì¤˜ì„œ ìì—°ìŠ¤ëŸ½ê²Œ
+            float duration = 0.5f;
+            float delay = 0f;
+            StartCoroutine(FallAndDestroyParabola(tile, duration, delay));
+        }
+
+        yield return null;
+    }
+
+    // í¬ë¬¼ì„  ì›€ì§ì„ êµ¬í˜„
+    IEnumerator FallAndDestroyParabola(GameObject tile, float duration, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // ì¤‘ê°„ì— â€˜íŠ•ê²¨ì˜¤ë¥¼â€™ ì»¨íŠ¸ë¡¤ í¬ì¸íŠ¸: ìœ„ë¡œ bounceHeight, ì•½ê°„ ì˜†ìœ¼ë¡œë„ ì´ë™ ê°€ëŠ¥
+        float minHeight = _cellSize * minHeightCoeff; // íŠ•ê²¨ì˜¤ë¥¼ ìµœì†Œ ë†’ì´
+        float maxHeight = _cellSize * maxHeightCoeff; // íŠ•ê²¨ì˜¤ë¥¼ ìµœëŒ€ ë†’ì´
+        float bounceHeight = Random.Range(minHeight, maxHeight); // íŠ•ê²¨ì˜¤ë¥¼ ë†’ì´
+        float minLength = _cellSize * minLengthCoeff; // íŠ•ê²¨ë‚˜ê°ˆ ìµœì†Œ ê±°ë¦¬
+        float maxLength = _cellSize * maxLengthCoeff; // íŠ•ê²¨ë‚˜ê°ˆ ìµœëŒ€ ê±°ë¦¬
+        int direction = Random.Range(0, 1) > 0.5 ? -1 : 1; // íŠ•ê²¨ë‚˜ê°ˆ ë°©í–¥
+        float bounceLength = _cellSize * direction * Random.Range(minLength, maxLength); // íŠ•ê²¨ë‚˜ê°ˆ ê±°ë¦¬
+        float downDistance = _rows * _cellSize + 1f;
+
+        Vector3 startPos = tile.transform.position;
+        Vector3 endPos = startPos + new Vector3(bounceLength, -downDistance, 0);
+
+        float g = -2f * bounceHeight / (duration * duration);
+        // í¬ë¬¼ì„  ìµœê³ ì (peakHeight)ì„ ë§Œë“¤ê¸° ìœ„í•œ ì¤‘ë ¥ê°’ â†’ negative
+        // peakHeight = -0.5 * g * (duration/2)^2  ì—ì„œ ìœ ë„ë¨
+
+        Vector3 accel = new Vector3(0, g, 0);
+        // ì´ˆê¸° ì†ë„: v0 = (endPos - startPos - 0.5*a*T^2) / T
+        Vector3 v0 = (endPos - startPos - 0.5f * accel * duration * duration) / duration;
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            // í¬ë¬¼ì„  ìš´ë™ ìœ„ì¹˜ ê³„ì‚°
+            Vector3 pos = startPos
+                        + v0 * elapsed
+                        + 0.5f * accel * elapsed * elapsed;
+
+            tile.transform.position = pos;
+
+            // 
+            tile.transform.Rotate(Vector3.forward, 90f * Time.deltaTime);
+
+            yield return null;
+        }
+
+        Destroy(tile);
+    }
+    #endregion
+
+    #region // ê²Œì„ ì¡°ê¸° ì¢…ë£Œ ê²€ì‚¬
     bool isEmptyLine(Vector2Int pos)
     {
-        // ÇØ´ç ºó Ä­ÀÇ Çà°ú ¿­¿¡ Å¸ÀÏÀÌ ¾ø´ÂÁö °Ë»ç
+        // í•´ë‹¹ ë¹ˆ ì¹¸ì˜ í–‰ê³¼ ì—´ì— íƒ€ì¼ì´ ì—†ëŠ”ì§€ ê²€ì‚¬
         for (int x = 0; x < _columns; x++)
         {
             if (stageGenerator.grid[pos.y, x] != TileColor.None && stageGenerator.tileObjects[pos.y, x] != null)
@@ -375,19 +453,19 @@ public class PlayManager : MonoBehaviour
         return true;
     }
 
-    // ÈÄº¸ ºó Ä­ ¸®½ºÆ®¸¸ ¼øÈ¸ÇÏ¿© ´õ ÀÌ»ó Á¦°Å °¡´ÉÇÑ Å¸ÀÏÀÌ ¾ø´ÂÁö °Ë»ç
+    // í›„ë³´ ë¹ˆ ì¹¸ ë¦¬ìŠ¤íŠ¸ë§Œ ìˆœíšŒí•˜ì—¬ ë” ì´ìƒ ì œê±° ê°€ëŠ¥í•œ íƒ€ì¼ì´ ì—†ëŠ”ì§€ ê²€ì‚¬
     bool HasNoRemovableTiles()
     {
-        // ÈÄº¸ ºó Ä­ÀÌ ÇÏ³ªµµ ¾øÀ¸¸é Á¦°ÅÇÒ ¼ö ÀÖ´Â Å¸ÀÏÀÌ ¾ø´Â °ÍÀ¸·Î ÆÇ´Ü
+        // í›„ë³´ ë¹ˆ ì¹¸ì´ í•˜ë‚˜ë„ ì—†ìœ¼ë©´ ì œê±°í•  ìˆ˜ ìˆëŠ” íƒ€ì¼ì´ ì—†ëŠ” ê²ƒìœ¼ë¡œ íŒë‹¨
         if (candidateEmptyCells.Count == 0)
             return true;
 
-        // ¼øÈ¸¿ë ¸®½ºÆ® º¹»çº»
+        // ìˆœíšŒìš© ë¦¬ìŠ¤íŠ¸ ë³µì‚¬ë³¸
         var cells = candidateEmptyCells.ToList();
 
         foreach (var emptyPos in cells)
         {
-            // ÈÄº¸ ºó Ä­ÀÇ Çà°ú ¿­¿¡ Å¸ÀÏÀÌ ¾ø´Â °æ¿ì´Â ÈÄº¸ ¸®½ºÆ®¿¡¼­ Á¦°Å
+            // í›„ë³´ ë¹ˆ ì¹¸ì˜ í–‰ê³¼ ì—´ì— íƒ€ì¼ì´ ì—†ëŠ” ê²½ìš°ëŠ” í›„ë³´ ë¦¬ìŠ¤íŠ¸ì—ì„œ ì œê±°
             if (isEmptyLine(emptyPos))
             {
                 candidateEmptyCells.Remove(emptyPos);
@@ -406,30 +484,30 @@ public class PlayManager : MonoBehaviour
                 colorCount[color]++;
             }
 
-            // µ¿ÀÏ »ö»óÀÇ Å¸ÀÏÀÌ 2°³ ÀÌ»ó Á¸ÀçÇÏ¸é ÀÌµ¿(Á¦°Å)ÀÌ °¡´ÉÇÑ °ÍÀ¸·Î ÆÇ´Ü
+            // ë™ì¼ ìƒ‰ìƒì˜ íƒ€ì¼ì´ 2ê°œ ì´ìƒ ì¡´ì¬í•˜ë©´ ì´ë™(ì œê±°)ì´ ê°€ëŠ¥í•œ ê²ƒìœ¼ë¡œ íŒë‹¨
             foreach (var kvp in colorCount)
             {
                 if (kvp.Value >= 2)
                     return false;
             }
         }
-        // ¸ğµç ÈÄº¸¿¡¼­ °Ë»çÇßÁö¸¸ Á¦°Å °¡´ÉÇÑ ±×·ìÀÌ ¾ø´Ù¸é, ´õ ÀÌ»ó Á¦°ÅÇÒ ¼ö ¾øÀ½.
+        // ëª¨ë“  í›„ë³´ì—ì„œ ê²€ì‚¬í–ˆì§€ë§Œ ì œê±° ê°€ëŠ¥í•œ ê·¸ë£¹ì´ ì—†ë‹¤ë©´, ë” ì´ìƒ ì œê±°í•  ìˆ˜ ì—†ìŒ.
         return true;
     }
     #endregion
 
-    // ÆĞ³ÎÆ¼ Àû¿ë
+    // íŒ¨ë„í‹° ì ìš©
     void GetPenaltiy()
     {
-        // ¹«ÇÑ ¸ğµå¿¡¼­´Â ÆĞ³ÎÆ¼ ¾øÀ½  
+        // ë¬´í•œ ëª¨ë“œì—ì„œëŠ” íŒ¨ë„í‹° ì—†ìŒ  
         if (_gameMode == GameMode.Infinite)
             return;
 
         timeRemaining -= penaltyTime;
     }
 
-    // ½ºÅ×ÀÌÁö Å¬¸®¾î ¿©ºÎ °Ë»ç
-    // ¸ğµç Å¸ÀÏÀÌ Á¦°ÅµÈ °æ¿ì Å¬¸®¾î
+    // ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´ ì—¬ë¶€ ê²€ì‚¬
+    // ëª¨ë“  íƒ€ì¼ì´ ì œê±°ëœ ê²½ìš° í´ë¦¬ì–´
     bool IsStageCleared()
     {
         for (int y = 0; y < _rows; y++)
@@ -443,10 +521,10 @@ public class PlayManager : MonoBehaviour
         return true;
     }
 
-    // °ÔÀÓ Á¾·á
+    // ê²Œì„ ì¢…ë£Œ
     void EndGame(GameResult result)
     {
-        // °ÔÀÓ Á¾·á Ã³¸®
+        // ê²Œì„ ì¢…ë£Œ ì²˜ë¦¬
         GameEvents.OnGameEnded?.Invoke(result);
     }
 }
