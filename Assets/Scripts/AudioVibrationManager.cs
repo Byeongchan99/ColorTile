@@ -1,83 +1,88 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
 public class AudioVibrationManager : MonoBehaviour
 {
-    [Header("Audio")]
-    public AudioSource bgmSource;    // Inspector 에 할당
-    public AudioMixer mixer;        // "BGMVol", "SFXVol" 노출
+    [Header("Audio Sources & Mixer")]
+    public AudioSource bgmSource;    // BGM용 AudioSource (루프, Play On Awake 해제)
+    public AudioSource sfxSource;    // SFX용 AudioSource (PlayOneShot 전용)
+    public AudioMixer mixer;        // "BGMVolume", "SFXVolume" Exposed Parameters
 
-    // 내부 플래그
-    bool _isBGMOn;
-    bool _isSFXOn;
-    bool _isVibrationOn;
+    [Header("Indexed SFX Clips")]
+    [Tooltip("0부터 순서대로 효과음을 등록하세요.")]
+    public List<AudioClip> sfxClips; // 인덱스에 대응하는 효과음 리스트 0: UI 버튼 클릭, 1: 타일 제거, 2: 패널티
+
+    // 내부 상태
+    private Dictionary<int, AudioClip> _sfxDict;
+    private bool _isBGMOn, _isSFXOn, _isVibrationOn;
 
     void Awake()
     {
-        // 1) 저장값 로드
+        // 옵션 상태 불러오기
         _isBGMOn = Settings.GetBool(Settings.KEY_BGM);
         _isSFXOn = Settings.GetBool(Settings.KEY_SFX);
         _isVibrationOn = Settings.GetBool(Settings.KEY_VIBRATION);
 
-        // 2) 초기 적용
+        // 볼륨 초기 적용
         ApplyBGM(_isBGMOn);
         ApplySFX(_isSFXOn);
+
+        // 리스트 → 딕셔너리로 매핑
+        _sfxDict = new Dictionary<int, AudioClip>(sfxClips.Count);
+        for (int i = 0; i < sfxClips.Count; i++)
+            if (sfxClips[i] != null)
+                _sfxDict[i] = sfxClips[i];
     }
 
     void OnEnable()
     {
-        // 옵션 UI 이벤트 구독
         GameEvents.OnBGMChanged += OnBGMChanged;
         GameEvents.OnSFXChanged += OnSFXChanged;
         GameEvents.OnVibrationChanged += OnVibrationChanged;
+        GameEvents.OnPlaySFX += PlaySFX; // SFX 재생 이벤트 등록
     }
 
     void OnDisable()
     {
-        // 구독 해제
         GameEvents.OnBGMChanged -= OnBGMChanged;
         GameEvents.OnSFXChanged -= OnSFXChanged;
         GameEvents.OnVibrationChanged -= OnVibrationChanged;
+        GameEvents.OnPlaySFX -= PlaySFX; // SFX 재생 이벤트 해제
     }
 
-    // 옵션 변경 콜백
-    void OnBGMChanged(bool on)
+    void OnBGMChanged(bool on) => ApplyBGM(_isBGMOn = on);
+    void OnSFXChanged(bool on) => ApplySFX(_isSFXOn = on);
+    void OnVibrationChanged(bool on) => _isVibrationOn = on;
+
+    /// <summary>
+    /// 인덱스에 대응하는 효과음을 PlayOneShot으로 재생합니다.
+    /// </summary>
+    public void PlaySFX(int index)
     {
-        _isBGMOn = on;
-        ApplyBGM(on);
+        if (!_isSFXOn) return;
+
+        if (_sfxDict != null && _sfxDict.TryGetValue(index, out var clip))
+        {
+            sfxSource.PlayOneShot(clip);
+        }
+        else
+        {
+            Debug.LogWarning($"[AudioVibrationManager] SFX index not found: {index}");
+        }
     }
 
-    void OnSFXChanged(bool on)
-    {
-        _isSFXOn = on;
-        ApplySFX(on);
-    }
-
-    void OnVibrationChanged(bool on)
-    {
-        _isVibrationOn = on;
-    }
-
-    // 외부에서 SFX 재생할 때
-    public void PlaySFX(AudioClip clip, Vector3 pos)
-    {
-        if (_isSFXOn && clip != null)
-            AudioSource.PlayClipAtPoint(clip, pos);
-    }
-
-    // 외부에서 진동 호출할 때
+    /// <summary>
+    /// 진동 호출
+    /// </summary>
     public void Vibrate()
     {
         if (_isVibrationOn)
             Handheld.Vibrate();
     }
 
-    // 실제 볼륨/재생 제어
     void ApplyBGM(bool on)
     {
-        Debug.Log($"BGM: {on}");
         mixer.SetFloat("BGMVolume", on ? 0f : -80f);
         if (on && !bgmSource.isPlaying) bgmSource.Play();
         if (!on && bgmSource.isPlaying) bgmSource.Pause();

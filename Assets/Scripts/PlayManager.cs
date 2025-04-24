@@ -357,6 +357,8 @@ public class PlayManager : MonoBehaviour
             }
         }
 
+        // 효과음 재생
+        GameEvents.OnPlaySFX?.Invoke(1); // SFX 인덱스 0으로 재생
         // 떨어지는 애니메이션 코루틴 실행
         StartCoroutine(PlayTileFallAndDestroy(tilesToAnimate));
 
@@ -502,6 +504,8 @@ public class PlayManager : MonoBehaviour
         if (_gameMode == GameMode.Infinite)
             return;
 
+        // 효과음 재생
+        GameEvents.OnPlaySFX?.Invoke(2);
         timeRemaining -= penaltyTime;
     }
 
