@@ -15,7 +15,7 @@ public class LoadingScreenManager : MonoBehaviour
         _animator = transform.GetComponent<Animator>();
 
         GameEvents.OnGameStartedRequest += () =>
-           StartCoroutine(RevealAndHideLoagindScreen(GameEvents.OnGameStartedFirst, GameEvents.OnGameStartedSecond, 0.7085f, 0.75f));
+           StartCoroutine(RevealLoadingScreen(GameEvents.OnGameStarted, 0.7085f));
         GameEvents.OnRetryGameRequest += () =>
            StartCoroutine(RevealLoadingScreen(GameEvents.OnRetryGame, 0.7085f));
         GameEvents.OnClearBoardRequest += () =>

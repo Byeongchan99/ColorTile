@@ -14,8 +14,7 @@ public static class GameEvents
     public static Action OnClearBoardRequest;
 
     // StageGenerator
-    public static Action OnGameStartedFirst;
-    public static Action OnGameStartedSecond;
+    public static Action OnGameStarted;
     public static Action OnGameStartedRequest; // 게임 시작 시 호출
     public static Action OnPauseGame; // 게임 일시정지 시 호출
     

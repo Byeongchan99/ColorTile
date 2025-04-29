@@ -48,9 +48,9 @@ public class UIManager : MonoBehaviour
         GameEvents.OnScoreChanged += UpdateScore;
 
         // 게임 시작 시 호출
-        GameEvents.OnGameStartedSecond += CloseMainUI; // 게임 시작 시 초기화
-        GameEvents.OnGameStartedSecond += StartGame;
-        GameEvents.OnGameStartedSecond += SwitchMode;
+        GameEvents.OnGameStarted += CloseMainUI; // 게임 시작 시 초기화
+        GameEvents.OnGameStarted += StartGame;
+        GameEvents.OnGameStarted += SwitchMode;
 
         // 게임 종료 시 호출
         GameEvents.OnGameEnded += EndGame;

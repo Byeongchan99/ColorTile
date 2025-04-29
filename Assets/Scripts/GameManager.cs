@@ -11,13 +11,13 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        //StopTime(); 
+        StopTime(); 
     }
 
     
     private void OnEnable()
     {
-        GameEvents.OnGameStartedFirst += StartTime; // 게임 시작 시 시간 재개
+        GameEvents.OnGameStarted += StartTime; // 게임 시작 시 시간 재개
         GameEvents.OnResumeGame += StartTime; // 게임 재개 시 시간 재개
         GameEvents.OnRetryGame += StartTime; // 게임 재시작 시 시간 재개
         GameEvents.OnPauseGame += StopTime; // 게임 일시정지 시 시간 정지
@@ -30,14 +30,14 @@ public class GameManager : MonoBehaviour
     // 시간 정지 - 일시정지
     public void StopTime()
     {
-        Time.timeScale = 0f;
+        //Time.timeScale = 0f;
         isPaused = true;
     }
 
     // 시간 재개
     public void StartTime()
     {
-        Time.timeScale = 1f;
+        //Time.timeScale = 1f;
         isPaused = false;
     }
 }
