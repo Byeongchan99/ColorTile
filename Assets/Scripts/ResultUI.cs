@@ -20,14 +20,14 @@ public class ResultUI : MonoBehaviour
     // 게임 재시작
     public void RetryGame()
     {
-        GameEvents.OnRetryGame?.Invoke();
+        GameEvents.OnRetryGameRequest?.Invoke();
         this.gameObject.SetActive(false);
     }
 
     // 메인 화면으로 이동
     public void GoToMain()
     {
-        GameEvents.OnGoToMain?.Invoke();
+        GameEvents.OnGoToMainRequest?.Invoke();
         this.gameObject.SetActive(false);
     }
 }

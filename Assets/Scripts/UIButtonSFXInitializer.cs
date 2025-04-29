@@ -8,7 +8,7 @@ public class UIButtonSFXInitializer : MonoBehaviour
 
     void Start()
     {
-        // 씬 내 모든 Button 컴포넌트를 찾아서…
+        // 씬 내 모든 Button 컴포넌트를 찾아서
         var buttons = FindObjectsOfType<Button>();
         foreach (var btn in buttons)
         {

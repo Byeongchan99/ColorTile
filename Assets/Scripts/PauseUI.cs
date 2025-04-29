@@ -31,7 +31,7 @@ public class PauseUI : MonoBehaviour
     public void RetryGame()
     {
         //gameManager.StartTime();
-        GameEvents.OnRetryGame?.Invoke();
+        GameEvents.OnRetryGameRequest?.Invoke();
         this.gameObject.SetActive(false);
         //uiManager.StartGame();
     }
@@ -47,7 +47,7 @@ public class PauseUI : MonoBehaviour
     public void GoToMain()
     {
         //gameManager.StopTime();
-        GameEvents.OnGoToMain?.Invoke();
+        GameEvents.OnGoToMainRequest?.Invoke();
         this.gameObject.SetActive(false);
         //uiManager.GoToMain();
     }

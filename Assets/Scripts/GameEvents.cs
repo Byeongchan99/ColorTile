@@ -11,9 +11,11 @@ public static class GameEvents
     public static Action<float> OnTimerUpdated; // 타이머 업데이트 시 호출
     public static Action<GameResult> OnGameEnded; // 게임 종료 시 호출
     public static Action OnClearBoard; // 보드 클리어 시 호출(무한 모드)
+    public static Action OnClearBoardRequest;
 
     // StageGenerator
     public static Action OnGameStarted; // 게임 시작 시 호출
+    public static Action OnGameStartedRequest;
     public static Action OnPauseGame; // 게임 일시정지 시 호출
     
     // PauseUI, GameManager
@@ -21,7 +23,9 @@ public static class GameEvents
 
     // GameManager, UIManager, ResultUI, PauseUI
     public static Action OnRetryGame; // 게임 재시작 시 호출
+    public static Action OnRetryGameRequest;
     public static Action OnGoToMain; // 메인 화면으로 이동 시 호출
+    public static Action OnGoToMainRequest;
 
     // PauseUI, OptionUI
     public static Action OnOpenOption; // 옵션 화면 열기

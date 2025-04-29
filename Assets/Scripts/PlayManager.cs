@@ -201,7 +201,7 @@ public class PlayManager : MonoBehaviour
                                 }
                                 else
                                 {
-                                    GameEvents.OnClearBoard?.Invoke(); // 무한 모드에서 보드 클리어 시 호출
+                                    GameEvents.OnClearBoardRequest?.Invoke(); // 무한 모드에서 보드 클리어 시 호출
                                 }
                             }
                         }              

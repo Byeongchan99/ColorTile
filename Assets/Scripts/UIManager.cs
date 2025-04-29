@@ -87,7 +87,7 @@ public class UIManager : MonoBehaviour
     public void OnClickStartNormalButton()
     {
         GameManager.gameMode = GameMode.Normal; // 게임 모드 설정
-        GameEvents.OnGameStarted?.Invoke(); // 게임 시작 이벤트 호출
+        GameEvents.OnGameStartedRequest?.Invoke(); // 게임 시작 이벤트 호출
         //gameManager.StartTime();
         MainUI.SetActive(false);
         StartGame();
@@ -97,7 +97,7 @@ public class UIManager : MonoBehaviour
     public void OnClickStartInfiniteButton()
     {
         GameManager.gameMode = GameMode.Infinite; // 게임 모드 설정
-        GameEvents.OnGameStarted?.Invoke(); // 게임 시작 이벤트 호출
+        GameEvents.OnGameStartedRequest?.Invoke(); // 게임 시작 이벤트 호출
         //gameManager.StartTime();
         MainUI.SetActive(false);
         StartGame();
@@ -130,7 +130,7 @@ public class UIManager : MonoBehaviour
 
     public void OnClickRetryGameButton()
     {
-        GameEvents.OnRetryGame?.Invoke(); // 게임 재시작 이벤트 호출
+        GameEvents.OnRetryGameRequest?.Invoke(); // 게임 재시작 이벤트 호출
     }
 
     // 게임 시작 처리
@@ -185,14 +185,14 @@ public class UIManager : MonoBehaviour
 
     public void OnClickGoToMain()
     {
-        GoToMain();
+        GameEvents.OnGoToMainRequest?.Invoke(); // 메인 화면으로 이동 이벤트 호출
     }
 
     // 메인 화면으로 이동
     public void GoToMain()
     {
-        gameManager.StopTime();
         MainUI.SetActive(true);
+        gameManager.StopTime();  
     }
 
     public void OnClickOpenOption()
