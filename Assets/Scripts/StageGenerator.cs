@@ -83,6 +83,7 @@ public class StageGenerator : MonoBehaviour
     // 스테이지를 생성하는 메서드 (GenerateStage ver.2)
     public void GenerateStage()
     {
+        // 1. 스테이지 초기화
         InitStage();
         // 2. 색상별 쌍 리스트 생성 (총 pairCount * colorCount 쌍)
         List<TileColor> pairColors = new List<TileColor>();
@@ -113,7 +114,7 @@ public class StageGenerator : MonoBehaviour
             {
                 attempt++;
 
-                // Step 1: 빈 셀(트리거 셀)을 랜덤 선택
+                // 1: 빈 셀(트리거 셀)을 랜덤 선택
                 int triggerX = Random.Range(0, columns);
                 int triggerY = Random.Range(0, rows);
                 Vector2Int triggerPos = new Vector2Int(triggerX, triggerY);
@@ -122,7 +123,7 @@ public class StageGenerator : MonoBehaviour
                     continue;
                 }
 
-                // Step 2: 상하좌우 방향 중 2가지를 랜덤하게 선택 (순서를 섞어서 첫 두 개 사용)
+                // 2: 상하좌우 방향 중 2가지를 랜덤하게 선택 (순서를 섞어서 첫 두 개 사용)
                 List<Vector2Int> directions = new List<Vector2Int>
             {
                 new Vector2Int(0, 1),   // 위
@@ -140,7 +141,7 @@ public class StageGenerator : MonoBehaviour
                 Vector2Int dir1 = directions[0];
                 Vector2Int dir2 = directions[1];
 
-                // Step 3: 각 방향으로 이동할 수 있는 최대 거리를 계산 (트리거 셀 기준)
+                // 3: 각 방향으로 이동할 수 있는 최대 거리를 계산 (트리거 셀 기준)
                 int maxDist1 = 0;
                 if (dir1.x > 0) maxDist1 = columns - 1 - triggerPos.x;
                 else if (dir1.x < 0) maxDist1 = triggerPos.x;
@@ -159,11 +160,11 @@ public class StageGenerator : MonoBehaviour
                     continue;
                 }
 
-                // Step 4: 각 방향에 대해, 1부터 최대 거리(maxDist)까지 중 랜덤한 거리 선택
+                // 4: 각 방향에 대해, 1부터 최대 거리(maxDist)까지 중 랜덤한 거리 선택
                 int dist1 = Random.Range(1, maxDist1 + 1);
                 int dist2 = Random.Range(1, maxDist2 + 1);
 
-                // Step 5: 각 방향으로 이동하며 배치할 위치 결정 (다른 타일을 만나기 전, 혹은 최대 거리 도달 시까지)
+                // 5: 각 방향으로 이동하며 배치할 위치 결정 (다른 타일을 만나기 전, 혹은 최대 거리 도달 시까지)
                 // 첫 번째 방향에 대해:
                 Vector2Int posTile1 = triggerPos;
                 bool valid1 = true;
@@ -222,7 +223,7 @@ public class StageGenerator : MonoBehaviour
                     continue;
                 }
 
-                // Step 6: 배치할 두 위치가 서로 다르고, 트리거 셀과도 겹치지 않으며, 모두 빈 칸인지 확인
+                // 6: 배치할 두 위치가 서로 다르고, 트리거 셀과도 겹치지 않으며, 모두 빈 칸인지 확인
                 if (posTile1 == posTile2 || posTile1 == triggerPos || posTile2 == triggerPos)
                 {
                     continue;
@@ -232,7 +233,7 @@ public class StageGenerator : MonoBehaviour
                     continue;
                 }
 
-                // Step 7: 두 위치에 타일 쌍 배치
+                // 7: 두 위치에 타일 쌍 배치
                 SetTiles(posTile1, posTile2, color);
                 placed = true;
             }

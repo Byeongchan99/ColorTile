@@ -63,7 +63,7 @@ public class PlayManager : MonoBehaviour
         GameEvents.OnGameStarted += Initialize; // 게임 시작 시 초기화
         GameEvents.OnRetryGame += Initialize; // 게임 재시작 시 초기화
         GameEvents.OnClearBoard += InitStage; // 무한 모드에서 보드 클리어 시 스테이지 초기화
-
+      
         //Initialize();
     }
 

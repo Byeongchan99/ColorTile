@@ -32,5 +32,5 @@ public static class GameEvents
     public static Action<bool> OnVibrationChanged; // 진동 설정 변경 시 호출
 
     // AudioVibrationManager
-    public static Action<int> OnPlaySFX; // SFX 재생 시 호출
+    public static Action<int> OnPlaySFX; // SFX 재생 시 호출    
 }
