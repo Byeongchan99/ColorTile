@@ -48,8 +48,9 @@ public class UIManager : MonoBehaviour
         GameEvents.OnScoreChanged += UpdateScore;
 
         // 게임 시작 시 호출
-        GameEvents.OnGameStarted += StartGame;
-        GameEvents.OnGameStarted += SwitchMode;
+        GameEvents.OnGameStartedSecond += CloseMainUI; // 게임 시작 시 초기화
+        GameEvents.OnGameStartedSecond += StartGame;
+        GameEvents.OnGameStartedSecond += SwitchMode;
 
         // 게임 종료 시 호출
         GameEvents.OnGameEnded += EndGame;
@@ -58,7 +59,7 @@ public class UIManager : MonoBehaviour
         GameEvents.OnRetryGame += StartGame;
 
         // 메인 화면으로 이동 시 호출
-        GameEvents.OnGoToMain += GoToMain;
+        GameEvents.OnGoToMainFirst += GoToMain;
 
         MainUI.SetActive(true); // 메인 UI 활성화
     }
@@ -88,9 +89,6 @@ public class UIManager : MonoBehaviour
     {
         GameManager.gameMode = GameMode.Normal; // 게임 모드 설정
         GameEvents.OnGameStartedRequest?.Invoke(); // 게임 시작 이벤트 호출
-        //gameManager.StartTime();
-        MainUI.SetActive(false);
-        StartGame();
     }
 
     // 무한 모드 게임 시작 버튼 클릭
@@ -98,9 +96,6 @@ public class UIManager : MonoBehaviour
     {
         GameManager.gameMode = GameMode.Infinite; // 게임 모드 설정
         GameEvents.OnGameStartedRequest?.Invoke(); // 게임 시작 이벤트 호출
-        //gameManager.StartTime();
-        MainUI.SetActive(false);
-        StartGame();
     }
 
     public void SwitchMode()
@@ -136,6 +131,7 @@ public class UIManager : MonoBehaviour
     // 게임 시작 처리
     public void StartGame()
     {
+        //MainUI.SetActive(false);
         resultText.gameObject.SetActive(false);
         //ResultUI.SetActive(false);
         //playManager.Initialize();
@@ -192,7 +188,6 @@ public class UIManager : MonoBehaviour
     public void GoToMain()
     {
         MainUI.SetActive(true);
-        gameManager.StopTime();  
     }
 
     public void OnClickOpenOption()

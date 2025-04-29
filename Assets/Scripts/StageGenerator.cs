@@ -29,7 +29,7 @@ public class StageGenerator : MonoBehaviour
 
     private void Awake()
     {
-        GameEvents.OnGameStarted += GenerateStage; // 게임 시작 시 초기화
+        GameEvents.OnGameStartedSecond += GenerateStage; // 게임 시작 시 초기화
         GameEvents.OnRetryGame += GenerateStage; // 게임 재시작 시 초기화
         GameEvents.OnClearBoard += GenerateStage; // 보드 클리어 시 초기화
     }

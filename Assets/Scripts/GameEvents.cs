@@ -14,8 +14,9 @@ public static class GameEvents
     public static Action OnClearBoardRequest;
 
     // StageGenerator
-    public static Action OnGameStarted; // 게임 시작 시 호출
-    public static Action OnGameStartedRequest;
+    public static Action OnGameStartedFirst;
+    public static Action OnGameStartedSecond;
+    public static Action OnGameStartedRequest; // 게임 시작 시 호출
     public static Action OnPauseGame; // 게임 일시정지 시 호출
     
     // PauseUI, GameManager
@@ -24,8 +25,10 @@ public static class GameEvents
     // GameManager, UIManager, ResultUI, PauseUI
     public static Action OnRetryGame; // 게임 재시작 시 호출
     public static Action OnRetryGameRequest;
-    public static Action OnGoToMain; // 메인 화면으로 이동 시 호출
-    public static Action OnGoToMainRequest;
+
+    public static Action OnGoToMainFirst;
+    public static Action OnGoToMainSecond;
+    public static Action OnGoToMainRequest; // 메인 화면으로 이동 시 호출
 
     // PauseUI, OptionUI
     public static Action OnOpenOption; // 옵션 화면 열기
