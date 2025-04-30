@@ -4,6 +4,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Profiling;
 using UnityEngine.UI;
 using static Enums;
 
@@ -137,10 +138,6 @@ public class PlayManager : MonoBehaviour
             return;
         }
         */
-        if (gameManager.isPaused == true)
-        {
-            return; // 게임이 일시정지 상태인 경우
-        }
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -151,14 +148,14 @@ public class PlayManager : MonoBehaviour
             // 유효 범위 검사
             if (IsValidGridPos(gridPos))
             {
-                Debug.Log("Clicked grid position: " + gridPos);
+                //Debug.Log("Clicked grid position: " + gridPos);
 
                 // 클릭한 위치가 빈 칸일 때만 진행
                 if (stageGenerator.grid[gridPos.y, gridPos.x] == TileColor.None)
                 {
                     // 빈 칸에서 가장 가까운 직교 타일 검색(상하좌우 각 4방향에서 가장 가까운 타일 검색)
                     List<Vector2Int> matchingTiles = GetOrthogonalTiles(gridPos);
-                    Debug.Log("Total adjacent tiles found: " + matchingTiles.Count);
+                    //Debug.Log("Total adjacent tiles found: " + matchingTiles.Count);
 
                     // 딕셔너리에 가져온 타일 색상과 위치 저장
                     Dictionary<TileColor, List<Vector2Int>> groups = new Dictionary<TileColor, List<Vector2Int>>();
@@ -176,7 +173,7 @@ public class PlayManager : MonoBehaviour
                     {
                         if (kvp.Value.Count >= 2)
                         {
-                            Debug.Log("Removing group of color: " + kvp.Key + ", count: " + kvp.Value.Count);
+                            //Debug.Log("Removing group of color: " + kvp.Key + ", count: " + kvp.Value.Count);
                             tilesToErase.AddRange(kvp.Value);
                         }
                     }
@@ -214,7 +211,7 @@ public class PlayManager : MonoBehaviour
                     else
                     {
                         GetPenaltiy();
-                        Debug.Log("No matching adjacent groups found. Penalty applied.");
+                        //Debug.Log("No matching adjacent groups found. Penalty applied.");
                     }
                 }
             }
@@ -321,7 +318,7 @@ public class PlayManager : MonoBehaviour
             new Vector2Int(1, 0)
         };
 
-        Debug.Log("Checking adjacent tiles from " + pos);
+        //Debug.Log("Checking adjacent tiles from " + pos);
 
         foreach (Vector2Int dir in directions)
         {
@@ -331,7 +328,7 @@ public class PlayManager : MonoBehaviour
                 // 빈 칸이 아닌 타일
                 if (stageGenerator.grid[checkPos.y, checkPos.x] != TileColor.None)
                 {
-                    Debug.Log("Matched tile found at " + checkPos + " color: " + stageGenerator.grid[checkPos.y, checkPos.x]);
+                    //Debug.Log("Matched tile found at " + checkPos + " color: " + stageGenerator.grid[checkPos.y, checkPos.x]);
                     matched.Add(checkPos);
                     break;
                 }

@@ -55,7 +55,7 @@ public class StageGenerator : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Invalid game mode.");
+            //Debug.LogError("Invalid game mode.");
             return;
         }
 
