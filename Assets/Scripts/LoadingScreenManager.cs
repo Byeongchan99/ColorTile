@@ -13,7 +13,7 @@ public class LoadingScreenManager : MonoBehaviour
     private void Awake()
     {
         _animator = transform.GetComponent<Animator>();
-
+       
         GameEvents.OnGameStartedRequest += () =>
            StartCoroutine(RevealLoadingScreen(GameEvents.OnGameStarted, 0.7085f));
         GameEvents.OnRetryGameRequest += () =>
