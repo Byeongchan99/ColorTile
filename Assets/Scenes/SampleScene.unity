@@ -2396,6 +2396,81 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &663033824
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 663033826}
+  - component: {fileID: 663033825}
+  m_Layer: 0
+  m_Name: Tiles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &663033825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 663033824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 030e828ab11dfc640a75959edc1ee239, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pools:
+  - color: 8
+    prefab: {fileID: 1013087852384782845, guid: 080e821ba7396b3439542cecff977f56, type: 3}
+    preloadCount: 10
+  - color: 3
+    prefab: {fileID: 3201441611351008911, guid: 1368cd5c38ad6004a95993dd3b63b04e, type: 3}
+    preloadCount: 10
+  - color: 4
+    prefab: {fileID: 7502561436463056045, guid: f9aff31eda783504f8bf2c5973fefda9, type: 3}
+    preloadCount: 10
+  - color: 7
+    prefab: {fileID: 3408144753225075697, guid: 7f0c8042bbe359d489c495f818f5bc10, type: 3}
+    preloadCount: 10
+  - color: 6
+    prefab: {fileID: 5561266232563233018, guid: bb004731855dfe2419fbb11d390db567, type: 3}
+    preloadCount: 10
+  - color: 2
+    prefab: {fileID: 2623143937281074210, guid: e50991985c6320f44a434d5bad29a647, type: 3}
+    preloadCount: 10
+  - color: 10
+    prefab: {fileID: 5256468732765958890, guid: 23c44f55b36319b489b22f70b0555d2d, type: 3}
+    preloadCount: 10
+  - color: 9
+    prefab: {fileID: 3742095679469759135, guid: 68a95cfa6b23b37449ae0f30dabb3c29, type: 3}
+    preloadCount: 10
+  - color: 1
+    prefab: {fileID: 1328728263180657370, guid: e599e6a17f4c5d04194b1da30e9eae75, type: 3}
+    preloadCount: 10
+  - color: 5
+    prefab: {fileID: 4219133518455607408, guid: b99f0cc869bdcf74885e45f3d3590068, type: 3}
+    preloadCount: 10
+--- !u!4 &663033826
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 663033824}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &675936150
 GameObject:
   m_ObjectHideFlags: 0
@@ -4520,6 +4595,7 @@ MonoBehaviour:
   penaltyTime: 5
   gameManager: {fileID: 460621657}
   stageGenerator: {fileID: 2013358174}
+  tilePool: {fileID: 663033825}
   overlayPool: {fileID: 1909523889}
   minHeightCoeff: 25
   maxHeightCoeff: 30
@@ -6073,17 +6149,7 @@ MonoBehaviour:
   _pairCount: 5
   _colorCount: 10
   totalTileCount: 0
-  TilePrefabs:
-  - {fileID: 1013087852384782845, guid: 080e821ba7396b3439542cecff977f56, type: 3}
-  - {fileID: 3201441611351008911, guid: 1368cd5c38ad6004a95993dd3b63b04e, type: 3}
-  - {fileID: 7502561436463056045, guid: f9aff31eda783504f8bf2c5973fefda9, type: 3}
-  - {fileID: 5561266232563233018, guid: bb004731855dfe2419fbb11d390db567, type: 3}
-  - {fileID: 3408144753225075697, guid: 7f0c8042bbe359d489c495f818f5bc10, type: 3}
-  - {fileID: 2623143937281074210, guid: e50991985c6320f44a434d5bad29a647, type: 3}
-  - {fileID: 5256468732765958890, guid: 23c44f55b36319b489b22f70b0555d2d, type: 3}
-  - {fileID: 3742095679469759135, guid: 68a95cfa6b23b37449ae0f30dabb3c29, type: 3}
-  - {fileID: 1328728263180657370, guid: e599e6a17f4c5d04194b1da30e9eae75, type: 3}
-  - {fileID: 4219133518455607408, guid: b99f0cc869bdcf74885e45f3d3590068, type: 3}
+  tilePool: {fileID: 663033825}
   tileContainer: {fileID: 721138805}
 --- !u!4 &2013358175
 Transform:
@@ -7089,4 +7155,5 @@ SceneRoots:
   - {fileID: 460621658}
   - {fileID: 1654193948}
   - {fileID: 1909523888}
+  - {fileID: 663033826}
   - {fileID: 172556749}

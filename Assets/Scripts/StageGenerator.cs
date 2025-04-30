@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static Enums;
+using static UnityEditor.PlayerSettings;
 
 public class StageGenerator : MonoBehaviour
 {
     [Header("Grid Settings")]
     public int rows;
     public int columns;
+    private const int MaxRows = 18;
+    private const int MaxColumns = 9;
     public float cellSize; // 한 칸의 크기
     public Transform normalboardPos; // 노말 모드 보드 오브젝트의 위치
     public Transform infiniteboardPos; // 무한 모드 보드 오브젝트의 위치
@@ -19,13 +22,13 @@ public class StageGenerator : MonoBehaviour
     public int totalTileCount; // 총 타일 개수(_pairCount * _colorCount * 2)
 
     [Header("Tile Prefab")]
-    public GameObject[] TilePrefabs; // 타일 프리팹 (Inspector에 할당)
+    public TilePool tilePool; // 타일 오브젝트 풀
     public Transform tileContainer; // 타일 오브젝트들을 담을 부모 오브젝트
 
     // 스테이지 전체를 관리하는 2차원 배열 (PlayManager에서 참조)
-    public TileColor[,] grid;
+    public TileColor[,] grid = new TileColor[MaxRows, MaxColumns];
     // 실제 타일 오브젝트들을 관리하는 배열
-    public GameObject[,] tileObjects;
+    public GameObject[,] tileObjects = new GameObject[MaxRows, MaxColumns];
 
     private void Awake()
     {
@@ -60,24 +63,22 @@ public class StageGenerator : MonoBehaviour
         }
 
         // 1. grid와 tileObjects 초기화 (모든 칸을 None, null로 설정)
-        grid = new TileColor[rows, columns];
-        tileObjects = new GameObject[rows, columns];
         totalTileCount = _pairCount * _colorCount * 2; // 총 타일 개수 계산
 
-        for (int y = 0; y < rows; y++)
+        for (int y = 0; y < MaxRows; y++)
         {
-            for (int x = 0; x < columns; x++)
+            for (int x = 0; x < MaxColumns; x++)
             {
+                // 기존의 타일들 제거
+                if (tileObjects[y, x] != null)
+                {
+                    tilePool.Return(tileObjects[y, x], grid[y, x]);
+                }
+
                 grid[y, x] = TileColor.None;
                 tileObjects[y, x] = null;
             }
-        }
-
-        // 기존의 타일들 제거
-        foreach (Transform child in tileContainer)
-        {
-            Destroy(child.gameObject);
-        }
+        }       
     }
 
     // 스테이지를 생성하는 메서드 (GenerateStage ver.2)
@@ -348,14 +349,12 @@ public class StageGenerator : MonoBehaviour
         Vector3 worldPos1 = GetWorldPosition(pos1);
         Vector3 worldPos2 = GetWorldPosition(pos2);
 
-        if (TilePrefabs[(int)color - 1] != null)
-        {
-            GameObject tile1 = Instantiate(TilePrefabs[(int)color - 1], worldPos1, Quaternion.identity, tileContainer);
-            GameObject tile2 = Instantiate(TilePrefabs[(int)color - 1], worldPos2, Quaternion.identity, tileContainer);
+        GameObject tile1 = tilePool.Get(color, worldPos1);
+        GameObject tile2 = tilePool.Get(color, worldPos2);
 
-            tileObjects[pos1.y, pos1.x] = tile1;
-            tileObjects[pos2.y, pos2.x] = tile2;
-        }
+        tileObjects[pos1.y, pos1.x] = tile1;
+        tileObjects[pos2.y, pos2.x] = tile2;
+
     }
 
     // grid 좌표 → 월드 좌표 변환

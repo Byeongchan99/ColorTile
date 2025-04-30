@@ -41,9 +41,10 @@ public class PlayManager : MonoBehaviour
     [Header("References")]
     public GameManager gameManager; // isPaused 참조
     public StageGenerator stageGenerator; // grid 참조
+    public TilePool tilePool; // 타일 오브젝트 풀
 
     [Header("Overlay Settings")]
-    public OverlayPool overlayPool; // 오버레이를 담을 컨테이너
+    public OverlayPool overlayPool; // 오버레이 오브젝트 풀
     private List<GameObject> activeOverlays = new List<GameObject>();
 
     [Header("Tile Animation Settings")]
@@ -342,9 +343,11 @@ public class PlayManager : MonoBehaviour
     void EraseTiles(List<Vector2Int> positions)
     {
         var tilesToAnimate = new List<GameObject>();
+        TileColor color = TileColor.None;
 
         foreach (Vector2Int pos in positions)
         {
+            color = stageGenerator.grid[pos.y, pos.x];
             stageGenerator.grid[pos.y, pos.x] = TileColor.None;
             GameObject tileObj = stageGenerator.tileObjects[pos.y, pos.x];
             if (tileObj != null)
@@ -361,7 +364,7 @@ public class PlayManager : MonoBehaviour
         // 효과음 재생
         GameEvents.OnPlaySFX?.Invoke(1); // SFX 인덱스 0으로 재생
         // 떨어지는 애니메이션 코루틴 실행
-        StartCoroutine(PlayTileFallAndDestroy(tilesToAnimate));
+        StartCoroutine(PlayTileFallAndDestroy(tilesToAnimate, color));
 
         // 남은 후보 리스트에서 제거 가능한 타일이 없으면 게임 종료
         if (HasNoRemovableTiles() && _remainTileCount > 0)
@@ -372,7 +375,7 @@ public class PlayManager : MonoBehaviour
 
     #region // 타일 제거 애니메이션
     // 타일을 떨어뜨리고 파괴하는 애니메이션 코루틴
-    IEnumerator PlayTileFallAndDestroy(List<GameObject> tiles)
+    IEnumerator PlayTileFallAndDestroy(List<GameObject> tiles, TileColor color)
     {
         float fallDistance = _rows * _cellSize + 1f; // 보드 아래로 충분히 떨어뜨릴 거리
 
@@ -381,14 +384,14 @@ public class PlayManager : MonoBehaviour
             // 각각 다른 속도로, 조금씩 지연을 줘서 자연스럽게
             float duration = 0.5f;
             float delay = 0f;
-            StartCoroutine(FallAndDestroyParabola(tile, duration, delay));
+            StartCoroutine(FallAndDestroyParabola(tile, duration, delay, color));
         }
 
         yield return null;
     }
 
     // 포물선 움직임 구현
-    IEnumerator FallAndDestroyParabola(GameObject tile, float duration, float delay)
+    IEnumerator FallAndDestroyParabola(GameObject tile, float duration, float delay, TileColor color)
     {
         yield return new WaitForSeconds(delay);
 
@@ -432,7 +435,7 @@ public class PlayManager : MonoBehaviour
             yield return null;
         }
 
-        Destroy(tile);
+        tilePool.Return(tile, color);
     }
     #endregion
 
