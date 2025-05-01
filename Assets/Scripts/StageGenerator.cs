@@ -23,8 +23,7 @@ public class StageGenerator : MonoBehaviour
 
     [Header("Tile Prefab")]
     public TilePool tilePool; // 타일 오브젝트 풀
-    public Transform tileContainer; // 타일 오브젝트들을 담을 부모 오브젝트
-
+    
     // 스테이지 전체를 관리하는 2차원 배열 (PlayManager에서 참조)
     public TileColor[,] grid = new TileColor[MaxRows, MaxColumns];
     // 실제 타일 오브젝트들을 관리하는 배열

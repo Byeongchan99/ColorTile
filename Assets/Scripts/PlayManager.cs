@@ -199,7 +199,7 @@ public class PlayManager : MonoBehaviour
                             {
                                 if (_gameMode == GameMode.Normal)
                                 {
-                                    EndGame(GameResult.NoRemovableTiles);
+                                    EndGame(GameResult.Cleared);
                                 }
                                 else
                                 {
@@ -342,19 +342,19 @@ public class PlayManager : MonoBehaviour
     // grid에서 타일 제거(타일 색상을 None으로 변경하고, 해당 GameObject 제거)
     void EraseTiles(List<Vector2Int> positions)
     {
-        var tilesToAnimate = new List<GameObject>();
-        TileColor color = TileColor.None;
+        var tilesToErase = new List<(GameObject, TileColor color)>();
 
         foreach (Vector2Int pos in positions)
         {
-            color = stageGenerator.grid[pos.y, pos.x];
+            TileColor color = stageGenerator.grid[pos.y, pos.x];
             stageGenerator.grid[pos.y, pos.x] = TileColor.None;
+
             GameObject tileObj = stageGenerator.tileObjects[pos.y, pos.x];
+            stageGenerator.tileObjects[pos.y, pos.x] = null;
+            
             if (tileObj != null)
             {
-                tilesToAnimate.Add(tileObj);
-                stageGenerator.tileObjects[pos.y, pos.x] = null;
-
+                tilesToErase.Add((tileObj, color));            
                 Score += _tileScore;
                 _remainTileCount--;
                 candidateEmptyCells.Add(pos); // 제거된 타일의 위치를 후보 빈 칸 리스트에 추가
@@ -364,7 +364,7 @@ public class PlayManager : MonoBehaviour
         // 효과음 재생
         GameEvents.OnPlaySFX?.Invoke(1); // SFX 인덱스 0으로 재생
         // 떨어지는 애니메이션 코루틴 실행
-        StartCoroutine(PlayTileFallAndDestroy(tilesToAnimate, color));
+        StartCoroutine(PlayTileFallAndDestroy(tilesToErase));
 
         // 남은 후보 리스트에서 제거 가능한 타일이 없으면 게임 종료
         if (HasNoRemovableTiles() && _remainTileCount > 0)
@@ -375,11 +375,11 @@ public class PlayManager : MonoBehaviour
 
     #region // 타일 제거 애니메이션
     // 타일을 떨어뜨리고 파괴하는 애니메이션 코루틴
-    IEnumerator PlayTileFallAndDestroy(List<GameObject> tiles, TileColor color)
+    IEnumerator PlayTileFallAndDestroy(List<(GameObject obj, TileColor color)> tiles)
     {
         float fallDistance = _rows * _cellSize + 1f; // 보드 아래로 충분히 떨어뜨릴 거리
 
-        foreach (GameObject tile in tiles)
+        foreach (var(tile, color) in tiles)
         {
             // 각각 다른 속도로, 조금씩 지연을 줘서 자연스럽게
             float duration = 0.5f;

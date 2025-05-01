@@ -11,21 +11,21 @@ public class ResultUI : MonoBehaviour
 
     private void Awake()
     {
-        retryButton.onClick.AddListener(RetryGame);
-        exitButton.onClick.AddListener(GoToMain);
+        retryButton.onClick.AddListener(OnClickRetryGame);
+        exitButton.onClick.AddListener(OnClickGoToMain);
         //exitButton.onClick.AddListener(() => GameEvents.OnGoToMain?.Invoke());
         //retryButton.onClick.AddListener(() => GameEvents.OnRetryGame?.Invoke());
     }
 
     // 게임 재시작
-    public void RetryGame()
+    public void OnClickRetryGame()
     {
         GameEvents.OnRetryGameRequest?.Invoke();
         this.gameObject.SetActive(false);
     }
 
     // 메인 화면으로 이동
-    public void GoToMain()
+    public void OnClickGoToMain()
     {
         GameEvents.OnGoToMainRequest?.Invoke();
         this.gameObject.SetActive(false);
