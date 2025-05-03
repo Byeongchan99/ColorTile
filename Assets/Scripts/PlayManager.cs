@@ -28,8 +28,8 @@ public class PlayManager : MonoBehaviour
     private HashSet<Vector2Int> _emptyCellsSet = new HashSet<Vector2Int>(); // 검사할 빈 칸들을 저장할 리스트
     private HashSet<Vector2Int> _overlayPathPositionsSet = new HashSet<Vector2Int>(); // 오버레이 표시할 경로를 저장할 리스트
     private List<(GameObject, TileColor color)> _tilesToEraseList = new List<(GameObject, TileColor color)>(); // 제거할 타일과 색상을 저장할 리스트
-    private List<Vector2Int> _closestTiles = new List<Vector2Int>(); // 클릭한 위치에서 가장 가까운 타일을 저장할 리스트 / 조기 종료 검사할 때 사용
-    private List<Vector2Int> _matchingTiles = new List<Vector2Int>(); // 클릭한 위치에서 가장 가까운 타일을 저장할 리스트 / 타일 제거 시 사용
+    private List<Vector2Int> _closestTiles = new List<Vector2Int>(); // 클릭한 위치에서 가장 가까운 타일을 저장할 리스트
+    private List<Vector2Int> _matchingTiles = new List<Vector2Int>(); // 타일 제거
 
     [Header("Game Score Settings")]
     private int _score = 0; // 점수

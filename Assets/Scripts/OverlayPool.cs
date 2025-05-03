@@ -5,7 +5,7 @@ using UnityEngine;
 public class OverlayPool : MonoBehaviour
 {
     [Header("Pool Settings")]
-    public GameObject overlayPrefab;
+    public GameObject overlayPrefab; // 오버레이 프리팹
     public Transform overlayContainer; // 인스펙터에서 할당
     public int initialSize = 30;
 
@@ -26,6 +26,7 @@ public class OverlayPool : MonoBehaviour
     public GameObject Get()
     {
         GameObject go;
+
         if (_pool.Count > 0)
         {
             go = _pool.Dequeue();
@@ -35,6 +36,7 @@ public class OverlayPool : MonoBehaviour
         {
             go = Instantiate(overlayPrefab, overlayContainer);
         }
+
         return go;
     }
 

@@ -58,33 +58,37 @@ public class OptionUI : MonoBehaviour
         this.gameObject.SetActive(false); // 옵션 UI 비활성화
     }
 
+    // BGM 토글
     void ToggleBGM()
     {
         _isBGMOn = !_isBGMOn;
         Settings.SetBool(Settings.KEY_BGM, _isBGMOn);
         RefreshButtons();
         GameEvents.OnBGMChanged?.Invoke(_isBGMOn);
-        Debug.Log($"BGM: {(_isBGMOn ? "On" : "Off")}");
+        //Debug.Log($"BGM: {(_isBGMOn ? "On" : "Off")}");
     }
 
+    // SFX 토글
     void ToggleSFX()
     {
         _isSFXOn = !_isSFXOn;
         Settings.SetBool(Settings.KEY_SFX, _isSFXOn);
         RefreshButtons();
         GameEvents.OnSFXChanged?.Invoke(_isSFXOn);
-        Debug.Log($"SFX: {(_isSFXOn ? "On" : "Off")}");
+        //Debug.Log($"SFX: {(_isSFXOn ? "On" : "Off")}");
     }
 
+    // 진동 토글
     void ToggleVibration()
     {
         _isVibrationOn = !_isVibrationOn;
         Settings.SetBool(Settings.KEY_VIBRATION, _isVibrationOn);
         RefreshButtons();
         GameEvents.OnVibrationChanged?.Invoke(_isVibrationOn);
-        Debug.Log($"Vibration: {(_isVibrationOn ? "On" : "Off")}");
+        //Debug.Log($"Vibration: {(_isVibrationOn ? "On" : "Off")}");
     }
 
+    /// 버튼 색상 변경
     void RefreshButtons()
     {
         BGMButton.image.color = _isBGMOn ? Color.white : Color.gray;

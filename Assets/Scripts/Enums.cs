@@ -34,8 +34,8 @@ public class Enums
 
     public enum GameMode
     {
-        Normal,
-        Infinite
+        Normal, // 일반
+        Infinite // 무한
     }
 
     public enum GameResult

@@ -6,15 +6,13 @@ using UnityEngine.UI;
 public class ResultUI : MonoBehaviour
 {
     [Header("UI Components")]
-    public Button exitButton;
-    public Button retryButton;
+    public Button exitButton; // 메인 화면으로 이동 버튼
+    public Button retryButton; // 게임 재시작 버튼
 
     private void Awake()
     {
         retryButton.onClick.AddListener(OnClickRetryGame);
-        exitButton.onClick.AddListener(OnClickGoToMain);
-        //exitButton.onClick.AddListener(() => GameEvents.OnGoToMain?.Invoke());
-        //retryButton.onClick.AddListener(() => GameEvents.OnRetryGame?.Invoke());
+        exitButton.onClick.AddListener(OnClickGoToMain);       
     }
 
     // 게임 재시작

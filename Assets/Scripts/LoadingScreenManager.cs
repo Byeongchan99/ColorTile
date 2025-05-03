@@ -5,8 +5,14 @@ using UnityEngine;
 public class LoadingScreenManager : MonoBehaviour
 {
     [Header("Animation Durations")]
-    [Tooltip("‘Reveal’ 애니메이션이 끝나기까지 걸리는 시간(초)")]
-    // reveal : 1.417f, hide : 1.5f 2.917f, 1.4585f
+    // Reveal : 1.417f + Hide : 1.5f = 2.917f => 1.4585f(재생 속도 반영)
+    [Tooltip("‘Reveal’ 애니메이션이 끝나기까지 걸리는 시간(초) - 기존 1.417f")]
+    [SerializeField] private float _revealDuration = 0.7085f; // Reveal 애니메이션이 끝나기까지 걸리는 시간(초)
+    [Tooltip("‘Hide’ 애니메이션이 끝나기까지 걸리는 시간(초) - 기존 1.5f")]
+    // Hide : 1.5f => 0.75f(재생 속도 반영)
+    [SerializeField] private float _hideDuration = 0.75f; // Hide 애니메이션이 끝나기까지 걸리는 시간(초)
+    [Tooltip("애니메이션 재생 속도")]
+    [SerializeField] private float _animationSpeed = 2f; // 애니메이션 재생 속도
 
     private Animator _animator;
 
@@ -15,13 +21,13 @@ public class LoadingScreenManager : MonoBehaviour
         _animator = transform.GetComponent<Animator>();
        
         GameEvents.OnGameStartedRequest += () =>
-           StartCoroutine(RevealLoadingScreen(GameEvents.OnGameStarted, 0.7085f));
+           StartCoroutine(RevealLoadingScreen(GameEvents.OnGameStarted, _revealDuration));
         GameEvents.OnRetryGameRequest += () =>
-           StartCoroutine(RevealLoadingScreen(GameEvents.OnRetryGame, 0.7085f));
+           StartCoroutine(RevealLoadingScreen(GameEvents.OnRetryGame, _revealDuration));
         GameEvents.OnClearBoardRequest += () =>
-           StartCoroutine(RevealLoadingScreen(GameEvents.OnClearBoard, 0.7085f));
+           StartCoroutine(RevealLoadingScreen(GameEvents.OnClearBoard, _revealDuration));
         GameEvents.OnGoToMainRequest += () =>
-           StartCoroutine(RevealAndHideLoagindScreen(GameEvents.OnGoToMainFirst, GameEvents.OnGoToMainSecond, 0.7085f, 0.75f));
+           StartCoroutine(RevealAndHideLoagindScreen(GameEvents.OnGoToMainFirst, GameEvents.OnGoToMainSecond, _revealDuration, _hideDuration));
     }
 
     /// <summary>

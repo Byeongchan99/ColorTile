@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class PauseUI : MonoBehaviour
 {
+    // 일시정지 사용 안 할 예정
+    /*
     [Header("UI Components")]
     public Button exitButton;
     public Button retryButton;
@@ -51,4 +53,5 @@ public class PauseUI : MonoBehaviour
         this.gameObject.SetActive(false);
         //uiManager.GoToMain();
     }
+    */
 }

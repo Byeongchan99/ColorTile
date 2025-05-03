@@ -13,13 +13,13 @@ public class GameManager : MonoBehaviour
     {
         StopTime(); 
     }
-
-    
+ 
     private void OnEnable()
     {
         GameEvents.OnGameStarted += StartTime; // 게임 시작 시 시간 재개
         GameEvents.OnResumeGame += StartTime; // 게임 재개 시 시간 재개
         GameEvents.OnRetryGame += StartTime; // 게임 재시작 시 시간 재개
+        
         GameEvents.OnPauseGame += StopTime; // 게임 일시정지 시 시간 정지
         // OnGameEnded 이벤트는 bool 파라미터를 무시하고 StopTime() 실행
         GameEvents.OnGameEnded += (GameResult result) => StopTime(); // 게임 종료 시 시간 정지
@@ -27,14 +27,14 @@ public class GameManager : MonoBehaviour
     }
     
 
-    // 시간 정지 - 일시정지
+    // 게임 정지
     public void StopTime()
     {
         //Time.timeScale = 0f;
         isPaused = true;
     }
 
-    // 시간 재개
+    // 게임 실행
     public void StartTime()
     {
         //Time.timeScale = 1f;
