@@ -329,14 +329,14 @@ public class StageGenerator : MonoBehaviour
             }
         }
     }
-    */
-    #endregion
 
     // 해당 두 위치가 비어있는지 검사
     bool CanSetTiles(Vector2Int pos1, Vector2Int pos2)
     {
         return grid[pos1.y, pos1.x] == TileColor.None && grid[pos2.y, pos2.x] == TileColor.None;
     }
+    */
+    #endregion
 
     // grid에 타일 색상을 기록하고, 타일 프리팹을 생성
     void SetTiles(Vector2Int pos1, Vector2Int pos2, TileColor color)
@@ -353,7 +353,6 @@ public class StageGenerator : MonoBehaviour
 
         tileObjects[pos1.y, pos1.x] = tile1;
         tileObjects[pos2.y, pos2.x] = tile2;
-
     }
 
     // grid 좌표 → 월드 좌표 변환

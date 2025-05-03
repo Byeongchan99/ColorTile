@@ -4597,10 +4597,10 @@ MonoBehaviour:
   stageGenerator: {fileID: 2013358174}
   tilePool: {fileID: 663033825}
   overlayPool: {fileID: 1909523889}
-  minHeightCoeff: 25
-  maxHeightCoeff: 30
-  minLengthCoeff: 5
-  maxLengthCoeff: 7
+  _minHeightCoeff: 20
+  _maxHeightCoeff: 25
+  _minLengthCoeff: 5
+  _maxLengthCoeff: 10
 --- !u!4 &1509568681
 Transform:
   m_ObjectHideFlags: 0
@@ -6150,7 +6150,6 @@ MonoBehaviour:
   _colorCount: 10
   totalTileCount: 0
   tilePool: {fileID: 663033825}
-  tileContainer: {fileID: 721138805}
 --- !u!4 &2013358175
 Transform:
   m_ObjectHideFlags: 0

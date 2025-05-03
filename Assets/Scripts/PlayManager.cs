@@ -14,8 +14,22 @@ public class PlayManager : MonoBehaviour
     private float _cellSize = 0.48f;
     private int _rows = 20;
     private int _columns = 10;
-    private Vector3 _boardPos;  
-    private HashSet<Vector2Int> candidateEmptyCells = new HashSet<Vector2Int>(); // 후보 빈 칸들을 저장할 리스트
+    private Vector3 _boardPos;
+
+    [Header("Tile Erase")]
+    private static readonly Vector2Int[] _directions = {
+      new Vector2Int(0,1), new Vector2Int(0,-1),
+      new Vector2Int(-1,0), new Vector2Int(1,0)
+    };
+
+    [Tooltip("버퍼 재사용")]
+    private Dictionary<TileColor, int> _colorCountDict = new Dictionary<TileColor, int>(); // 타일 색상과 개수를 저장할 딕셔너리
+    private Dictionary<TileColor, List<Vector2Int>> _tileGroupsDict = new Dictionary<TileColor, List<Vector2Int>>(); // 타일 색상과 위치를 저장할 딕셔너리
+    private HashSet<Vector2Int> _emptyCellsSet = new HashSet<Vector2Int>(); // 검사할 빈 칸들을 저장할 리스트
+    private HashSet<Vector2Int> _overlayPathPositionsSet = new HashSet<Vector2Int>(); // 오버레이 표시할 경로를 저장할 리스트
+    private List<(GameObject, TileColor color)> _tilesToEraseList = new List<(GameObject, TileColor color)>(); // 제거할 타일과 색상을 저장할 리스트
+    private List<Vector2Int> _closestTiles = new List<Vector2Int>(); // 클릭한 위치에서 가장 가까운 타일을 저장할 리스트 / 조기 종료 검사할 때 사용
+    private List<Vector2Int> _matchingTiles = new List<Vector2Int>(); // 클릭한 위치에서 가장 가까운 타일을 저장할 리스트 / 타일 제거 시 사용
 
     [Header("Game Score Settings")]
     private int _score = 0; // 점수
@@ -45,13 +59,13 @@ public class PlayManager : MonoBehaviour
 
     [Header("Overlay Settings")]
     public OverlayPool overlayPool; // 오버레이 오브젝트 풀
-    private List<GameObject> activeOverlays = new List<GameObject>();
+    private List<GameObject> activeOverlayList = new List<GameObject>();
 
     [Header("Tile Animation Settings")]
-    [SerializeField] float minHeightCoeff;
-    [SerializeField] float maxHeightCoeff;
-    [SerializeField] float minLengthCoeff;
-    [SerializeField] float maxLengthCoeff;
+    [SerializeField] float _minHeightCoeff;
+    [SerializeField] float _maxHeightCoeff;
+    [SerializeField] float _minLengthCoeff;
+    [SerializeField] float _maxLengthCoeff;
 
     public void Awake()
     {
@@ -62,11 +76,10 @@ public class PlayManager : MonoBehaviour
         if (stageGenerator == null)
             stageGenerator = FindObjectOfType<StageGenerator>();
 
+        // 이벤트 구독
         GameEvents.OnGameStarted += Initialize; // 게임 시작 시 초기화
         GameEvents.OnRetryGame += Initialize; // 게임 재시작 시 초기화
         GameEvents.OnClearBoard += InitStage; // 무한 모드에서 보드 클리어 시 스테이지 초기화
-      
-        //Initialize();
     }
 
     void Update()
@@ -77,6 +90,7 @@ public class PlayManager : MonoBehaviour
             return;
         }
 
+        // 입력 처리
         HandleInput();
 
         if (_gameMode == GameMode.Infinite)
@@ -90,7 +104,7 @@ public class PlayManager : MonoBehaviour
 
         if (timeRemaining <= 0) // 시간 종료로 인한 게임 종료
         {
-            EndGame(GameResult.NoRemovableTiles);
+            EndGame(GameResult.TimeOver);
         }
     }
 
@@ -103,26 +117,30 @@ public class PlayManager : MonoBehaviour
         InitStage();
     }
 
+    // 스테이지 초기화
     public void InitStage()
     {
         // 게임 모드 설정 및 모드에 따른 값 설정
         _gameMode = GameManager.gameMode;
         _rows = stageGenerator.rows;
         _columns = stageGenerator.columns;
+        
         _totalTileCount = stageGenerator.totalTileCount;
-        _remainTileCount = _totalTileCount; // 남은 타일 수 초기화
+        _remainTileCount = _totalTileCount;
+        
+        // stageGenerator에서 보드판의 칸 크기와 위치를 가져옴
         _cellSize = stageGenerator.cellSize;
         _boardPos = stageGenerator.boardPos.position;
 
         // 빈 칸 리스트 초기화
-        candidateEmptyCells.Clear();
+        _emptyCellsSet.Clear();
         for (int y = 0; y < _rows; y++)
         {
             for (int x = 0; x < _columns; x++)
             {
                 if (stageGenerator.grid[y, x] == TileColor.None)
                 {
-                    candidateEmptyCells.Add(new Vector2Int(x, y));
+                    _emptyCellsSet.Add(new Vector2Int(x, y));
                 }
             }
         }
@@ -143,11 +161,11 @@ public class PlayManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 screenPos = Input.mousePosition;
-            Vector3 worldPos = GetWorldPos(screenPos);
-            Vector2Int gridPos = GetGridPos(worldPos);
+            Vector3 worldPos = ScreenToWorldPosition(screenPos);
+            Vector2Int gridPos = WorldToGridPosition(worldPos);
 
             // 유효 범위 검사
-            if (IsValidGridPos(gridPos))
+            if (IsValidGridPosition(gridPos))
             {
                 //Debug.Log("Clicked grid position: " + gridPos);
 
@@ -155,22 +173,23 @@ public class PlayManager : MonoBehaviour
                 if (stageGenerator.grid[gridPos.y, gridPos.x] == TileColor.None)
                 {
                     // 빈 칸에서 가장 가까운 직교 타일 검색(상하좌우 각 4방향에서 가장 가까운 타일 검색)
-                    List<Vector2Int> matchingTiles = GetOrthogonalTiles(gridPos);
+                    _matchingTiles = GetClosestOrthogonalTiles(gridPos, _matchingTiles);
                     //Debug.Log("Total adjacent tiles found: " + matchingTiles.Count);
-
+                                  
                     // 딕셔너리에 가져온 타일 색상과 위치 저장
-                    Dictionary<TileColor, List<Vector2Int>> groups = new Dictionary<TileColor, List<Vector2Int>>();
-                    foreach (var pos in matchingTiles)
+                    foreach (var pos in _matchingTiles)
                     {
                         TileColor tileColor = stageGenerator.grid[pos.y, pos.x];
-                        if (!groups.ContainsKey(tileColor))
-                            groups[tileColor] = new List<Vector2Int>();
-                        groups[tileColor].Add(pos);
+                        
+                        if (!_tileGroupsDict.ContainsKey(tileColor)) // 딕셔너리에 없는 색상인 경우 추가
+                            _tileGroupsDict[tileColor] = new List<Vector2Int>();
+
+                        _tileGroupsDict[tileColor].Add(pos);
                     }
 
                     // 같은 색상의 타일이 2개 이상인 경우에만 제거 리스트에 추가
                     List<Vector2Int> tilesToErase = new List<Vector2Int>();
-                    foreach (var kvp in groups)
+                    foreach (var kvp in _tileGroupsDict) // kvp = KeyValuePair<TileColor, List<Vector2Int>>
                     {
                         if (kvp.Value.Count >= 2)
                         {
@@ -179,15 +198,17 @@ public class PlayManager : MonoBehaviour
                         }
                     }
 
+                    _tileGroupsDict.Clear(); // 딕셔너리 초기화
+
                     // 제거할 타일이 있는 경우
                     if (tilesToErase.Count > 0)
                     {
-                        // Show path overlays before erasing
-                        ShowRemovalPath(gridPos, tilesToErase);
+                        // 오버레이 표시
+                        ShowOverlay(gridPos, tilesToErase);
 
+                        // 타일 제거
                         EraseTiles(tilesToErase);
-                        //uiManager.UpdateScore(_score); // 점수 업데이트 - 프로퍼티에서 바로 처리
-
+                        
                         // 남은 타일 수 감소
                         _totalTileCount -= tilesToErase.Count; 
 
@@ -208,7 +229,7 @@ public class PlayManager : MonoBehaviour
                             }
                         }              
                     }
-                    // 제거할 타일이 없는 경우 - 잘못된 입력 -> 패널티 적용
+                    // 제거할 타일이 없는 경우 = 잘못된 입력 -> 패널티 적용
                     else
                     {
                         GetPenaltiy();
@@ -220,27 +241,27 @@ public class PlayManager : MonoBehaviour
     }
 
     #region // 타일 제거 오버레이 관련
-    // 타일을 제거하기 전 경로상 모든 셀에 원 오버레이를 표시
-    void ShowRemovalPath(Vector2Int clickPos, List<Vector2Int> removedTiles)
+    // 타일을 제거하기 전 경로상 모든 칸에 오버레이를 표시
+    void ShowOverlay(Vector2Int clickPos, List<Vector2Int> removedTiles)
     {
-        var path = GetPathPositions(clickPos, removedTiles);
+        _overlayPathPositionsSet.Clear(); // 리스트 초기화
+        GetPathPositions(clickPos, removedTiles);
 
         // 오버레이 표시
-        foreach (var cell in path)
+        foreach (var cell in _overlayPathPositionsSet)
         {
-            Vector3 world = CellToWorldPosition(cell);
+            Vector3 worldPos = GridToWorldPosition(cell);
             GameObject ov = overlayPool.Get();
-            ov.transform.position = world;
-            activeOverlays.Add(ov);
+            ov.transform.position = worldPos;
+            activeOverlayList.Add(ov);
         }
-
+     
         StartCoroutine(HideOverlaysAfterDelay(0.2f));
     }
 
     // 클릭 위치와 제거될 각 타일의 위치 사이에 놓인 모든 셀의 좌표를 반환
-    HashSet<Vector2Int> GetPathPositions(Vector2Int clickPos, List<Vector2Int> removedTiles)
-    {
-        var set = new HashSet<Vector2Int>();
+    void GetPathPositions(Vector2Int clickPos, List<Vector2Int> removedTiles)
+    {      
         foreach (var tile in removedTiles)
         {
             // 같은 행
@@ -248,102 +269,99 @@ public class PlayManager : MonoBehaviour
             {
                 int minY = Mathf.Min(tile.y, clickPos.y);
                 int maxY = Mathf.Max(tile.y, clickPos.y);
+                
                 for (int y = minY; y <= maxY; y++)
-                    set.Add(new Vector2Int(clickPos.x, y));
+                    _overlayPathPositionsSet.Add(new Vector2Int(clickPos.x, y));
             }
             // 같은 열
             else if (tile.y == clickPos.y)
             {
                 int minX = Mathf.Min(tile.x, clickPos.x);
                 int maxX = Mathf.Max(tile.x, clickPos.x);
+                
                 for (int x = minX; x <= maxX; x++)
-                    set.Add(new Vector2Int(x, clickPos.y));
+                    _overlayPathPositionsSet.Add(new Vector2Int(x, clickPos.y));
             }
         }
-        return set;
     }
 
     // 화면에 띄운 오버레이를 일정 시간 후에 제거
     IEnumerator HideOverlaysAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        foreach (var ov in activeOverlays)
+
+        foreach (var ov in activeOverlayList)
             overlayPool.Return(ov);
-        activeOverlays.Clear();
+        
+        activeOverlayList.Clear();
     }
 
-    // 그리드 좌표를 월드 공간으로 변환
-    Vector3 CellToWorldPosition(Vector2Int cell)
+    // 그리드 좌표를 월드 좌표로 변환
+    Vector3 GridToWorldPosition(Vector2Int gridPos)
     {
         return new Vector3(
-            _boardPos.x + (cell.x + 0.5f) * _cellSize,
-            _boardPos.y + (cell.y + 0.5f) * _cellSize,
+            _boardPos.x + (gridPos.x + 0.5f) * _cellSize,
+            _boardPos.y + (gridPos.y + 0.5f) * _cellSize,
             0f
         );
     }
     #endregion
 
     // 화면 좌표를 월드 좌표로 변환
-    Vector3 GetWorldPos(Vector3 screenPos)
+    Vector3 ScreenToWorldPosition(Vector3 screenPos)
     {
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
         worldPos.z = 0;
+        
         return worldPos;
     }
 
     // 월드 좌표를 grid 좌표로 변환
-    Vector2Int GetGridPos(Vector3 worldPos)
+    Vector2Int WorldToGridPosition(Vector3 worldPos)
     {
         // boardPos.position을 기준으로 로컬 좌표 계산
         Vector3 localPos = worldPos - _boardPos;
         int x = Mathf.FloorToInt(localPos.x / _cellSize);
         int y = Mathf.FloorToInt(localPos.y / _cellSize);
+        
         return new Vector2Int(x, y);
     }
 
     // grid 범위 내 유효한 좌표인지 검사
-    bool IsValidGridPos(Vector2Int pos)
+    bool IsValidGridPosition(Vector2Int pos)
     {
         return pos.x >= 0 && pos.x < _columns && pos.y >= 0 && pos.y < _rows;
     }
 
-    // 직교 위치에서 가장 가까운 타일들을 반환
-    List<Vector2Int> GetOrthogonalTiles(Vector2Int pos)
+    // 현재 위치에서 가장 가까운 타일들을 반환
+    List<Vector2Int> GetClosestOrthogonalTiles(Vector2Int pos, List<Vector2Int> tileList)
     {
-        List<Vector2Int> matched = new List<Vector2Int>();
-        // 상하좌우 4방향 탐색
-        Vector2Int[] directions = {
-            new Vector2Int(0, 1),
-            new Vector2Int(0, -1),
-            new Vector2Int(-1, 0),
-            new Vector2Int(1, 0)
-        };
-
+        tileList.Clear();
         //Debug.Log("Checking adjacent tiles from " + pos);
 
-        foreach (Vector2Int dir in directions)
+        foreach (Vector2Int dir in _directions)
         {
-            Vector2Int checkPos = pos + dir;
-            while (IsValidGridPos(checkPos))
+            Vector2Int nextPos = pos + dir;
+            
+            while (IsValidGridPosition(nextPos))
             {
                 // 빈 칸이 아닌 타일
-                if (stageGenerator.grid[checkPos.y, checkPos.x] != TileColor.None)
+                if (stageGenerator.grid[nextPos.y, nextPos.x] != TileColor.None)
                 {
                     //Debug.Log("Matched tile found at " + checkPos + " color: " + stageGenerator.grid[checkPos.y, checkPos.x]);
-                    matched.Add(checkPos);
+                    tileList.Add(nextPos);
                     break;
                 }
-                checkPos += dir;
+
+                nextPos += dir;
             }
         }
-        return matched;
+        return tileList;
     }
 
     // grid에서 타일 제거(타일 색상을 None으로 변경하고, 해당 GameObject 제거)
     void EraseTiles(List<Vector2Int> positions)
     {
-        var tilesToErase = new List<(GameObject, TileColor color)>();
-
         foreach (Vector2Int pos in positions)
         {
             TileColor color = stageGenerator.grid[pos.y, pos.x];
@@ -354,17 +372,17 @@ public class PlayManager : MonoBehaviour
             
             if (tileObj != null)
             {
-                tilesToErase.Add((tileObj, color));            
+                _tilesToEraseList.Add((tileObj, color));            
                 Score += _tileScore;
                 _remainTileCount--;
-                candidateEmptyCells.Add(pos); // 제거된 타일의 위치를 후보 빈 칸 리스트에 추가
+                _emptyCellsSet.Add(pos); // 제거된 타일의 위치를 검사할 빈 칸 리스트에 추가
             }
         }
 
         // 효과음 재생
-        GameEvents.OnPlaySFX?.Invoke(1); // SFX 인덱스 0으로 재생
+        GameEvents.OnPlaySFX?.Invoke(1); // SFX 인덱스 1으로 재생
         // 떨어지는 애니메이션 코루틴 실행
-        StartCoroutine(PlayTileFallAndDestroy(tilesToErase));
+        StartCoroutine(DropTileAndDestroy());
 
         // 남은 후보 리스트에서 제거 가능한 타일이 없으면 게임 종료
         if (HasNoRemovableTiles() && _remainTileCount > 0)
@@ -375,35 +393,34 @@ public class PlayManager : MonoBehaviour
 
     #region // 타일 제거 애니메이션
     // 타일을 떨어뜨리고 파괴하는 애니메이션 코루틴
-    IEnumerator PlayTileFallAndDestroy(List<(GameObject obj, TileColor color)> tiles)
-    {
-        float fallDistance = _rows * _cellSize + 1f; // 보드 아래로 충분히 떨어뜨릴 거리
-
-        foreach (var(tile, color) in tiles)
+    IEnumerator DropTileAndDestroy()
+    {      
+        foreach (var(tile, color) in _tilesToEraseList)
         {
-            // 각각 다른 속도로, 조금씩 지연을 줘서 자연스럽게
             float duration = 0.5f;
             float delay = 0f;
-            StartCoroutine(FallAndDestroyParabola(tile, duration, delay, color));
+            StartCoroutine(MoveTileParabola(tile, duration, delay, color));
         }
 
+        // 애니메이션이 끝난 후 리스트 초기화
+        _tilesToEraseList.Clear();
         yield return null;
     }
 
     // 포물선 움직임 구현
-    IEnumerator FallAndDestroyParabola(GameObject tile, float duration, float delay, TileColor color)
+    IEnumerator MoveTileParabola(GameObject tile, float duration, float delay, TileColor color)
     {
         yield return new WaitForSeconds(delay);
 
-        // 중간에 ‘튕겨오를’ 컨트롤 포인트: 위로 bounceHeight, 약간 옆으로도 이동 가능
-        float minHeight = _cellSize * minHeightCoeff; // 튕겨오를 최소 높이
-        float maxHeight = _cellSize * maxHeightCoeff; // 튕겨오를 최대 높이
+        // 변수 설정
+        float minHeight = _cellSize * _minHeightCoeff; // 튕겨오를 최소 높이
+        float maxHeight = _cellSize * _maxHeightCoeff; // 튕겨오를 최대 높이
         float bounceHeight = Random.Range(minHeight, maxHeight); // 튕겨오를 높이
-        float minLength = _cellSize * minLengthCoeff; // 튕겨나갈 최소 거리
-        float maxLength = _cellSize * maxLengthCoeff; // 튕겨나갈 최대 거리
+        float minLength = _cellSize * _minLengthCoeff; // 튕겨나갈 최소 거리
+        float maxLength = _cellSize * _maxLengthCoeff; // 튕겨나갈 최대 거리
         int direction = Random.Range(0, 1) > 0.5 ? -1 : 1; // 튕겨나갈 방향
         float bounceLength = _cellSize * direction * Random.Range(minLength, maxLength); // 튕겨나갈 거리
-        float downDistance = _rows * _cellSize + 1f;
+        float downDistance = _rows * _cellSize + 1f; // 떨어지는 거리
 
         Vector3 startPos = tile.transform.position;
         Vector3 endPos = startPos + new Vector3(bounceLength, -downDistance, 0);
@@ -428,14 +445,12 @@ public class PlayManager : MonoBehaviour
                         + 0.5f * accel * elapsed * elapsed;
 
             tile.transform.position = pos;
-
-            // 
-            tile.transform.Rotate(Vector3.forward, 90f * Time.deltaTime);
+            tile.transform.Rotate(Vector3.forward, 90f * Time.deltaTime); // 조금 회전
 
             yield return null;
         }
 
-        tilePool.Return(tile, color);
+        tilePool.Return(tile, color); // 타일 풀에 반환
     }
     #endregion
 
@@ -458,45 +473,43 @@ public class PlayManager : MonoBehaviour
         return true;
     }
 
-    // 후보 빈 칸 리스트만 순회하여 더 이상 제거 가능한 타일이 없는지 검사
+    // 빈 칸 리스트만 순회하여 더 이상 제거 가능한 타일이 없는지 검사
     bool HasNoRemovableTiles()
     {
-        // 후보 빈 칸이 하나도 없으면 제거할 수 있는 타일이 없는 것으로 판단
-        if (candidateEmptyCells.Count == 0)
+        // 빈 칸이 하나도 없으면 제거할 수 있는 타일이 없는 것으로 판단
+        if (_emptyCellsSet.Count == 0)
             return true;
 
-        // 순회용 리스트 복사본
-        var cells = candidateEmptyCells.ToList();
+        // 검사할 빈 칸의 행과 열에 타일이 없는 경우는 리스트에서 제거
+        _emptyCellsSet.RemoveWhere(pos => isEmptyLine(pos));
 
-        foreach (var emptyPos in cells)
+        foreach (var emptyPos in _emptyCellsSet)
         {
-            // 후보 빈 칸의 행과 열에 타일이 없는 경우는 후보 리스트에서 제거
-            if (isEmptyLine(emptyPos))
-            {
-                candidateEmptyCells.Remove(emptyPos);
-                continue;
-            }
+            _colorCountDict.Clear(); // 리스트 초기화
 
-            List<Vector2Int> adjacentTiles = GetOrthogonalTiles(emptyPos);
-            Dictionary<TileColor, int> colorCount = new Dictionary<TileColor, int>();
-
-            foreach (Vector2Int tilePos in adjacentTiles)
+            _closestTiles = GetClosestOrthogonalTiles(emptyPos, _closestTiles);
+            
+            foreach (Vector2Int tilePos in _closestTiles)
             {
                 TileColor color = stageGenerator.grid[tilePos.y, tilePos.x];
+                
                 if (color == TileColor.None) continue;
-                if (!colorCount.ContainsKey(color))
-                    colorCount[color] = 0;
-                colorCount[color]++;
+                
+                if (!_colorCountDict.ContainsKey(color))
+                    _colorCountDict[color] = 0;
+
+                _colorCountDict[color]++;
             }
 
-            // 동일 색상의 타일이 2개 이상 존재하면 이동(제거)이 가능한 것으로 판단
-            foreach (var kvp in colorCount)
+            // 동일 색상의 타일이 2개 이상 존재하면 제거 가능
+            foreach (var kvp in _colorCountDict)
             {
                 if (kvp.Value >= 2)
                     return false;
             }
-        }
-        // 모든 후보에서 검사했지만 제거 가능한 그룹이 없다면, 더 이상 제거할 수 없음.
+        }      
+
+        // 모든 빈 칸에서 검사했지만 제거 가능한 타일이 없다면
         return true;
     }
     #endregion
