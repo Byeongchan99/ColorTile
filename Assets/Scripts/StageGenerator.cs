@@ -9,8 +9,8 @@ public class StageGenerator : MonoBehaviour
     [Header("Grid Settings")]
     public int rows;
     public int columns;
-    private const int MaxRows = 18;
-    private const int MaxColumns = 9;
+    private const int _maxRows = 18;
+    private const int _maxColumns = 9;
     public float cellSize; // 한 칸의 크기
     public Transform normalboardPos; // 노말 모드 보드 오브젝트의 위치
     public Transform infiniteboardPos; // 무한 모드 보드 오브젝트의 위치
@@ -20,14 +20,15 @@ public class StageGenerator : MonoBehaviour
     [SerializeField] private int _pairCount; // 각 색상별 쌍 개수
     [SerializeField] private int _colorCount; // 사용 색상 개수 (None 제외)
     public int totalTileCount; // 총 타일 개수(_pairCount * _colorCount * 2)
+    private List<TileColor> _pairColors = new List<TileColor>(); // 색상별 쌍 리스트 (타일 색상)
 
     [Header("Tile Prefab")]
     public TilePool tilePool; // 타일 오브젝트 풀
     
     // 스테이지 전체를 관리하는 2차원 배열 (PlayManager에서 참조)
-    public TileColor[,] grid = new TileColor[MaxRows, MaxColumns];
+    public TileColor[,] grid = new TileColor[_maxRows, _maxColumns];
     // 실제 타일 오브젝트들을 관리하는 배열
-    public GameObject[,] tileObjects = new GameObject[MaxRows, MaxColumns];
+    public GameObject[,] tileObjects = new GameObject[_maxRows, _maxColumns];
 
     private void Awake()
     {
@@ -61,12 +62,12 @@ public class StageGenerator : MonoBehaviour
             return;
         }
 
-        // 1. grid와 tileObjects 초기화 (모든 칸을 None, null로 설정)
+        // grid와 tileObjects 초기화 (모든 칸을 None, null로 설정)
         totalTileCount = _pairCount * _colorCount * 2; // 총 타일 개수 계산
 
-        for (int y = 0; y < MaxRows; y++)
+        for (int y = 0; y < _maxRows; y++)
         {
-            for (int x = 0; x < MaxColumns; x++)
+            for (int x = 0; x < _maxColumns; x++)
             {
                 // 기존의 타일들 제거
                 if (tileObjects[y, x] != null)
@@ -85,28 +86,29 @@ public class StageGenerator : MonoBehaviour
     {
         // 1. 스테이지 초기화
         InitStage();
-        // 2. 색상별 쌍 리스트 생성 (총 pairCount * colorCount 쌍)
-        List<TileColor> pairColors = new List<TileColor>();
+        // 2. 색상별 쌍 리스트 초기화 (총 pairCount * colorCount 쌍)
+        _pairColors.Clear();
+
         for (int colorIndex = 1; colorIndex <= _colorCount; colorIndex++)
         {
             for (int i = 0; i < _pairCount; i++)
             {
-                pairColors.Add((TileColor)colorIndex);
+                _pairColors.Add((TileColor)colorIndex);
             }
         }
 
         // 3. 쌍 순서를 랜덤으로 섞기
-        for (int i = 0; i < pairColors.Count; i++)
+        for (int i = 0; i < _pairColors.Count; i++)
         {
-            TileColor temp = pairColors[i];
-            int randomIndex = Random.Range(i, pairColors.Count);
-            pairColors[i] = pairColors[randomIndex];
-            pairColors[randomIndex] = temp;
+            TileColor temp = _pairColors[i];
+            int randomIndex = Random.Range(i, _pairColors.Count);
+            _pairColors[i] = _pairColors[randomIndex];
+            _pairColors[randomIndex] = temp;
         }
 
         // 4. 각 쌍을 ver.2 로직에 따라 배치
         int MAX_ATTEMPTS = 1000;
-        foreach (TileColor color in pairColors)
+        foreach (TileColor color in _pairColors)
         {
             bool placed = false;
             int attempt = 0;
@@ -345,8 +347,8 @@ public class StageGenerator : MonoBehaviour
         grid[pos2.y, pos2.x] = color;
 
         // grid 좌표를 월드 좌표로 변환하여 타일 생성 (각 칸의 중심은 (cellSize/2, cellSize/2)만큼 오프셋)
-        Vector3 worldPos1 = GetWorldPosition(pos1);
-        Vector3 worldPos2 = GetWorldPosition(pos2);
+        Vector3 worldPos1 = GridToWorldPosition(pos1);
+        Vector3 worldPos2 = GridToWorldPosition(pos2);
 
         GameObject tile1 = tilePool.Get(color, worldPos1);
         GameObject tile2 = tilePool.Get(color, worldPos2);
@@ -356,7 +358,7 @@ public class StageGenerator : MonoBehaviour
     }
 
     // grid 좌표 → 월드 좌표 변환
-    public Vector3 GetWorldPosition(Vector2Int gridPos)
+    public Vector3 GridToWorldPosition(Vector2Int gridPos)
     {
         // boardPos.position을 기준으로 각 셀의 오프셋을 더함.
         return boardPos.position + new Vector3(gridPos.x * cellSize + cellSize / 2,

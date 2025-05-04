@@ -409,6 +409,8 @@ MonoBehaviour:
   scoreRatio: 0.35
   pauseRatio: 0.15
   rightPaddingRatio: 0.05
+  screenWidth: 0
+  screenHeight: 0
 --- !u!1 &131867886
 GameObject:
   m_ObjectHideFlags: 0
@@ -1553,10 +1555,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cf47e012ef052c4ebbe2bb78201b2b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exitButton: {fileID: 230161481}
-  retryButton: {fileID: 586735369}
-  optionButton: {fileID: 524230757}
-  mainButton: {fileID: 675936152}
 --- !u!1 &460621656
 GameObject:
   m_ObjectHideFlags: 0
@@ -2425,37 +2423,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 030e828ab11dfc640a75959edc1ee239, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pools:
-  - color: 8
-    prefab: {fileID: 1013087852384782845, guid: 080e821ba7396b3439542cecff977f56, type: 3}
-    preloadCount: 10
-  - color: 3
-    prefab: {fileID: 3201441611351008911, guid: 1368cd5c38ad6004a95993dd3b63b04e, type: 3}
-    preloadCount: 10
-  - color: 4
-    prefab: {fileID: 7502561436463056045, guid: f9aff31eda783504f8bf2c5973fefda9, type: 3}
-    preloadCount: 10
-  - color: 7
-    prefab: {fileID: 3408144753225075697, guid: 7f0c8042bbe359d489c495f818f5bc10, type: 3}
-    preloadCount: 10
-  - color: 6
-    prefab: {fileID: 5561266232563233018, guid: bb004731855dfe2419fbb11d390db567, type: 3}
-    preloadCount: 10
-  - color: 2
-    prefab: {fileID: 2623143937281074210, guid: e50991985c6320f44a434d5bad29a647, type: 3}
-    preloadCount: 10
-  - color: 10
-    prefab: {fileID: 5256468732765958890, guid: 23c44f55b36319b489b22f70b0555d2d, type: 3}
-    preloadCount: 10
-  - color: 9
-    prefab: {fileID: 3742095679469759135, guid: 68a95cfa6b23b37449ae0f30dabb3c29, type: 3}
-    preloadCount: 10
+  _poolSettings:
   - color: 1
     prefab: {fileID: 1328728263180657370, guid: e599e6a17f4c5d04194b1da30e9eae75, type: 3}
-    preloadCount: 10
+    initialSize: 10
+  - color: 2
+    prefab: {fileID: 2623143937281074210, guid: e50991985c6320f44a434d5bad29a647, type: 3}
+    initialSize: 10
+  - color: 3
+    prefab: {fileID: 3201441611351008911, guid: 1368cd5c38ad6004a95993dd3b63b04e, type: 3}
+    initialSize: 10
+  - color: 4
+    prefab: {fileID: 7502561436463056045, guid: f9aff31eda783504f8bf2c5973fefda9, type: 3}
+    initialSize: 10
   - color: 5
     prefab: {fileID: 4219133518455607408, guid: b99f0cc869bdcf74885e45f3d3590068, type: 3}
-    preloadCount: 10
+    initialSize: 10
+  - color: 6
+    prefab: {fileID: 5561266232563233018, guid: bb004731855dfe2419fbb11d390db567, type: 3}
+    initialSize: 10
+  - color: 7
+    prefab: {fileID: 3408144753225075697, guid: 7f0c8042bbe359d489c495f818f5bc10, type: 3}
+    initialSize: 10
+  - color: 8
+    prefab: {fileID: 1013087852384782845, guid: 080e821ba7396b3439542cecff977f56, type: 3}
+    initialSize: 10
+  - color: 9
+    prefab: {fileID: 3742095679469759135, guid: 68a95cfa6b23b37449ae0f30dabb3c29, type: 3}
+    initialSize: 10
+  - color: 10
+    prefab: {fileID: 5256468732765958890, guid: 23c44f55b36319b489b22f70b0555d2d, type: 3}
+    initialSize: 10
 --- !u!4 &663033826
 Transform:
   m_ObjectHideFlags: 0

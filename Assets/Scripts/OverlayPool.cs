@@ -6,10 +6,10 @@ public class OverlayPool : MonoBehaviour
 {
     [Header("Pool Settings")]
     public GameObject overlayPrefab; // 오버레이 프리팹
-    public Transform overlayContainer; // 인스펙터에서 할당
-    public int initialSize = 30;
+    public Transform overlayContainer; // 오버레이들을 담을 부모 오브젝트
+    public int initialSize = 30; // 초기 풀 크기
 
-    Queue<GameObject> _pool = new Queue<GameObject>();
+    private Queue<GameObject> _pool = new Queue<GameObject>();
 
     void Awake()
     {
@@ -44,7 +44,6 @@ public class OverlayPool : MonoBehaviour
     public void Return(GameObject go)
     {
         go.SetActive(false);
-        go.transform.SetParent(overlayContainer, worldPositionStays: false);
         _pool.Enqueue(go);
     }
 }

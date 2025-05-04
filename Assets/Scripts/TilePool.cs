@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using static Enums;
 
@@ -12,22 +11,27 @@ public class TilePool : MonoBehaviour
     {
         public TileColor color;
         public GameObject prefab;
-        public int preloadCount;
+        public int initialSize;
     }
 
-    [SerializeField] private Pool[] pools;
-    private Dictionary<TileColor, Queue<GameObject>> _queues;
+    [SerializeField] private Pool[] _poolSettings;
+    private Dictionary<TileColor, Queue<GameObject>> _pool = new Dictionary<TileColor, Queue<GameObject>>();
 
     void Awake()
     {
-        _queues = pools.ToDictionary(p => p.color, p => new Queue<GameObject>());
-        foreach (var p in pools)
-            Preload(p.color, p.prefab, p.preloadCount);
+        for (int i = 0; i < _poolSettings.Length; i++)
+        {
+            var color = _poolSettings[i].color;
+            _pool.Add(color, new Queue<GameObject>());
+        }
+
+        for (int i = 0; i < _poolSettings.Length; i++)
+            Preload(_poolSettings[i].color, _poolSettings[i].prefab, _poolSettings[i].initialSize);
     }
 
     void Preload(TileColor color, GameObject prefab, int count)
     {
-        var q = _queues[color];
+        var q = _pool[color];
         for (int i = 0; i < count; i++)
         {
             var go = Instantiate(prefab, transform);
@@ -38,17 +42,37 @@ public class TilePool : MonoBehaviour
 
     public GameObject Get(TileColor color, Vector3 position)
     {
-        var q = _queues[color];
-        GameObject tile = q.Count > 0 ? q.Dequeue() : Instantiate(pools.First(p => p.color == color).prefab, transform);
-        tile.transform.position = position;
-        tile.transform.rotation = Quaternion.identity; // Reset rotation
-        tile.SetActive(true);
-        return tile;
+        var q = _pool[color];
+        GameObject go;
+
+        if (q.Count > 0)
+        {
+            go = q.Dequeue();
+        }
+        else
+        {
+            GameObject prefabToInstantiate = null;
+            for (int i = 0; i < _poolSettings.Length; i++)
+            {
+                if (_poolSettings[i].color == color)
+                {
+                    prefabToInstantiate = _poolSettings[i].prefab;
+                    break;
+                }
+            }
+            go = Instantiate(prefabToInstantiate, transform);
+        }
+
+        go.transform.position = position;
+        go.transform.rotation = Quaternion.identity;
+        go.SetActive(true);
+
+        return go;
     }
 
     public void Return(GameObject tile, TileColor color)
     {
         tile.SetActive(false);
-        _queues[color].Enqueue(tile);
+        _pool[color].Enqueue(tile);
     }
 }

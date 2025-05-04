@@ -12,7 +12,7 @@ public class LoadingScreenManager : MonoBehaviour
     // Hide : 1.5f => 0.75f(재생 속도 반영)
     [SerializeField] private float _hideDuration = 0.75f; // Hide 애니메이션이 끝나기까지 걸리는 시간(초)
     [Tooltip("애니메이션 재생 속도")]
-    [SerializeField] private float _animationSpeed = 2f; // 애니메이션 재생 속도
+    //[SerializeField] private float _animationSpeed = 2f; // 애니메이션 재생 속도
 
     private Animator _animator;
 
