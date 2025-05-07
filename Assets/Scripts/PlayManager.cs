@@ -418,7 +418,7 @@ public class PlayManager : MonoBehaviour
         float bounceHeight = Random.Range(minHeight, maxHeight); // 튕겨오를 높이
         float minLength = _cellSize * _minLengthCoeff; // 튕겨나갈 최소 거리
         float maxLength = _cellSize * _maxLengthCoeff; // 튕겨나갈 최대 거리
-        int direction = Random.Range(0, 1) > 0.5 ? -1 : 1; // 튕겨나갈 방향
+        int direction = Random.Range(0f, 1f) > 0.5f ? -1 : 1; // 튕겨나갈 방향
         float bounceLength = _cellSize * direction * Random.Range(minLength, maxLength); // 튕겨나갈 거리
         float downDistance = _rows * _cellSize + 1f; // 떨어지는 거리
 

@@ -37,6 +37,21 @@ public class UIManager : MonoBehaviour
     private void Awake()
     {
         Initialize();
+
+        if (!PlayerPrefs.HasKey("NormalHighScore"))
+        {
+            PlayerPrefs.SetInt("NormalHighScore", 0);
+        }
+
+        if (!PlayerPrefs.HasKey("NormalBestTime"))
+        {
+            PlayerPrefs.SetInt("NormalBestTime", 9999);
+        }
+
+        if (!PlayerPrefs.HasKey("InfiniteHighScore"))
+        {
+            PlayerPrefs.SetInt("InfiniteHighScore", 0);
+        }
     }
 
     private void OnEnable()
@@ -151,27 +166,96 @@ public class UIManager : MonoBehaviour
     public void EndGame(GameResult result)
     {
         //gameManager.StopTime();
-        ShowResult(result);      
+        if (GameManager.gameMode == GameMode.Normal)
+            ShowNormalResult(result);
+        else if (GameManager.gameMode == GameMode.Infinite)
+            ShowInfiniteResult(result);  
     }
 
     // 게임 종료 결과 UI 표시
-    public void ShowResult(GameResult result)
+    public void ShowNormalResult(GameResult result)
     {
+        // 1) 현재 세션 점수
+        int currentScore = playManager.Score;
+
+        // 2) 저장된 최고 점수 불러오기
+        int bestScore = PlayerPrefs.GetInt("NormalHighScore", 0);
+        int bestTime = PlayerPrefs.GetInt("NormalBestTime", 0);
+
+        // 3) 최고 점수 갱신
+        if (currentScore > bestScore)
+        {
+            bestScore = currentScore;
+
+            PlayerPrefs.SetInt("NormalHighScore", bestScore);
+            PlayerPrefs.SetInt("NormalBestTime", (int)playManager.timeRemaining);
+            
+            PlayerPrefs.Save(); 
+        }
+        else if (currentScore == bestScore) // 최고 점수와 동일하지만 시간 기록 갱신
+        {
+            bestScore = currentScore;
+
+            PlayerPrefs.SetInt("NormalHighScore", bestScore);
+            if (playManager.timeRemaining > bestTime)
+            {
+                bestTime = (int)playManager.timeRemaining;
+                PlayerPrefs.SetInt("NormalBestTime", (int)playManager.timeRemaining);
+            }
+            
+            PlayerPrefs.Save();
+        }
+
+        // 4) UI 띄우기
         ResultUI.SetActive(true);
         resultText.gameObject.SetActive(true);
+
+        // 공통으로 항상 보여줄 내용 (현재 점수, 최고 기록)
+        string scoreInfo = $"\n\nYour Score: {currentScore}\nBest Score: {bestScore}\nBest Remain Time: {bestTime}";
+
         if (result == GameResult.Cleared)
         {
-            resultText.text = "Stage cleared!\nYou win!\n\nScore: " + playManager.Score + "\nRemain Time: " + (int)playManager.timeRemaining;
+            resultText.text = "Stage cleared!\nYou win!" + scoreInfo
+                            + $"\nRemain Time: {(int)playManager.timeRemaining}";
         }
         else if (result == GameResult.NoRemovableTiles)
         {
-            resultText.text = "No removable tiles!\nGame Over!\nScore: " + playManager.Score;
+            resultText.text = "No removable tiles!\nGame Over!" + scoreInfo;
         }
         else if (result == GameResult.TimeOver)
         {
-            resultText.text = "Time's up!\nGame Over!\nScore: " + playManager.Score;
+            resultText.text = "Time's up!\nGame Over!" + scoreInfo;
         }
-    } 
+    }
+
+    public void ShowInfiniteResult(GameResult result)
+    {
+        // 1) 현재 세션 점수
+        int currentScore = playManager.Score;
+
+        // 2) 저장된 최고 점수 불러오기
+        int bestScore = PlayerPrefs.GetInt("InfiniteHighScore", 0);
+
+        // 3) 최고 점수 갱신
+        if (currentScore > bestScore)
+        {
+            bestScore = currentScore;
+            PlayerPrefs.SetInt("InfiniteHighScore", bestScore);
+            PlayerPrefs.Save();  // 즉시 디스크에 저장
+        }
+
+        // 4) UI 띄우기
+        ResultUI.SetActive(true);
+        resultText.gameObject.SetActive(true);
+
+        // 공통으로 항상 보여줄 내용 (현재 점수, 최고 기록)
+        string scoreInfo = $"\n\nYour Score: {currentScore}\nBest Score: {bestScore}";
+
+        if (result == GameResult.NoRemovableTiles)
+        {
+            resultText.text = "No removable tiles!\nGame Over!" + scoreInfo;
+        }
+    }
 
     // 메인 화면 닫기
     public void CloseMainUI()
