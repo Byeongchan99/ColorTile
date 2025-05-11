@@ -384,6 +384,13 @@ public class PlayManager : MonoBehaviour
         // 떨어지는 애니메이션 코루틴 실행
         StartCoroutine(DropTileAndDestroy());
 
+        /* 애니메이션 X
+        foreach (var (tile, color) in _tilesToEraseList)
+        {
+            tilePool.Return(tile, color);
+        }
+        */
+
         // 남은 후보 리스트에서 제거 가능한 타일이 없으면 게임 종료
         if (HasNoRemovableTiles() && _remainTileCount > 0)
         {
