@@ -10,14 +10,14 @@ public class Enums
         None,      // 빈 칸
         Red,
         Orange,
-        Brown,
-        Cream,
         Yellow,
+        Olive,
         Green,
-        LightBlue,
+        Mint,
         Blue,
-        Purple,
-        Pink
+        Navy,
+        Indigo,
+        Purple
     }
 
     // 직사각형의 크기를 나타내는 구조체
