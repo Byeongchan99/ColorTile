@@ -17,6 +17,10 @@ public class UIManager : MonoBehaviour
     public GameObject MainUI;
     public GameObject ResultUI;
 
+    // TextMeshPro에서 색상 태그
+    string colorTagStart = "<color=#905734>";
+    string colorTagEnd = "</color>";
+
     [Header("Game Mode Settings")]
     public GameObject NormalModeArea;
     public GameObject InfiniteModeArea;
@@ -96,7 +100,7 @@ public class UIManager : MonoBehaviour
     // 점수 UI 업데이트
     public void UpdateScore(int score)
     {
-        scoreText.text = score.ToString();
+        scoreText.text = colorTagStart + score.ToString() + colorTagEnd;
     }
 
     // 노말 모드 게임 시작 버튼 클릭
@@ -215,16 +219,16 @@ public class UIManager : MonoBehaviour
 
         if (result == GameResult.Cleared)
         {
-            resultText.text = "Stage cleared!\nYou win!" + scoreInfo
-                            + $"\nRemain Time: {(int)playManager.timeRemaining}";
+            resultText.text = colorTagStart + "Stage cleared!\nYou win!" + scoreInfo +
+                              $"\nRemain Time: {(int)playManager.timeRemaining}" + colorTagEnd;
         }
         else if (result == GameResult.NoRemovableTiles)
         {
-            resultText.text = "No removable tiles!\nGame Over!" + scoreInfo;
+            resultText.text = colorTagStart + "No removable tiles!\nGame Over!" + scoreInfo + colorTagEnd;
         }
         else if (result == GameResult.TimeOver)
         {
-            resultText.text = "Time's up!\nGame Over!" + scoreInfo;
+            resultText.text = colorTagStart + "Time's up!\nGame Over!" + scoreInfo + colorTagEnd;
         }
     }
 
@@ -253,7 +257,7 @@ public class UIManager : MonoBehaviour
 
         if (result == GameResult.NoRemovableTiles)
         {
-            resultText.text = "No removable tiles!\nGame Over!" + scoreInfo;
+            resultText.text = colorTagStart + "No removable tiles!\nGame Over!" + scoreInfo + colorTagEnd;
         }
     }
 
