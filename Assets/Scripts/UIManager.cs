@@ -184,7 +184,7 @@ public class UIManager : MonoBehaviour
 
         // 2) 저장된 최고 점수 불러오기
         int bestScore = PlayerPrefs.GetInt("NormalHighScore", 0);
-        int bestTime = PlayerPrefs.GetInt("NormalBestTime", 0);
+        //int bestTime = PlayerPrefs.GetInt("NormalBestTime", 0);
 
         // 3) 최고 점수 갱신
         if (currentScore > bestScore)
@@ -192,7 +192,7 @@ public class UIManager : MonoBehaviour
             bestScore = currentScore;
 
             PlayerPrefs.SetInt("NormalHighScore", bestScore);
-            PlayerPrefs.SetInt("NormalBestTime", (int)playManager.timeRemaining);
+            //PlayerPrefs.SetInt("NormalBestTime", (int)playManager.timeRemaining);
             
             PlayerPrefs.Save(); 
         }
@@ -201,12 +201,13 @@ public class UIManager : MonoBehaviour
             bestScore = currentScore;
 
             PlayerPrefs.SetInt("NormalHighScore", bestScore);
+            /*
             if (playManager.timeRemaining > bestTime)
             {
                 bestTime = (int)playManager.timeRemaining;
                 PlayerPrefs.SetInt("NormalBestTime", (int)playManager.timeRemaining);
             }
-            
+            */
             PlayerPrefs.Save();
         }
 
@@ -215,12 +216,13 @@ public class UIManager : MonoBehaviour
         resultText.gameObject.SetActive(true);
 
         // 공통으로 항상 보여줄 내용 (현재 점수, 최고 기록)
-        string scoreInfo = $"\n\nYour Score: {currentScore}\nBest Score: {bestScore}\nBest Remain Time: {bestTime}";
+        //string scoreInfo = $"\n\nYour Score: {currentScore}\nBest Score: {bestScore}\nBest Remain Time: {bestTime}";
+        string scoreInfo = $"\n\nYour Score: {currentScore}\nBest Score: {bestScore}";
 
         if (result == GameResult.Cleared)
         {
-            resultText.text = colorTagStart + "Stage cleared!\nYou win!" + scoreInfo +
-                              $"\nRemain Time: {(int)playManager.timeRemaining}" + colorTagEnd;
+            //resultText.text = colorTagStart + "Stage cleared!\nYou win!" + scoreInfo + $"\nRemain Time: {(int)playManager.timeRemaining}" + colorTagEnd;
+            resultText.text = colorTagStart + "Stage cleared!\nYou win!" + scoreInfo + colorTagEnd;
         }
         else if (result == GameResult.NoRemovableTiles)
         {

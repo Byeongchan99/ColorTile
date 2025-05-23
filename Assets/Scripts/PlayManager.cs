@@ -218,6 +218,7 @@ public class PlayManager : MonoBehaviour
                             // 스테이지 클리어 처리
                             if (IsStageCleared())
                             {
+                                /*
                                 if (_gameMode == GameMode.Normal)
                                 {
                                     EndGame(GameResult.Cleared);
@@ -226,6 +227,8 @@ public class PlayManager : MonoBehaviour
                                 {
                                     GameEvents.OnClearBoardRequest?.Invoke(); // 무한 모드에서 보드 클리어 시 호출
                                 }
+                                */
+                                GameEvents.OnClearBoardRequest?.Invoke();
                             }
                         }              
                     }
