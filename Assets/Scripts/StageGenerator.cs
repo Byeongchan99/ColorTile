@@ -17,6 +17,8 @@ public class StageGenerator : MonoBehaviour
     public RectTransform normalBoardRect; // 노말 모드 보드 오브젝트의 위치
     public RectTransform infiniteBoardRect; // 무한 모드 보드 오브젝트의 위치
     public RectTransform boardRect; // 보드 오브젝트의 위치(Normal 또는 Infinite에 따라 다름)
+    private Vector3 _gridOrigin;   // 월드 좌표계에서 보드판의 왼쪽-아래
+    public Vector3 GridOrigin => _gridOrigin;
 
     [Header("Tile Pair Settings")]
     [SerializeField] private int _pairCount; // 각 색상별 쌍 개수
@@ -70,6 +72,23 @@ public class StageGenerator : MonoBehaviour
         // 정사각 타일 유지: 폭/열, 높이/행 중 작은 값
         cellSize = Mathf.Min(boardWidth / columns, boardHeight / rows);
         _tileSize = cellSize * fillRatio;
+
+        /* ③ ***새 원점 계산*** ---------------------------------------- */
+        //   1) 보드의 정확한 왼쪽-아래 모서리
+        Vector3[] c = new Vector3[4];
+        boardRect.GetWorldCorners(c);      // 0:BL, 1:TL, 2:TR, 3:BR
+        Vector3 boardBL = c[0];
+
+        //   2) 격자가 차지하는 실제 높이/폭
+        float usedW = cellSize * columns;
+        float usedH = cellSize * rows;
+
+        //   3) 보드 안 남는 여백
+        float marginX = boardWidth - usedW;    // 좌/우 합계
+        float marginY = boardHeight - usedH;    // 상/하 합계
+
+        //   4) 왼쪽-아래 + (좌우여백/2 , 상하여백/2) => 격자 원점
+        _gridOrigin = boardBL + new Vector3(marginX * 0.5f, marginY * 0.5f, 0f);
 
         // grid와 tileObjects 초기화 (모든 칸을 None, null로 설정)
         totalTileCount = _pairCount * _colorCount * 2; // 총 타일 개수 계산
@@ -547,7 +566,7 @@ public class StageGenerator : MonoBehaviour
     public Vector3 GridToWorldPosition(Vector2Int gridPos)
     {
         // boardRect.position을 기준으로 각 셀의 오프셋을 더함.
-        return boardRect.position + new Vector3(gridPos.x * cellSize + cellSize * 0.5f,
+        return _gridOrigin + new Vector3(gridPos.x * cellSize + cellSize * 0.5f,
                                                  gridPos.y * cellSize + cellSize * 0.5f, 0f);
     }
 
