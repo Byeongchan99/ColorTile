@@ -130,7 +130,7 @@ public class PlayManager : MonoBehaviour
         
         // stageGenerator에서 보드판의 칸 크기와 위치를 가져옴
         _cellSize = stageGenerator.cellSize;
-        _boardPos = stageGenerator.boardPos.position;
+        _boardPos = stageGenerator.boardRect.position;
 
         // 빈 칸 리스트 초기화
         _emptyCellsSet.Clear();
