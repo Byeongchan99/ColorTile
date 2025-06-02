@@ -391,13 +391,13 @@ TextureImporter:
       name: ColorTileUI2_12
       rect:
         serializedVersion: 2
-        x: 1486
-        y: 594
-        width: 694
-        height: 102
+        x: 1488
+        y: 595
+        width: 690
+        height: 100
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 15, y: 15, z: 15, w: 15}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -412,13 +412,13 @@ TextureImporter:
       name: ColorTileUI2_13
       rect:
         serializedVersion: 2
-        x: 1486
-        y: 478
-        width: 694
-        height: 103
+        x: 1488
+        y: 480
+        width: 690
+        height: 100
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 15, y: 15, z: 15, w: 15}
       outline: []
       physicsShape: []
       tessellationDetail: 0
