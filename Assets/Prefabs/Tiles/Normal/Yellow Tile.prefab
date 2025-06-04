@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8023410430555315660}
   - component: {fileID: 3396012910588038343}
   m_Layer: 0
-  m_Name: Olive Tile
+  m_Name: Yellow Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73,12 +73,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 20
-  m_Sprite: {fileID: -456282633, guid: dfd2b2919dfaea94694ca66af504aacf, type: 3}
+  m_Sprite: {fileID: -1866944610, guid: dfd2b2919dfaea94694ca66af504aacf, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 5.12, y: 5.12}
+  m_Size: {x: 2.54, y: 2.54}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
