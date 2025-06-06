@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8023410430555315660}
   - component: {fileID: 3396012910588038343}
+  - component: {fileID: -916967858707367211}
   m_Layer: 0
-  m_Name: Orange Tile
+  m_Name: Indigo Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73,7 +74,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 20
-  m_Sprite: {fileID: 44244907, guid: dfd2b2919dfaea94694ca66af504aacf, type: 3}
+  m_Sprite: {fileID: -599933584, guid: dfd2b2919dfaea94694ca66af504aacf, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -84,3 +85,17 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-916967858707367211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013087852384782845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20601371ee1a99f49b507075b9edc941, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  normalSprite: {fileID: -599933584, guid: dfd2b2919dfaea94694ca66af504aacf, type: 3}
+  cbSprite: {fileID: 222283946, guid: dfd2b2919dfaea94694ca66af504aacf, type: 3}

@@ -10,11 +10,13 @@ public class OptionUI : MonoBehaviour
     public Button SFXButton;
     public Button vibrationButton; // 진동 버튼
     public Button closeButton;
+    public Button colorblindButton; // 색약 모드 버튼
 
     [Header("Flags")]
     public bool _isBGMOn = true; // BGM 여부
     public bool _isSFXOn = true; // SFX 여부
     public bool _isVibrationOn = true; // 진동 여부
+    public bool _isColorblindModeOn = false; // 색약 모드 여부
 
     private void Awake()
     {
@@ -25,6 +27,7 @@ public class OptionUI : MonoBehaviour
         BGMButton.onClick.AddListener(ToggleBGM);
         SFXButton.onClick.AddListener(ToggleSFX);
         vibrationButton.onClick.AddListener(ToggleVibration);
+        colorblindButton.onClick.AddListener(ToggleColorblindMode);
 
         if (this.gameObject.activeSelf)
         {
@@ -38,6 +41,7 @@ public class OptionUI : MonoBehaviour
         _isBGMOn = Settings.GetBool(Settings.KEY_BGM);
         _isSFXOn = Settings.GetBool(Settings.KEY_SFX);
         _isVibrationOn = Settings.GetBool(Settings.KEY_VIBRATION);
+        _isColorblindModeOn = Settings.GetBool(Settings.KEY_COLORBLIND_MODE);
 
         RefreshButtons();
 
@@ -45,6 +49,7 @@ public class OptionUI : MonoBehaviour
         GameEvents.OnBGMChanged?.Invoke(_isBGMOn);
         GameEvents.OnSFXChanged?.Invoke(_isSFXOn);
         GameEvents.OnVibrationChanged?.Invoke(_isVibrationOn);
+        GameEvents.OnColorblindModeChanged?.Invoke(_isColorblindModeOn);
     }
 
     public void OpenOption()
@@ -88,11 +93,22 @@ public class OptionUI : MonoBehaviour
         //Debug.Log($"Vibration: {(_isVibrationOn ? "On" : "Off")}");
     }
 
+    // 색약 모드 토글
+    void ToggleColorblindMode()
+    {
+        _isColorblindModeOn = !_isColorblindModeOn;
+        Settings.SetBool(Settings.KEY_COLORBLIND_MODE, _isColorblindModeOn);
+        RefreshButtons();
+        GameEvents.OnColorblindModeChanged?.Invoke(_isColorblindModeOn);
+        //Debug.Log($"Colorblind Mode: {(_isColorblindModeOn ? "On" : "Off")}");
+    }
+
     /// 버튼 색상 변경
     void RefreshButtons()
     {
         BGMButton.image.color = _isBGMOn ? Color.white : Color.gray;
         SFXButton.image.color = _isSFXOn ? Color.white : Color.gray;
         vibrationButton.image.color = _isVibrationOn ? Color.white : Color.gray;
+        colorblindButton.image.color = _isColorblindModeOn ? Color.white : Color.gray;
     }
 }
