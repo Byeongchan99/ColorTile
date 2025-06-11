@@ -1068,7 +1068,7 @@ TextureImporter:
         width: 70
         height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1089,7 +1089,7 @@ TextureImporter:
         width: 70
         height: 70
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1097,6 +1097,27 @@ TextureImporter:
       bones: []
       spriteID: 7e7d65b753f1feb47a0239a78a96126b
       internalID: 211493109
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ColorTileUI3_46
+      rect:
+        serializedVersion: 2
+        x: 2028
+        y: 175
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e4c1de21db147d4ca1a313b2b5fe706
+      internalID: 1322302127
       vertices: []
       indices: 
       edges: []
@@ -1153,6 +1174,7 @@ TextureImporter:
       ColorTileUI3_43: 706799632
       ColorTileUI3_44: 1538930083
       ColorTileUI3_45: 211493109
+      ColorTileUI3_46: 1322302127
       ColorTileUI3_5: -2061435020
       ColorTileUI3_6: -206562060
       ColorTileUI3_7: -846057531
