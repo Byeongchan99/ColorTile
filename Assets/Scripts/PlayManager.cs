@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Profiling;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using static Enums;
 
 public class PlayManager : MonoBehaviour
@@ -158,86 +159,97 @@ public class PlayManager : MonoBehaviour
         }
         */
 
-        if (Input.GetMouseButtonDown(0))
+        // 1) 입력 체크
+        bool mouseClicked = Mouse.current.leftButton.wasPressedThisFrame;
+        bool touchClicked = Touchscreen.current != null
+            && Touchscreen.current.primaryTouch.press.wasPressedThisFrame;
+
+        if (!mouseClicked && !touchClicked)
+            return;
+
+        // 2) 화면 좌표를 Input System 에서 직접 읽어오기
+        Vector2 rawPos = mouseClicked
+            ? Mouse.current.position.ReadValue()
+            : Touchscreen.current.primaryTouch.position.ReadValue();
+
+        // 3) Vector3 로 변환 (Z 는 orthographic 카메라라면 0 으로 놔도 무방)
+        Vector3 screenPos = new Vector3(rawPos.x, rawPos.y, 0f);
+        Vector3 worldPos = ScreenToWorldPosition(screenPos);
+        Vector2Int gridPos = WorldToGridPosition(worldPos);
+
+        // 유효 범위 검사
+        if (IsValidGridPosition(gridPos))
         {
-            Vector3 screenPos = Input.mousePosition;
-            Vector3 worldPos = ScreenToWorldPosition(screenPos);
-            Vector2Int gridPos = WorldToGridPosition(worldPos);
+            //Debug.Log("Clicked grid position: " + gridPos);
 
-            // 유효 범위 검사
-            if (IsValidGridPosition(gridPos))
+            // 클릭한 위치가 빈 칸일 때만 진행
+            if (stageGenerator.grid[gridPos.y, gridPos.x] == TileColor.None)
             {
-                //Debug.Log("Clicked grid position: " + gridPos);
+                // 빈 칸에서 가장 가까운 직교 타일 검색(상하좌우 각 4방향에서 가장 가까운 타일 검색)
+                _matchingTiles = GetClosestOrthogonalTiles(gridPos, _matchingTiles);
+                //Debug.Log("Total adjacent tiles found: " + matchingTiles.Count);
 
-                // 클릭한 위치가 빈 칸일 때만 진행
-                if (stageGenerator.grid[gridPos.y, gridPos.x] == TileColor.None)
+                // 딕셔너리에 가져온 타일 색상과 위치 저장
+                foreach (var pos in _matchingTiles)
                 {
-                    // 빈 칸에서 가장 가까운 직교 타일 검색(상하좌우 각 4방향에서 가장 가까운 타일 검색)
-                    _matchingTiles = GetClosestOrthogonalTiles(gridPos, _matchingTiles);
-                    //Debug.Log("Total adjacent tiles found: " + matchingTiles.Count);
-                                  
-                    // 딕셔너리에 가져온 타일 색상과 위치 저장
-                    foreach (var pos in _matchingTiles)
-                    {
-                        TileColor tileColor = stageGenerator.grid[pos.y, pos.x];
-                        
-                        if (!_tileGroupsDict.ContainsKey(tileColor)) // 딕셔너리에 없는 색상인 경우 추가
-                            _tileGroupsDict[tileColor] = new List<Vector2Int>();
+                    TileColor tileColor = stageGenerator.grid[pos.y, pos.x];
 
-                        _tileGroupsDict[tileColor].Add(pos);
+                    if (!_tileGroupsDict.ContainsKey(tileColor)) // 딕셔너리에 없는 색상인 경우 추가
+                        _tileGroupsDict[tileColor] = new List<Vector2Int>();
+
+                    _tileGroupsDict[tileColor].Add(pos);
+                }
+
+                // 같은 색상의 타일이 2개 이상인 경우에만 제거 리스트에 추가
+                List<Vector2Int> tilesToErase = new List<Vector2Int>();
+                foreach (var kvp in _tileGroupsDict) // kvp = KeyValuePair<TileColor, List<Vector2Int>>
+                {
+                    if (kvp.Value.Count >= 2)
+                    {
+                        //Debug.Log("Removing group of color: " + kvp.Key + ", count: " + kvp.Value.Count);
+                        tilesToErase.AddRange(kvp.Value);
                     }
+                }
 
-                    // 같은 색상의 타일이 2개 이상인 경우에만 제거 리스트에 추가
-                    List<Vector2Int> tilesToErase = new List<Vector2Int>();
-                    foreach (var kvp in _tileGroupsDict) // kvp = KeyValuePair<TileColor, List<Vector2Int>>
+                _tileGroupsDict.Clear(); // 딕셔너리 초기화
+
+                // 제거할 타일이 있는 경우
+                if (tilesToErase.Count > 0)
+                {
+                    // 오버레이 표시
+                    ShowOverlay(gridPos, tilesToErase);
+
+                    // 타일 제거
+                    EraseTiles(tilesToErase);
+
+                    // 남은 타일 수 감소
+                    _totalTileCount -= tilesToErase.Count;
+
+                    // 모든 타일이 제거된 경우 - 스테이지 클리어
+                    if (_totalTileCount <= 0)
                     {
-                        if (kvp.Value.Count >= 2)
+                        // 스테이지 클리어 처리
+                        if (IsStageCleared())
                         {
-                            //Debug.Log("Removing group of color: " + kvp.Key + ", count: " + kvp.Value.Count);
-                            tilesToErase.AddRange(kvp.Value);
+                            /*
+                            if (_gameMode == GameMode.Normal)
+                            {
+                                EndGame(GameResult.Cleared);
+                            }
+                            else
+                            {
+                                GameEvents.OnClearBoardRequest?.Invoke(); // 무한 모드에서 보드 클리어 시 호출
+                            }
+                            */
+                            GameEvents.OnClearBoardRequest?.Invoke();
                         }
                     }
-
-                    _tileGroupsDict.Clear(); // 딕셔너리 초기화
-
-                    // 제거할 타일이 있는 경우
-                    if (tilesToErase.Count > 0)
-                    {
-                        // 오버레이 표시
-                        ShowOverlay(gridPos, tilesToErase);
-
-                        // 타일 제거
-                        EraseTiles(tilesToErase);
-                        
-                        // 남은 타일 수 감소
-                        _totalTileCount -= tilesToErase.Count; 
-
-                        // 모든 타일이 제거된 경우 - 스테이지 클리어
-                        if (_totalTileCount <= 0)
-                        {
-                            // 스테이지 클리어 처리
-                            if (IsStageCleared())
-                            {
-                                /*
-                                if (_gameMode == GameMode.Normal)
-                                {
-                                    EndGame(GameResult.Cleared);
-                                }
-                                else
-                                {
-                                    GameEvents.OnClearBoardRequest?.Invoke(); // 무한 모드에서 보드 클리어 시 호출
-                                }
-                                */
-                                GameEvents.OnClearBoardRequest?.Invoke();
-                            }
-                        }              
-                    }
-                    // 제거할 타일이 없는 경우 = 잘못된 입력 -> 패널티 적용
-                    else
-                    {
-                        GetPenaltiy();
-                        //Debug.Log("No matching adjacent groups found. Penalty applied.");
-                    }
+                }
+                // 제거할 타일이 없는 경우 = 잘못된 입력 -> 패널티 적용
+                else
+                {
+                    GetPenaltiy();
+                    //Debug.Log("No matching adjacent groups found. Penalty applied.");
                 }
             }
         }
