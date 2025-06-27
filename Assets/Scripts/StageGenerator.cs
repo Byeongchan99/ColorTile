@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static Enums;
-using static UnityEditor.PlayerSettings;
 
 public class StageGenerator : MonoBehaviour
 {
@@ -14,11 +13,11 @@ public class StageGenerator : MonoBehaviour
     public float cellSize; // 보드판 한 칸의 크기
     [SerializeField] private float _tileSize; // 타일 크기
     public float fillRatio = 0.9f; // 한 칸에서 타일이 차지하는 비율
-    public RectTransform normalBoardRect; // 노말 모드 보드 오브젝트의 위치
-    public RectTransform infiniteBoardRect; // 무한 모드 보드 오브젝트의 위치
-    public RectTransform boardRect; // 보드 오브젝트의 위치(Normal 또는 Infinite에 따라 다름)
+    public RectTransform normalBoardRect; // 노말 모드 보드판의 위치
+    public RectTransform infiniteBoardRect; // 무한 모드 보드판의 위치
+    public RectTransform boardRect; // 보드판의 위치(Normal 또는 Infinite에 따라 다름)
     private Vector3 _gridOrigin;   // 월드 좌표계에서 보드판의 왼쪽-아래
-    public Vector3 GridOrigin => _gridOrigin;
+    public Vector3 GridOrigin => _gridOrigin; // playManager에서 참조할 수 있도록 프로퍼티 사용
 
     [Header("Tile Pair Settings")]
     [SerializeField] private int _pairCount; // 각 색상별 쌍 개수

@@ -9,9 +9,18 @@ public class GameManager : MonoBehaviour
     public bool isPaused = true;
     public static GameMode gameMode; // 게임 모드 (Normal, Infinite)
 
+    [SerializeField, Tooltip("목표 FPS (0 = 무제한)")]
+    int targetFps = 60;
+
     void Awake()
     {
-        StopTime(); 
+        StopTime();
+
+        // 60프레임 설정
+        // V Sync 완전히 해제
+        QualitySettings.vSyncCount = 0;
+        // Application.targetFrameRate에 따라 프레임 고정
+        Application.targetFrameRate = targetFps;
     }
  
     private void OnEnable()

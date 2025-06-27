@@ -159,21 +159,17 @@ public class PlayManager : MonoBehaviour
         }
         */
 
-        // 1) 입력 체크
-        bool mouseClicked = Mouse.current.leftButton.wasPressedThisFrame;
-        bool touchClicked = Touchscreen.current != null
-            && Touchscreen.current.primaryTouch.press.wasPressedThisFrame;
+        var ptr = Pointer.current;
+        if (ptr == null) return;
 
-        if (!mouseClicked && !touchClicked)
-            return;
+        // 눌림이 시작된 프레임인지 체크
+        if (!ptr.press.wasPressedThisFrame) return;
 
-        // 2) 화면 좌표를 Input System 에서 직접 읽어오기
-        Vector2 rawPos = mouseClicked
-            ? Mouse.current.position.ReadValue()
-            : Touchscreen.current.primaryTouch.position.ReadValue();
-
-        // 3) Vector3 로 변환 (Z 는 orthographic 카메라라면 0 으로 놔도 무방)
+        // 좌표 읽기
+        Vector2 rawPos = ptr.position.ReadValue();
         Vector3 screenPos = new Vector3(rawPos.x, rawPos.y, 0f);
+
+        // 이하 기존 처리
         Vector3 worldPos = ScreenToWorldPosition(screenPos);
         Vector2Int gridPos = WorldToGridPosition(worldPos);
 
@@ -396,6 +392,8 @@ public class PlayManager : MonoBehaviour
 
         // 효과음 재생
         GameEvents.OnPlaySFX?.Invoke(1); // SFX 인덱스 1으로 재생
+        // 진동
+        GameEvents.OnPlayVibration?.Invoke();
         // 떨어지는 애니메이션 코루틴 실행
         StartCoroutine(DropTileAndDestroy());
 

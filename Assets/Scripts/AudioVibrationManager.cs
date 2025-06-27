@@ -40,7 +40,9 @@ public class AudioVibrationManager : MonoBehaviour
         GameEvents.OnBGMChanged += OnBGMChanged;
         GameEvents.OnSFXChanged += OnSFXChanged;
         GameEvents.OnVibrationChanged += OnVibrationChanged;
+
         GameEvents.OnPlaySFX += PlaySFX;
+        GameEvents.OnPlayVibration += PlayVibrate;
     }
 
     void OnDisable()
@@ -48,7 +50,9 @@ public class AudioVibrationManager : MonoBehaviour
         GameEvents.OnBGMChanged -= OnBGMChanged;
         GameEvents.OnSFXChanged -= OnSFXChanged;
         GameEvents.OnVibrationChanged -= OnVibrationChanged;
+
         GameEvents.OnPlaySFX -= PlaySFX;
+        GameEvents.OnPlayVibration -= PlayVibrate;
     }
 
     void OnBGMChanged(bool on) => ApplyBGM(_isBGMOn = on);
@@ -75,7 +79,7 @@ public class AudioVibrationManager : MonoBehaviour
     /// <summary>
     /// 진동 호출
     /// </summary>
-    public void Vibrate()
+    public void PlayVibrate()
     {
         if (_isVibrationOn)
             Handheld.Vibrate();

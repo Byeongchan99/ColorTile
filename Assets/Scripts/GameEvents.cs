@@ -39,5 +39,6 @@ public static class GameEvents
     public static Action<bool> OnColorblindModeChanged; // 색약 모드 설정 변경 시 호출
 
     // AudioVibrationManager
-    public static Action<int> OnPlaySFX; // SFX 재생 시 호출    
+    public static Action<int> OnPlaySFX; // SFX 재생 시 호출
+    public static Action OnPlayVibration; // SFX 재생 및 진동 시 호출
 }
