@@ -16,38 +16,62 @@ public class LoadingScreenManager : MonoBehaviour
 
     private Animator _animator;
 
+    private bool _isLoading;
+
     private void Awake()
     {
-        _animator = transform.GetComponent<Animator>();
-       
-        GameEvents.OnGameStartedRequest += () =>
-           StartCoroutine(RevealLoadingScreen(GameEvents.OnGameStarted, _revealDuration));
-        GameEvents.OnRetryGameRequest += () =>
-           StartCoroutine(RevealLoadingScreen(GameEvents.OnRetryGame, _revealDuration));
-        GameEvents.OnClearBoardRequest += () =>
-           StartCoroutine(RevealLoadingScreen(GameEvents.OnClearBoard, _revealDuration));
-        GameEvents.OnGoToMainRequest += () =>
-           StartCoroutine(RevealAndHideLoagindScreen(GameEvents.OnGoToMainFirst, GameEvents.OnGoToMainSecond, _revealDuration, _hideDuration));
+        _animator = GetComponent<Animator>();
+
+        GameEvents.OnGameStartedRequest += () => TryStartLoading(RevealLoadingScreen(GameEvents.OnGameStarted, _revealDuration));
+        GameEvents.OnRetryGameRequest += () => TryStartLoading(RevealLoadingScreen(GameEvents.OnRetryGame, _revealDuration));
+        GameEvents.OnClearBoardRequest += () => TryStartLoading(RevealLoadingScreen(GameEvents.OnClearBoard, _revealDuration));
+        GameEvents.OnGoToMainRequest += () => TryStartLoading(RevealAndHideLoagindScreen(
+                                                  GameEvents.OnGoToMainFirst,
+                                                  GameEvents.OnGoToMainSecond,
+                                                  _revealDuration,
+                                                  _hideDuration));
+    }
+
+    private void TryStartLoading(IEnumerator loadingCoroutine)
+    {
+        if (_isLoading)
+            return;            // 이미 로딩 중이면 무시
+
+        StartCoroutine(LoadingFlow(loadingCoroutine));
+    }
+
+    private IEnumerator LoadingFlow(IEnumerator routine)
+    {
+        _isLoading = true;      // 여기서 “로딩 시작”
+        yield return StartCoroutine(routine);
+        _isLoading = false;     // 끝나면 “로딩 끝”
     }
 
     /// <summary>
     /// Reveal 트리거 → unscaled 시간 대기 → next 액션 호출
     /// </summary>
-    public IEnumerator RevealLoadingScreen(Action nextEvent, float duration)
+    public IEnumerator RevealLoadingScreen(Action nextEvent, float revealDuration)
     {
         _animator.SetTrigger("Reveal");
-        yield return new WaitForSecondsRealtime(duration);
+        yield return new WaitForSecondsRealtime(revealDuration);
+
         nextEvent?.Invoke();
+
         _animator.SetTrigger("Hide");
+        // Hide 애니메이션이 끝날 때까지 대기
+        yield return new WaitForSecondsRealtime(_hideDuration);
     }
 
     public IEnumerator RevealAndHideLoagindScreen(Action firstEvent, Action secondEvent, float revealDuration, float hideDuration)
     {
         _animator.SetTrigger("Reveal");
         yield return new WaitForSecondsRealtime(revealDuration);
+
         firstEvent?.Invoke();
+
         _animator.SetTrigger("Hide");
         yield return new WaitForSecondsRealtime(hideDuration);
+
         secondEvent?.Invoke();
     }
 }

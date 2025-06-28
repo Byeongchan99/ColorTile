@@ -161,7 +161,7 @@ public class UIManager : MonoBehaviour
     // 일시정지 버튼 클릭
     public void OnClickPauseButton()
     {
-        GameEvents.OnPauseGame?.Invoke(); // 게임 일시정지 이벤트 호출
+        //GameEvents.OnPauseGame?.Invoke(); // 게임 일시정지 이벤트 호출
         //gameManager.StopTime();
         PauseUI.SetActive(true); // 일시정지 UI 활성화
     }

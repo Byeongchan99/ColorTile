@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
         GameEvents.OnResumeGame += StartTime; // 게임 재개 시 시간 재개
         GameEvents.OnRetryGame += StartTime; // 게임 재시작 시 시간 재개
         
-        GameEvents.OnPauseGame += StopTime; // 게임 일시정지 시 시간 정지
+        //GameEvents.OnPauseGame += StopTime; // 게임 일시정지 시 시간 정지
         // OnGameEnded 이벤트는 bool 파라미터를 무시하고 StopTime() 실행
         GameEvents.OnGameEnded += (GameResult result) => StopTime(); // 게임 종료 시 시간 정지
         GameEvents.OnGoToMainSecond += StopTime; // 메인 화면으로 이동 시 시간 정지

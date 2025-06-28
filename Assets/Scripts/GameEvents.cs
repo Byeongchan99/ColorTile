@@ -16,7 +16,7 @@ public static class GameEvents
     // StageGenerator
     public static Action OnGameStartedRequest; // 게임 시작 시 호출
     public static Action OnGameStarted; // OnGameStartedRequest 이후 실행  
-    public static Action OnPauseGame; // 게임 일시정지 시 호출
+    //public static Action OnPauseGame; // 게임 일시정지 시 호출
     
     // PauseUI, GameManager
     public static Action OnResumeGame; // 게임 재개 시 호출
