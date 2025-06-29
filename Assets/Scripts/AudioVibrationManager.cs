@@ -17,6 +17,19 @@ public class AudioVibrationManager : MonoBehaviour
     private Dictionary<int, AudioClip> _sfxDictonary;
     private bool _isBGMOn, _isSFXOn, _isVibrationOn;
 
+    [Header("Vibration Settings")]
+    [Tooltip("진동 지속 시간(밀리초)")]
+    [SerializeField] private int vibrationDurationMs = 50;
+    [Tooltip("진동 세기(1~255)")]
+    [SerializeField, Range(1, 255)] private int vibrationAmplitude = 50;
+
+    // 진동 API 설정
+#if UNITY_ANDROID && !UNITY_EDITOR
+    private AndroidJavaObject _vibrator;
+    private AndroidJavaClass _vibrationEffectClass;
+    private bool _supportsVibrationEffect;
+#endif
+
     void Awake()
     {
         // 옵션 상태 불러오기
@@ -33,6 +46,9 @@ public class AudioVibrationManager : MonoBehaviour
         for (int i = 0; i < sfxClips.Count; i++)
             if (sfxClips[i] != null)
                 _sfxDictonary[i] = sfxClips[i];
+
+        // 진동 세팅
+        SettingVibrate();
     }
 
     void OnEnable()
@@ -76,13 +92,61 @@ public class AudioVibrationManager : MonoBehaviour
         }
     }
 
+    public void SettingVibrate()
+    {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        if (_vibrator == null)
+        {
+            try
+            {
+                var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+                var activity    = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+                var context     = activity.Call<AndroidJavaObject>("getApplicationContext");
+                _vibrator       = context.Call<AndroidJavaObject>("getSystemService", "vibrator");
+
+                var versionClass = new AndroidJavaClass("android.os.Build$VERSION");
+                int sdkInt       = versionClass.GetStatic<int>("SDK_INT");
+                if (sdkInt >= 26)
+                {
+                    _supportsVibrationEffect = true;
+                    _vibrationEffectClass    = new AndroidJavaClass("android.os.VibrationEffect");
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"Vibrator init failed: {e}");
+            }
+        }
+#endif
+    }
+
     /// <summary>
     /// 진동 호출
     /// </summary>
     public void PlayVibrate()
     {
-        if (_isVibrationOn)
-            Handheld.Vibrate();
+        if (!_isVibrationOn)
+            return;
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+        if (_vibrator != null)
+        {
+            if (_supportsVibrationEffect && _vibrationEffectClass != null)
+            {
+                var effect = _vibrationEffectClass.CallStatic<AndroidJavaObject>(
+                    "createOneShot", vibrationDurationMs, vibrationAmplitude);
+                _vibrator.Call("vibrate", effect);
+            }
+            else
+            {
+                _vibrator.Call("vibrate", vibrationDurationMs);
+            }
+        }
+#elif UNITY_IOS && !UNITY_EDITOR
+        Handheld.Vibrate();
+#else
+        Handheld.Vibrate();
+#endif
     }
 
     void ApplyBGM(bool on)
