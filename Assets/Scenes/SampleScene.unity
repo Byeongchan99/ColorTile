@@ -1656,6 +1656,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPaused: 0
+  targetFps: 60
 --- !u!4 &460621658
 Transform:
   m_ObjectHideFlags: 0
@@ -4843,9 +4844,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 5703280636307187412, guid: 5585b10f7b7021148a0805291a7a2dbd, type: 2}
-  m_audioClip: {fileID: 8300000, guid: ea5fdc351dcd53c4d81a80ba2b34483e, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 96db1a77edebb464a8379db138a0d698, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.2
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -4948,6 +4949,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
   - {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
   - {fileID: 8300000, guid: 7e9ee6dc04a5d40d1a5dfc4beb9865e7, type: 3}
+  vibrationDurationMs: 50
+  vibrationAmplitude: 50
 --- !u!4 &1654193948
 Transform:
   m_ObjectHideFlags: 0

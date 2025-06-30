@@ -7,10 +7,11 @@ public class UIButtonSFXInitializer : MonoBehaviour
     [Tooltip("모든 버튼 클릭 시 Invoke할 SFX 인덱스")]
     public int sfxIndex = 0;
 
-    void Start()
+    void Awake()
     {
-        // 씬 내 모든 Button 컴포넌트를 찾아서
-        var buttons = FindObjectsOfType<Button>();
+        // 씬 내 모든 Button 컴포넌트를 찾아서(비활성화된 오브젝트 포함)
+        var buttons = FindObjectsOfType<Button>(includeInactive: true);
+
         foreach (var button in buttons)
         {
             // 클로저 문제가 없도록 로컬 변수에 복사
