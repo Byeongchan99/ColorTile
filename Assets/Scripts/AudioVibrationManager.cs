@@ -129,10 +129,13 @@ public class AudioVibrationManager : MonoBehaviour
             return;
 
 #if UNITY_ANDROID && !UNITY_EDITOR
+    try
+    {
         if (_vibrator != null)
         {
             if (_supportsVibrationEffect && _vibrationEffectClass != null)
             {
+                vibrationAmplitude = Mathf.Clamp(vibrationAmplitude, 1, 255);
                 var effect = _vibrationEffectClass.CallStatic<AndroidJavaObject>(
                     "createOneShot", vibrationDurationMs, vibrationAmplitude);
                 _vibrator.Call("vibrate", effect);
@@ -142,8 +145,19 @@ public class AudioVibrationManager : MonoBehaviour
                 _vibrator.Call("vibrate", vibrationDurationMs);
             }
         }
+        else
+        {
+            Debug.LogWarning("[AudioVibrationManager] Vibrator is null.");
+            Handheld.Vibrate(); // fallback 기본 진동 호출
+        }
+    }
+    catch (System.Exception e)
+    {
+        Debug.LogWarning($"[AudioVibrationManager] PlayVibrate error: {e.Message}");
+        Handheld.Vibrate(); // fallback 기본 진동 호출
+    }
 #elif UNITY_IOS && !UNITY_EDITOR
-        Handheld.Vibrate();
+    Handheld.Vibrate();
 #else
         Handheld.Vibrate();
 #endif
