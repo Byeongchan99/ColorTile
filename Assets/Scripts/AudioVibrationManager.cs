@@ -19,15 +19,16 @@ public class AudioVibrationManager : MonoBehaviour
 
     [Header("Vibration Settings")]
     [Tooltip("진동 지속 시간(밀리초)")]
-    [SerializeField] private int vibrationDurationMs = 50;
+    [SerializeField] private int vibrationDurationMs = 25;
     [Tooltip("진동 세기(1~255)")]
     [SerializeField, Range(1, 255)] private int vibrationAmplitude = 50;
 
     // 진동 API 설정
 #if UNITY_ANDROID && !UNITY_EDITOR
-    private AndroidJavaObject _vibrator;
-    private AndroidJavaClass _vibrationEffectClass;
-    private bool _supportsVibrationEffect;
+private AndroidJavaObject _vibrator;
+private AndroidJavaClass _vibrationEffectClass;
+private bool _supportsVibrationEffect;
+private bool _hasAmplitudeControl;
 #endif
 
     void Awake()
@@ -95,28 +96,31 @@ public class AudioVibrationManager : MonoBehaviour
     public void SettingVibrate()
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
-        if (_vibrator == null)
+    if (_vibrator == null)
+    {
+        try
         {
-            try
-            {
-                var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-                var activity    = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-                var context     = activity.Call<AndroidJavaObject>("getApplicationContext");
-                _vibrator       = context.Call<AndroidJavaObject>("getSystemService", "vibrator");
+            var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+            var activity    = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+            var context     = activity.Call<AndroidJavaObject>("getApplicationContext");
+            _vibrator       = context.Call<AndroidJavaObject>("getSystemService", "vibrator");
 
-                var versionClass = new AndroidJavaClass("android.os.Build$VERSION");
-                int sdkInt       = versionClass.GetStatic<int>("SDK_INT");
-                if (sdkInt >= 26)
-                {
-                    _supportsVibrationEffect = true;
-                    _vibrationEffectClass    = new AndroidJavaClass("android.os.VibrationEffect");
-                }
-            }
-            catch (System.Exception e)
+            var versionClass = new AndroidJavaClass("android.os.Build$VERSION");
+            int sdkInt       = versionClass.GetStatic<int>("SDK_INT");
+            if (sdkInt >= 26)
             {
-                Debug.LogWarning($"Vibrator init failed: {e}");
+                _supportsVibrationEffect = true;
+                _vibrationEffectClass    = new AndroidJavaClass("android.os.VibrationEffect");
+
+                // ★ amplitude 지원 여부 확인 추가
+                _hasAmplitudeControl = _vibrator.Call<bool>("hasAmplitudeControl");
             }
         }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"Vibrator init failed: {e}");
+        }
+    }
 #endif
     }
 
@@ -131,30 +135,43 @@ public class AudioVibrationManager : MonoBehaviour
 #if UNITY_ANDROID && !UNITY_EDITOR
     try
     {
-        if (_vibrator != null)
+        if (_vibrator != null && _supportsVibrationEffect && _vibrationEffectClass != null)
         {
-            if (_supportsVibrationEffect && _vibrationEffectClass != null)
+            vibrationAmplitude = Mathf.Clamp(vibrationAmplitude, 1, 255);
+            
+            AndroidJavaObject effect;
+
+            // ★ amplitude 지원 여부에 따라 분기
+            if (_hasAmplitudeControl)
             {
-                vibrationAmplitude = Mathf.Clamp(vibrationAmplitude, 1, 255);
-                var effect = _vibrationEffectClass.CallStatic<AndroidJavaObject>(
+                // 진동 세기 지원 시 amplitude 적용
+                effect = _vibrationEffectClass.CallStatic<AndroidJavaObject>(
                     "createOneShot", vibrationDurationMs, vibrationAmplitude);
-                _vibrator.Call("vibrate", effect);
             }
             else
             {
-                _vibrator.Call("vibrate", vibrationDurationMs);
+                // 진동 세기 미지원 시 DEFAULT_AMPLITUDE 사용(-1 값)
+                effect = _vibrationEffectClass.CallStatic<AndroidJavaObject>(
+                    "createOneShot", vibrationDurationMs, -1);
             }
+
+            _vibrator.Call("vibrate", effect);
+        }
+        else if (_vibrator != null)
+        {
+            Debug.LogWarning("[AudioVibrationManager] Using basic vibration (old API).");
+            _vibrator.Call("vibrate", vibrationDurationMs);
         }
         else
         {
             Debug.LogWarning("[AudioVibrationManager] Vibrator is null.");
-            Handheld.Vibrate(); // fallback 기본 진동 호출
+            Handheld.Vibrate(); // fallback
         }
     }
     catch (System.Exception e)
     {
-        Debug.LogWarning($"[AudioVibrationManager] PlayVibrate error: {e.Message}");
-        Handheld.Vibrate(); // fallback 기본 진동 호출
+        Debug.LogWarning($"[AudioVibrationManager] PlayVibrate error: {e}");
+        Handheld.Vibrate(); // fallback
     }
 #elif UNITY_IOS && !UNITY_EDITOR
     Handheld.Vibrate();

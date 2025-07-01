@@ -4949,7 +4949,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
   - {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
   - {fileID: 8300000, guid: 7e9ee6dc04a5d40d1a5dfc4beb9865e7, type: 3}
-  vibrationDurationMs: 50
+  vibrationDurationMs: 25
   vibrationAmplitude: 50
 --- !u!4 &1654193948
 Transform:
