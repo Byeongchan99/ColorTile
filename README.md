@@ -60,7 +60,7 @@ Unity 기반으로 개발한 **2D 퍼즐 게임**입니다.
 
 1. **스테이지 생성**
 
-![스테이지 생성 로직.gif](attachment:3a596eb3-6a7d-45b6-94c6-c5aa61757e21:스테이지_생성_로직.gif)
+![Image](https://github.com/user-attachments/assets/e578afae-b851-419f-b053-904d4697b90d)
 
 ***스테이지 생성 과정을 시각화하기 위해 연출한 이미지입니다.***
 
@@ -70,11 +70,11 @@ Unity 기반으로 개발한 **2D 퍼즐 게임**입니다.
 
 1. **UI 해상도 관리**
 
-![image.png](attachment:c7a89a8d-189c-490a-997b-ae2420c49b04:image.png)
+![Image](https://github.com/user-attachments/assets/eda8f673-3532-4c7d-b587-2d893c0f4b44)
 
-![image.png](attachment:2c9a0549-fc8f-4312-9ff9-94825a5b3df7:image.png)
+![Image](https://github.com/user-attachments/assets/1c001dc8-ff7f-4ba5-8504-4870a72b2b7a)
 
-![image.png](attachment:766c8cfc-8c00-4d30-b900-ad1fe78914a8:image.png)
+![Image](https://github.com/user-attachments/assets/f9c19bc2-79a9-4554-bc71-425332803896)
 
 [컬러 타일 개발 일지 2 - 임시 UI 및 해상도 작업](https://www.notion.so/2-UI-1f04e320564d807ea972c236b81fbb0d?pvs=21) 
 
@@ -84,9 +84,9 @@ Unity 기반으로 개발한 **2D 퍼즐 게임**입니다.
 
 1. **시각 효과**
 
-![타일제거효과.gif](attachment:211eedd4-e4ce-4afa-93be-6d4fd6cda7df:타일제거효과.gif)
+![Image](https://github.com/user-attachments/assets/45112136-84b5-454f-bdfd-74b5554727d5)
 
-![화면전환애니메잇녀.gif](attachment:13834ea9-6efa-4ea3-8ac5-f3c8384679dc:화면전환애니메잇녀.gif)
+![Image](https://github.com/user-attachments/assets/6ddabe92-b13f-4e3d-9051-65e3f9da4c53)
 
 [컬러 타일 개발 일지 3 - 디테일 추가](https://www.notion.so/3-1f04e320564d801bba09ed9ac9a0b3d2?pvs=21) 
 
@@ -132,9 +132,9 @@ Unity 기반으로 개발한 **2D 퍼즐 게임**입니다.
 
 UI 개발 중 발생한 문제점으로, 디스플레이 크기에 따라 Mid Area는 자동으로 크기가 변경되지만, 게임 오브젝트인 보드판은 크기가 자동으로 변경되지 않아 레이아웃에 문제가 발생했습니다.
 
-![image.png](attachment:70eb7a77-f462-438b-92f2-18ca488df581:image.png)
+<img width="333" height="211" alt="Image" src="https://github.com/user-attachments/assets/198e9ee9-59b9-4871-aa92-168ad9abcab5" />
 
-![image.png](attachment:03861f7b-6740-4952-a6f7-12a381d24763:image.png)
+<img width="333" height="206" alt="Image" src="https://github.com/user-attachments/assets/ba1e3706-7fcd-43cd-90b7-f1c3186d1ea5" />
 
 ***검은색 박스: Mid Area, 빨간색 박스: 보드판***
 
