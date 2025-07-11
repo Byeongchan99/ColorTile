@@ -80,12 +80,15 @@ Unity 기반으로 개발한 **2D 퍼즐 게임**입니다.
 
 2. **UI 해상도 관리**
 
+</br>
+
 <img width="300" height="600" alt="Image" src="https://github.com/user-attachments/assets/4a1d1694-d7f4-42a3-9776-17cc8e7604b8" />
 
 <img width="300" height="600" alt="Image" src="https://github.com/user-attachments/assets/a597de57-26b6-4b95-b983-1b0fe158e044" />
 
 <img width="300" height="600" alt="Image" src="https://github.com/user-attachments/assets/de5130b1-f99e-4bf6-8153-cb987e22b169" />
 
+</br>
 </br>
 
 [컬러 타일 개발 일지 2 - 임시 UI 및 해상도 작업](https://www.notion.so/2-UI-1f04e320564d807ea972c236b81fbb0d?pvs=21) 
