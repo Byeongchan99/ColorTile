@@ -92,26 +92,6 @@ Unity 기반으로 개발한 **2D 퍼즐 게임**입니다.
 
 시각적 피드백과 몰입도를 높일 수 있는 오버레이 효과, 타일 제거 애니메이션, 화면 전환 애니메이션과 같은 여러 시각 효과를 추가하였습니다.
 
-# 개발 기록
-
-[컬러 타일 개발 기록 1](https://www.notion.so/1-1c04e320564d8073a5aafc51584a3792?pvs=21) 
-
-[컬러 타일 개발 기록 2](https://www.notion.so/2-1de4e320564d809394c4e2d5031ad57f?pvs=21) 
-
-[컬러 타일 개발 기록 3](https://www.notion.so/3-1fd4e320564d809cb64ed3df8fe6da36?pvs=21) 
-
-# 개발 일지
-
-[컬러 타일 개발 일지 1 - 스테이지 생성 로직](https://www.notion.so/1-1e34e320564d80de8335efd6f1760e23?pvs=21) 
-
-[컬러 타일 개발 일지 2 - 임시 UI 및 해상도 작업](https://www.notion.so/2-UI-1f04e320564d807ea972c236b81fbb0d?pvs=21) 
-
-[컬러 타일 개발 일지 3 - 디테일 추가](https://www.notion.so/3-1f04e320564d801bba09ed9ac9a0b3d2?pvs=21) 
-
-[컬러 타일 개발 일지 4 - UI 작업 마무리 및 색약 모드](https://www.notion.so/4-UI-2144e320564d80018a3fef213ac7fbd4?pvs=21) 
-
-[컬러 타일 개발 일지 5 - 배경음악 및 진동 기능](https://www.notion.so/5-2294e320564d80f2aa7bc5e5f51fc983?pvs=21) 
-
 # 프로젝트 경험
 
 [컬러 타일 개발 개선점 및 아쉬웠던 점](https://www.notion.so/1f04e320564d80d68d09d7381b84f341?pvs=21) 
