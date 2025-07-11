@@ -30,9 +30,7 @@ Unity 기반으로 개발한 **2D 퍼즐 게임**입니다.
 
 # 게임 구조
 
-![Image](https://github.com/user-attachments/assets/2057f662-7f68-4694-b61f-fdb109e9b334)
-
-![Image](https://github.com/user-attachments/assets/9c655303-c3b2-46b5-8bde-613432075cb7)
+![Image](https://github.com/user-attachments/assets/2057f662-7f68-4694-b61f-fdb109e9b334) ![Image](https://github.com/user-attachments/assets/9c655303-c3b2-46b5-8bde-613432075cb7)
 
 - **일반 모드**: 제한 시간 90초 내에 최대한 많은 타일을 제거하는 것이 목표입니다.
     
@@ -70,11 +68,11 @@ Unity 기반으로 개발한 **2D 퍼즐 게임**입니다.
 
 1. **UI 해상도 관리**
 
-![Image](https://github.com/user-attachments/assets/eda8f673-3532-4c7d-b587-2d893c0f4b44)
+<img width="307" height="609" alt="Image" src="https://github.com/user-attachments/assets/4a1d1694-d7f4-42a3-9776-17cc8e7604b8" />
 
-![Image](https://github.com/user-attachments/assets/1c001dc8-ff7f-4ba5-8504-4870a72b2b7a)
+<img width="301" height="585" alt="Image" src="https://github.com/user-attachments/assets/a597de57-26b6-4b95-b983-1b0fe158e044" />
 
-![Image](https://github.com/user-attachments/assets/f9c19bc2-79a9-4554-bc71-425332803896)
+<img width="297" height="587" alt="Image" src="https://github.com/user-attachments/assets/de5130b1-f99e-4bf6-8153-cb987e22b169" />
 
 [컬러 타일 개발 일지 2 - 임시 UI 및 해상도 작업](https://www.notion.so/2-UI-1f04e320564d807ea972c236b81fbb0d?pvs=21) 
 
@@ -112,9 +110,9 @@ Unity 기반으로 개발한 **2D 퍼즐 게임**입니다.
 
 UI 개발 중 발생한 문제점으로, 디스플레이 크기에 따라 Mid Area는 자동으로 크기가 변경되지만, 게임 오브젝트인 보드판은 크기가 자동으로 변경되지 않아 레이아웃에 문제가 발생했습니다.
 
-<img width="333" height="211" alt="Image" src="https://github.com/user-attachments/assets/198e9ee9-59b9-4871-aa92-168ad9abcab5" />
+<img width="669" height="424" alt="Image" src="https://github.com/user-attachments/assets/b2589876-8e01-4ec8-814d-ea1fe943ef2a" />
 
-<img width="333" height="206" alt="Image" src="https://github.com/user-attachments/assets/ba1e3706-7fcd-43cd-90b7-f1c3186d1ea5" />
+<img width="661" height="410" alt="Image" src="https://github.com/user-attachments/assets/ffab6af6-c513-4c04-8ae2-f8364b5235e6" />
 
 ***검은색 박스: Mid Area, 빨간색 박스: 보드판***
 
