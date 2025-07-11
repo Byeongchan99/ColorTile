@@ -32,6 +32,8 @@ Unity 기반으로 개발한 **2D 퍼즐 게임**입니다.
 
 ![Image](https://github.com/user-attachments/assets/2057f662-7f68-4694-b61f-fdb109e9b334) ![Image](https://github.com/user-attachments/assets/9c655303-c3b2-46b5-8bde-613432075cb7)
 
+</br>
+
 - **일반 모드**: 제한 시간 90초 내에 최대한 많은 타일을 제거하는 것이 목표입니다.
     
     잘못된 칸을 클릭할 경우 **5초의 시간 패널티**가 부여됩니다.
