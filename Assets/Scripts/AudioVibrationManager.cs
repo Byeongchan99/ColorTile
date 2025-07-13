@@ -21,15 +21,7 @@ public class AudioVibrationManager : MonoBehaviour
     [Tooltip("진동 지속 시간(밀리초)")]
     [SerializeField] private int vibrationDurationMs = 25;
     [Tooltip("진동 세기(1~255)")]
-    [SerializeField, Range(1, 255)] private int vibrationAmplitude = 50;
-
-    // 진동 API 설정
-#if UNITY_ANDROID && !UNITY_EDITOR
-private AndroidJavaObject _vibrator;
-private AndroidJavaClass _vibrationEffectClass;
-private bool _supportsVibrationEffect;
-private bool _hasAmplitudeControl;
-#endif
+    [SerializeField, Range(1, 255)] private int vibrationAmplitude = 100;
 
     void Awake()
     {
@@ -95,33 +87,7 @@ private bool _hasAmplitudeControl;
 
     public void SettingVibrate()
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
-    if (_vibrator == null)
-    {
-        try
-        {
-            var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-            var activity    = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-            var context     = activity.Call<AndroidJavaObject>("getApplicationContext");
-            _vibrator       = context.Call<AndroidJavaObject>("getSystemService", "vibrator");
 
-            var versionClass = new AndroidJavaClass("android.os.Build$VERSION");
-            int sdkInt       = versionClass.GetStatic<int>("SDK_INT");
-            if (sdkInt >= 26)
-            {
-                _supportsVibrationEffect = true;
-                _vibrationEffectClass    = new AndroidJavaClass("android.os.VibrationEffect");
-
-                // ★ amplitude 지원 여부 확인 추가
-                _hasAmplitudeControl = _vibrator.Call<bool>("hasAmplitudeControl");
-            }
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogWarning($"Vibrator init failed: {e}");
-        }
-    }
-#endif
     }
 
     /// <summary>
@@ -129,55 +95,10 @@ private bool _hasAmplitudeControl;
     /// </summary>
     public void PlayVibrate()
     {
-        if (!_isVibrationOn)
-            return;
+        if (!_isVibrationOn) return;
 
-#if UNITY_ANDROID && !UNITY_EDITOR
-    try
-    {
-        if (_vibrator != null && _supportsVibrationEffect && _vibrationEffectClass != null)
-        {
-            vibrationAmplitude = Mathf.Clamp(vibrationAmplitude, 1, 255);
-            
-            AndroidJavaObject effect;
-
-            // ★ amplitude 지원 여부에 따라 분기
-            if (_hasAmplitudeControl)
-            {
-                // 진동 세기 지원 시 amplitude 적용
-                effect = _vibrationEffectClass.CallStatic<AndroidJavaObject>(
-                    "createOneShot", vibrationDurationMs, vibrationAmplitude);
-            }
-            else
-            {
-                // 진동 세기 미지원 시 DEFAULT_AMPLITUDE 사용(-1 값)
-                effect = _vibrationEffectClass.CallStatic<AndroidJavaObject>(
-                    "createOneShot", vibrationDurationMs, -1);
-            }
-
-            _vibrator.Call("vibrate", effect);
-        }
-        else if (_vibrator != null)
-        {
-            Debug.LogWarning("[AudioVibrationManager] Using basic vibration (old API).");
-            _vibrator.Call("vibrate", vibrationDurationMs);
-        }
-        else
-        {
-            Debug.LogWarning("[AudioVibrationManager] Vibrator is null.");
-            Handheld.Vibrate(); // fallback
-        }
-    }
-    catch (System.Exception e)
-    {
-        Debug.LogWarning($"[AudioVibrationManager] PlayVibrate error: {e}");
-        Handheld.Vibrate(); // fallback
-    }
-#elif UNITY_IOS && !UNITY_EDITOR
-    Handheld.Vibrate();
-#else
-        Handheld.Vibrate();
-#endif
+        // 원하는 “짧고 약한” 진동
+        Vibration.Vibrate(vibrationDurationMs, vibrationAmplitude);
     }
 
     void ApplyBGM(bool on)

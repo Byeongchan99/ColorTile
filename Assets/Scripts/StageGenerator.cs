@@ -27,7 +27,7 @@ public class StageGenerator : MonoBehaviour
 
     [Header("Tile Prefab")]
     public TilePool tilePool; // 타일 오브젝트 풀
-    
+
     // 스테이지 전체를 관리하는 2차원 배열 (PlayManager에서 참조)
     public TileColor[,] grid = new TileColor[_maxRows, _maxColumns];
     // 실제 타일 오브젝트들을 관리하는 배열
@@ -35,6 +35,7 @@ public class StageGenerator : MonoBehaviour
 
     private void Awake()
     {
+        //GameEvents.OnGameStarted += VisualizeGenerateStage; // 테스트용 
         GameEvents.OnGameStarted += GenerateStage; // 게임 시작 시 초기화
         GameEvents.OnRetryGame += GenerateStage; // 게임 재시작 시 초기화
         GameEvents.OnClearBoard += GenerateStage; // 보드 클리어 시 초기화
@@ -105,13 +106,76 @@ public class StageGenerator : MonoBehaviour
                 grid[y, x] = TileColor.None;
                 tileObjects[y, x] = null;
             }
-        }       
+        }
     }
 
     #region // 스테이지 생성 과정을 시각화하는 메서드
+    /*
     public void VisualizeGenerateStage()
     {
-        StartCoroutine(GenerateStageCoroutine());
+        StartCoroutine(GenerateStageCoroutine1());
+    }
+
+    private IEnumerator GenerateStageCoroutine1()
+    {
+        InitStage();
+
+        _pairColors.Clear();
+        for (int colorIdx = 1; colorIdx <= _colorCount; colorIdx++)
+            for (int i = 0; i < _pairCount; i++)
+                _pairColors.Add((TileColor)colorIdx);
+
+        for (int i = 0; i < _pairColors.Count; i++)
+        {
+            int r = Random.Range(i, _pairColors.Count);
+            (_pairColors[i], _pairColors[r]) = (_pairColors[r], _pairColors[i]);
+        }
+
+        const int MAX_ATTEMPTS = 1000;
+
+        foreach (TileColor color in _pairColors)
+        {
+            bool placed = false;
+            int attempt = 0;
+
+            while (!placed && attempt < MAX_ATTEMPTS)
+            {
+                attempt++;
+
+                int rectW = Random.Range(1, columns + 1);
+                int rectH = Random.Range(1, rows + 1);
+                if (rectW + rectH <= 3) continue;
+
+                int ox = Random.Range(0, columns - rectW + 1);
+                int oy = Random.Range(0, rows - rectH + 1);
+
+  
+                bool option = Random.value < .5f;   // true: ↙↗, false: ↖↘
+                Vector2Int pos1, pos2;
+
+                if (option) // 왼위-오른아래
+                {
+                    pos1 = new Vector2Int(ox, oy + rectH - 1);   // top-left
+                    pos2 = new Vector2Int(ox + rectW - 1, oy);               // bottom-right
+                }
+                else       // 오른위-왼아래
+                {
+                    pos1 = new Vector2Int(ox + rectW - 1, oy + rectH - 1);   // top-right
+                    pos2 = new Vector2Int(ox, oy);               // bottom-left
+                }
+
+                if (CanSetTiles(pos1, pos2))
+                {
+                    SetTiles(pos1, pos2, color);
+                    placed = true;
+                }
+            }
+
+            if (!placed)
+                Debug.LogWarning($"[Stage] '{color}' 쌍 배치 실패(ver.1)");
+
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 
     private IEnumerator GenerateStageCoroutine()
@@ -280,6 +344,7 @@ public class StageGenerator : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
         }
     }
+    */
     #endregion
 
     // 스테이지를 생성하는 메서드 (GenerateStage ver.2)
@@ -451,74 +516,62 @@ public class StageGenerator : MonoBehaviour
     // 스테이지를 생성하는 메서드 (GenerateStage ver.1)
     #region
     /*
-    void GenerateStage()
+    public void GenerateStage()
     {
-        // 1. grid 초기화 (모든 칸을 None으로)
-        grid = new TileColor[rows, columns];
-        tileObjects = new GameObject[rows, columns];
-        for (int y = 0; y < rows; y++)
+        // 1. 스테이지 초기화 (grid 초기화 및 오브젝트 제거)
+        InitStage();  // ver.2에서 사용하던 초기화 메서드
+
+        // 2. 색상별 쌍 리스트 생성
+        _pairColors.Clear();
+        for (int colorIndex = 1; colorIndex <= _colorCount; colorIndex++)
         {
-            for (int x = 0; x < columns; x++)
+            for (int i = 0; i < _pairCount; i++)
             {
-                grid[y, x] = TileColor.None;
-                tileObjects[y, x] = null;
+                _pairColors.Add((TileColor)colorIndex);
             }
         }
 
-        // 2. 색상별 쌍 리스트 생성 (총 pairCount * colorCount 쌍)
-        List<TileColor> pairColors = new List<TileColor>();
-        for (int colorIndex = 1; colorIndex <= colorCount; colorIndex++)
+        // 3. 셔플
+        for (int i = 0; i < _pairColors.Count; i++)
         {
-            for (int i = 0; i < pairCount; i++)
-            {
-                pairColors.Add((TileColor)colorIndex);
-            }
-        }
-
-        // 3. 쌍 순서를 랜덤으로 섞기
-        for (int i = 0; i < pairColors.Count; i++)
-        {
-            TileColor temp = pairColors[i];
-            int randomIndex = Random.Range(i, pairColors.Count);
-            pairColors[i] = pairColors[randomIndex];
-            pairColors[randomIndex] = temp;
+            int randomIndex = Random.Range(i, _pairColors.Count);
+            (_pairColors[i], _pairColors[randomIndex]) = (_pairColors[randomIndex], _pairColors[i]);
         }
 
         // 4. 각 쌍을 배치
-        foreach (TileColor color in pairColors)
+        foreach (TileColor color in _pairColors)
         {
             bool placed = false;
             int attempt = 0;
+
             while (!placed && attempt < 1000)
-            { // 무한루프 방지
+            {
                 attempt++;
-                // (1) 직사각형 크기 생성 (1 <= width, height <= MAX, width + height > 3)
+
+                // (1) 직사각형 크기 결정
                 int rectWidth = Random.Range(1, columns + 1);
                 int rectHeight = Random.Range(1, rows + 1);
-                if (rectWidth + rectHeight <= 3)
-                    continue;
+                if (rectWidth + rectHeight <= 3) continue;
 
-                // (2) 직사각형이 grid 안에 들어가도록 원점(바닥 왼쪽) 결정
+                // (2) 원점 좌표 설정
                 int originX = Random.Range(0, columns - rectWidth + 1);
                 int originY = Random.Range(0, rows - rectHeight + 1);
 
-                // (3) 대각선 선택: 옵션에 따라 두 모서리 좌표 결정
-                bool option = (Random.value < 0.5f);
+                // (3) 대각선 선택
+                bool option = Random.value < 0.5f;
                 Vector2Int pos1, pos2;
                 if (option)
                 {
-                    // 왼쪽 위와 오른쪽 아래
-                    pos1 = new Vector2Int(originX, originY + rectHeight - 1);      // top-left
-                    pos2 = new Vector2Int(originX + rectWidth - 1, originY);         // bottom-right
+                    pos1 = new Vector2Int(originX, originY + rectHeight - 1);           // top-left
+                    pos2 = new Vector2Int(originX + rectWidth - 1, originY);           // bottom-right
                 }
                 else
                 {
-                    // 오른쪽 위와 왼쪽 아래
                     pos1 = new Vector2Int(originX + rectWidth - 1, originY + rectHeight - 1); // top-right
-                    pos2 = new Vector2Int(originX, originY);                                 // bottom-left
+                    pos2 = new Vector2Int(originX, originY);                                   // bottom-left
                 }
 
-                // (4) 두 위치에 타일을 둘 수 있는지 확인
+                // (4) 배치 가능 여부 확인
                 if (CanSetTiles(pos1, pos2))
                 {
                     SetTiles(pos1, pos2, color);
@@ -528,13 +581,13 @@ public class StageGenerator : MonoBehaviour
 
             if (!placed)
             {
-                //Debug.LogWarning("Failed to place a pair of color " + color);
+                Debug.LogWarning($"[Stage] '{color}' 쌍 배치 실패 (ver.1)");
             }
         }
     }
 
-    // 해당 두 위치가 비어있는지 검사
-    bool CanSetTiles(Vector2Int pos1, Vector2Int pos2)
+    // 두 위치가 모두 빈 칸인지 확인
+    private bool CanSetTiles(Vector2Int pos1, Vector2Int pos2)
     {
         return grid[pos1.y, pos1.x] == TileColor.None && grid[pos2.y, pos2.x] == TileColor.None;
     }
