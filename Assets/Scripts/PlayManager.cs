@@ -8,6 +8,7 @@ using UnityEngine.Profiling;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using static Enums;
+using Unity.Profiling;
 
 public class PlayManager : MonoBehaviour
 {
@@ -493,44 +494,51 @@ public class PlayManager : MonoBehaviour
         return true;
     }
 
+    // (1) 프로파일러 마커를 사용하여 HasNoRemovableTiles 메서드의 성능을 측정
+    private static readonly ProfilerMarker _markHasNoRemovable =
+        new ProfilerMarker("HasNoRemovableTiles");
+
     // 빈 칸 리스트만 순회하여 더 이상 제거 가능한 타일이 없는지 검사
     bool HasNoRemovableTiles()
     {
-        // 빈 칸이 하나도 없으면 제거할 수 있는 타일이 없는 것으로 판단
-        if (_emptyCellsSet.Count == 0)
-            return true;
-
-        // 검사할 빈 칸의 행과 열에 타일이 없는 경우는 리스트에서 제거
-        _emptyCellsSet.RemoveWhere(pos => isEmptyLine(pos));
-
-        foreach (var emptyPos in _emptyCellsSet)
+        using (_markHasNoRemovable.Auto())
         {
-            _colorCountDict.Clear(); // 리스트 초기화
+            // 빈 칸이 하나도 없으면 제거할 수 있는 타일이 없는 것으로 판단
+            if (_emptyCellsSet.Count == 0)
+                return true;
 
-            _closestTiles = GetClosestOrthogonalTiles(emptyPos, _closestTiles);
-            
-            foreach (Vector2Int tilePos in _closestTiles)
+            // 검사할 빈 칸의 행과 열에 타일이 없는 경우는 리스트에서 제거
+            _emptyCellsSet.RemoveWhere(pos => isEmptyLine(pos));
+
+            foreach (var emptyPos in _emptyCellsSet)
             {
-                TileColor color = stageGenerator.grid[tilePos.y, tilePos.x];
-                
-                if (color == TileColor.None) continue;
-                
-                if (!_colorCountDict.ContainsKey(color))
-                    _colorCountDict[color] = 0;
+                _colorCountDict.Clear(); // 리스트 초기화
 
-                _colorCountDict[color]++;
+                _closestTiles = GetClosestOrthogonalTiles(emptyPos, _closestTiles);
+
+                foreach (Vector2Int tilePos in _closestTiles)
+                {
+                    TileColor color = stageGenerator.grid[tilePos.y, tilePos.x];
+
+                    if (color == TileColor.None) continue;
+
+                    if (!_colorCountDict.ContainsKey(color))
+                        _colorCountDict[color] = 0;
+
+                    _colorCountDict[color]++;
+                }
+
+                // 동일 색상의 타일이 2개 이상 존재하면 제거 가능
+                foreach (var kvp in _colorCountDict)
+                {
+                    if (kvp.Value >= 2)
+                        return false;
+                }
             }
 
-            // 동일 색상의 타일이 2개 이상 존재하면 제거 가능
-            foreach (var kvp in _colorCountDict)
-            {
-                if (kvp.Value >= 2)
-                    return false;
-            }
-        }      
-
-        // 모든 빈 칸에서 검사했지만 제거 가능한 타일이 없다면
-        return true;
+            // 모든 빈 칸에서 검사했지만 제거 가능한 타일이 없다면
+            return true;
+        }
     }
     #endregion
 
